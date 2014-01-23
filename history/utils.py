@@ -2,7 +2,7 @@ import os
 
 from evaluation_system.misc import utils
 from models import History
-from django_evlauation import settings
+from django_evaluation import settings
 # from contrib.comments.views.moderation import delete
 
 

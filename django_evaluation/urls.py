@@ -1,4 +1,4 @@
-""" Default urlconf for django_evlauation """
+""" Default urlconf for django_evaluation """
 
 from django.conf import settings
 from django.conf.urls import include, patterns, url

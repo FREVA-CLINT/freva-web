@@ -4,7 +4,7 @@ from django.utils.encoding import force_text
 from django.utils.html import conditional_escape
 from django.template.loader import render_to_string
 
-from django_evlauation import settings
+from django_evaluation import settings
 
 import logging
 

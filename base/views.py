@@ -30,6 +30,18 @@ def home(request):
         
     return render(request, 'base/home.html',{'login_failed':login_failed})
 
+def wiki(request):
+    """
+    View rendering the iFrame for the wiki page.
+    """
+    return render(request, 'base/wiki.html', {'page':'https://code.zmaw.de/projects/miklip-d-integration/wiki'})
+
+def contact(request):
+    """
+    View rendering the iFrame for the wiki page.
+    """
+    return render(request, 'base/wiki.html', {'page':'https://code.zmaw.de/projects/miklip-d-integration/issues/new'})
+
 def logout(request):
     """
     Logout view.

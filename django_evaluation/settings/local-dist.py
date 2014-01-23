@@ -78,7 +78,7 @@ LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
     'loggers': {
-        'django_evlauation': {
+        'django_evaluation': {
             'level': "DEBUG"
         }
     }

@@ -14,7 +14,7 @@ from evaluation_system.model.user import User
 from evaluation_system.misc import utils
 
 from models import History, Result
-from django_evlauation import settings
+from django_evaluation import settings
 from plugins.utils import ssh_call
 
 from history.utils import FileDict
