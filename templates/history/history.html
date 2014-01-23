@@ -61,7 +61,20 @@
 	          			<a class="btn btn-success btn-sm" href="{% url 'plugins:setup' h_item.tool h_item.id%}">Edit Config</a>
 	          		{% endif %}
 	          		{%ifnotequal h_item.slurm_output '0'%}
-	          		<a class="btn btn-primary btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right" title="Information to scheduled job&#10;&#10;Configuration:&#10;{{h_item.config_dict}}">Info</a>
+	          		<a class="btn btn-primary btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right"
+	          		 title="Information to scheduled job<br><br>Configuration:<br>
+          		 	 	 	<div class="col-md-12">
+					 	 	<table class="table col-md-12" id="config_table" style="display:none; margin-top:10px;">
+		 				 	{% for key,value in history_object.config_dict.items %}
+		 	 				<tr>
+		 	 				<td>{{key}}:</td>
+		 	 				<td>{{value}}</td>
+		 	 				</tr>
+		 	 				{% endfor %}
+		 	 				</table>
+	 	 				</div>">Info</a>
+	 	 				
+	          		 
                                 {%else%}
 	          		<a class="btn btn-info btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right"  title="Restricted information to manually started job&#10;&#10;Configuration:&#10;{{h_item.config_dict}}">info</a>
                                 {%endifnotequal%}
