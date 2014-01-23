@@ -62,8 +62,8 @@
 	          		{% endif %}
 	          		{%ifnotequal h_item.slurm_output '0'%}
 	          		<a class="btn btn-primary btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right"
-	          		 title="Information to scheduled job<br><br>Configuration:<br> <div class='col-md-12'>
-					 	 	<table class='table col-md-12' style='display:none; margin-top:10px;'>
+	          		 title="Information to scheduled job<br><br>Configuration:<br>
+					 	 	<table class='table table-condensed'>
 		 				 	{% for key,value in history_object.config_dict.items %}
 		 	 				<tr>
 		 	 				<td>{{key}}:</td>
