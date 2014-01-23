@@ -112,13 +112,12 @@ $(document).ready(function() {
     $('#dataTable').dataTable({
     	"aaSorting": [[0,'desc']]
     });
-    
-//    $('#dataTable').dataTable( {
-//      "fnDrawCallback": function( oSettings ) {
-        $('.ttbtn').tooltip();
-//      }
-//  } );
+  
+    // the very first initialization needs this line of code
+    $('.ttbtn').tooltip();
 		
+    // for re-drawing (previous, next) this line is needed
+    $('#dataTable').on('draw', function() {$('.ttbtn').tooltip()});
     
 } );
 
