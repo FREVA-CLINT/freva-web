@@ -2,7 +2,7 @@
 import os, sys
 
 if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_evlauation.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_evaluation.settings")
     # Add the lib/ directory to the system path
     sys.path.append("lib")
 

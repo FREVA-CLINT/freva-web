@@ -17,7 +17,7 @@ from evaluation_system.misc import config
 from plugins.utils import get_plugin_or_404, ssh_call
 from plugins.models import PluginForm, PluginWeb
 from history.models import History
-from django_evlauation import settings
+from django_evaluation import settings
 
 import logging
 import paramiko # this is the ssh client

@@ -1,4 +1,4 @@
-""" Settings for django_evlauation """
+""" Settings for django_evaluation """
 
 from .base import *
 #from .local import *

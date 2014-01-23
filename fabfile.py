@@ -1,5 +1,5 @@
 """
-Starter fabfile for deploying the django_evlauation project.
+Starter fabfile for deploying the django_evaluation project.
 
 Change all the things marked CHANGEME. Other things can be left at their
 defaults if you are happy with the default layout.
@@ -14,13 +14,13 @@ from fabric.operations import _prefix_commands, _prefix_env_vars
 #from fabric.context_managers import cd, lcd, settings, hide
 
 # CHANGEME
-env.hosts = ['user@django_evlauation.example.com']
-env.code_dir = '/srv/www/django_evlauation'
-env.project_dir = '/srv/www/django_evlauation/django_evlauation'
-env.static_root = '/srv/www/django_evlauation/static/'
-env.virtualenv = '/srv/www/django_evlauation/.virtualenv'
-env.code_repo = 'git@github.com:user/django_evlauation.git'
-env.django_settings_module = 'django_evlauation.settings'
+env.hosts = ['user@django_evaluation.example.com']
+env.code_dir = '/srv/www/django_evaluation'
+env.project_dir = '/srv/www/django_evaluation/django_evaluation'
+env.static_root = '/srv/www/django_evaluation/static/'
+env.virtualenv = '/srv/www/django_evaluation/.virtualenv'
+env.code_repo = 'git@github.com:user/django_evaluation.git'
+env.django_settings_module = 'django_evaluation.settings'
 
 # Python version
 PYTHON_BIN = "python2.7"
@@ -135,7 +135,7 @@ def webserver_restart():
 def restart():
     """ Restart the wsgi process """
     with cd(env.code_dir):
-        run("touch %s/django_evlauation/wsgi.py" % env.code_dir)
+        run("touch %s/django_evaluation/wsgi.py" % env.code_dir)
 
 
 def build_static():

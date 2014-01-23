@@ -41,8 +41,10 @@
 	            <li><a href="{% url 'plugins:home' %}">Plugins</a></li>
 	            <li><a href="{% url 'history:history' %}">History</a></li>
 	            <li><a href="{% url 'plugins:about' %}">Docu</a></li>
-	             <li><a href="https://code.zmaw.de/projects/miklip-d-integration/issues/new" target="_blank">Contact</a></li>
-	             <li><a href="https://code.zmaw.de/projects/miklip-d-integration/wiki" target="_blank">Wiki</a>
+	            <li><a href="{% url 'base:contact' %}">Contact</a></li>
+	            <!-- <li><a href="https://code.zmaw.de/projects/miklip-d-integration/issues/new" target="_blank">Contact</a></li> -->
+	            <li><a href="{% url 'base:wiki' %}">Wiki</a></li>
+	            <!-- <li><a href="https://code.zmaw.de/projects/miklip-d-integration/wiki" target="_blank">Wiki</a> -->
 	          </ul>
 
  
