@@ -7,9 +7,18 @@ $(document).ready(function() {
 		placeholder: "Select a {{ facet }}",
 		allowClear: true,
 		initSelection : function (element, callback) {
-     		   	var data = {id: element.val(), text: element.val()};
-        		callback(data);
-    			},
+        		if('{{multiple}}'=='True'){
+				var data = [];
+                		var vals = element.val().split(",")
+				$.each(vals, function(key,value){ 
+                    			data.push({
+                        			id: value,
+                        			text: value
+                    			});
+             			});
+			}else
+				var data = {id: element.val(), text: element.val()};
+			callback(data);    			},
 		{% if multiple %}
 		multiple:true,
 		{%endif%}
@@ -25,9 +34,6 @@ $(document).ready(function() {
 						
 					};
 					tmp_data2 = getActiveFacets('{{facet}}','{{group}}');
-					//$.extend(tmp_data,tmp_data2);
-					//console.log(tmp_data);
-					//tmp_data.push({model:"mpi-esm-lr"});
 					var res = '/solr/solr-search?';
 					$.each(tmp_data, function(index,value){
 						res += index+'='+value+'&';
