@@ -62,9 +62,8 @@
 	          		{% endif %}
 	          		{%ifnotequal h_item.slurm_output '0'%}
 	          		<a class="btn btn-primary btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right"
-	          		 title="Information to scheduled job<br><br>Configuration:<br>
-          		 	 	 	<div class="col-md-12">
-					 	 	<table class="table col-md-12" id="config_table" style="display:none; margin-top:10px;">
+	          		 title="Information to scheduled job<br><br>Configuration:<br> <div class='col-md-12'>
+					 	 	<table class='table col-md-12' style='display:none; margin-top:10px;'>
 		 				 	{% for key,value in history_object.config_dict.items %}
 		 	 				<tr>
 		 	 				<td>{{key}}:</td>
@@ -127,10 +126,10 @@ $(document).ready(function() {
     });
   
     // the very first initialization needs this line of code
-    $('.ttbtn').tooltip();
+    $('.ttbtn').tooltip({html:true});
 		
     // for re-drawing (previous, next) this line is needed
-    $('#dataTable').on('draw', function() {$('.ttbtn').tooltip()});
+    $('#dataTable').on('draw', function() {$('.ttbtn').tooltip({html:true})});
     
 } );
 
