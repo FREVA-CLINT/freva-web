@@ -82,7 +82,17 @@
 	 	 				
 	          		 
                                 {%else%}
-	          		<a class="btn btn-info btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right"  title="Restricted information to manually started job&#10;&#10;Configuration:&#10;{{h_item.config_dict}}">info</a>
+	          		<a class="btn btn-info btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="left"
+	          		  title="Restricted information to manually started job<br><br>Configuration:<br>
+					 	 	<table class='table-condensed'>
+		 				 	{% for key,value in h_item.config_dict.items %}
+		 	 				<tr>
+		 	 				<td>{{key}}:</td>
+		 	 				<td>{{value}}</td>
+		 	 				</tr>
+		 	 				{% endfor %}
+		 	 				</table>
+	 	 				</div>">info</a>
                                 {%endifnotequal%}
 	          		</td>
           	</tr>
