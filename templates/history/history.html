@@ -146,22 +146,27 @@ $(document).ready(function() {
     $('.ttbtn').tooltip({html:true});
 		
     // for re-drawing (previous, next) this line is needed
-    $('#dataTable').on('draw', function() {$('.ttbtn').tooltip({html:true})});
-// Script for the password modal
-// set focus to pw-field
-$('#myModalPw').on('shown.bs.modal', function () {
-    $('#password_temp').focus();
-})
+    $('#dataTable').on('draw', function() {$('.ttbtn').tooltip({html:true});
+       $('.ttbtn').hover(function(){
+          $('.tooltip').css('top', -110 + 'px')
+        });
+    });
 
-$('.mybtn-cancel').on('click', function(){
-        var id = this.id;
-        cancelDialog.show(id.split('cancelButton_')[1]);
-});
+    // Script for the password modal
+    // set focus to pw-field
+    $('#myModalPw').on('shown.bs.modal', function () {
+        $('#password_temp').focus();
+    })
 
-$('.ttbtn').hover(function(){
-    $('.tooltip').css('top', -110 + 'px')
-//    $('.tooltip').css('top',parseInt($('.tooltip').css('top')) + 0 + 'px')
-});
+    $('.mybtn-cancel').on('click', function(){
+            var id = this.id;
+            cancelDialog.show(id.split('cancelButton_')[1]);
+    });
+
+    $('.ttbtn').hover(function(){
+        $('.tooltip').css('top', -110 + 'px')
+    //    $('.tooltip').css('top',parseInt($('.tooltip').css('top')) + 0 + 'px')
+    });
 
     
 } );
