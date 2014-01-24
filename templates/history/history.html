@@ -11,6 +11,13 @@
 {# Load CSS and JavaScript #}
 {% bootstrap_javascript %}  
 
+<style type="text/css">
+.tooltip-inner {max-width: 650px; !important; }
+
+.tooltip.left .tooltip-arrow{visibility: hidden;}
+
+</style>
+
 <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 
@@ -61,10 +68,10 @@
 	          			<a class="btn btn-success btn-sm" href="{% url 'plugins:setup' h_item.tool h_item.id%}">Edit Config</a>
 	          		{% endif %}
 	          		{%ifnotequal h_item.slurm_output '0'%}
-	          		<a class="btn btn-primary btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="auto right"
+	          		<a class="btn btn-primary btn-sm ttbtn" href="{% url 'history:jobinfo' h_item.id%}" data-toggle="tooltip" data-placement="left"
 	          		 title="Information to scheduled job<br><br>Configuration:<br>
-					 	 	<table class='table table-condensed'>
-		 				 	{% for key,value in history_object.config_dict.items %}
+					 	 	<table class='table-condensed'>
+		 				 	{% for key,value in h_item.config_dict.items %}
 		 	 				<tr>
 		 	 				<td>{{key}}:</td>
 		 	 				<td>{{value}}</td>
@@ -130,9 +137,6 @@ $(document).ready(function() {
 		
     // for re-drawing (previous, next) this line is needed
     $('#dataTable').on('draw', function() {$('.ttbtn').tooltip({html:true})});
-    
-} );
-
 // Script for the password modal
 // set focus to pw-field
 $('#myModalPw').on('shown.bs.modal', function () {
@@ -140,10 +144,17 @@ $('#myModalPw').on('shown.bs.modal', function () {
 })
 
 $('.mybtn-cancel').on('click', function(){
-	var id = this.id;
-	cancelDialog.show(id.split('cancelButton_')[1]);
+        var id = this.id;
+        cancelDialog.show(id.split('cancelButton_')[1]);
 });
 
+$('.ttbtn').hover(function(){
+    $('.tooltip').css('top', -110 + 'px')
+//    $('.tooltip').css('top',parseInt($('.tooltip').css('top')) + 0 + 'px')
+});
+
+    
+} );
 
 </script>
 
