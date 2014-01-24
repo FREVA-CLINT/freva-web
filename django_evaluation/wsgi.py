@@ -17,6 +17,7 @@ import os
 import sys
 import site
 import subprocess
+from django_evaluation import monitor
 
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
@@ -61,3 +62,6 @@ application = get_wsgi_application()
 # Apply WSGI middleware here.
 # from helloworld.wsgi import HelloWorldApplication
 # application = HelloWorldApplication(application)
+
+# this is vor auto reloading after code changes
+monitor.start(interval=1.0)
