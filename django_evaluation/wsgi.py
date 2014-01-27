@@ -17,7 +17,7 @@ import os
 import sys
 import site
 import subprocess
-from django_evaluation import monitor
+from django_evaluation import monitor, settings
 
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
@@ -48,7 +48,7 @@ prev_sys_path = list(sys.path)
 
 # Get the path to the env's site-packages directory
 site_packages = subprocess.check_output([
-                    VENV_PYTHON_DIR,
+                    settings.VENV_PYTHON_DIR,
                     '-c',
                     'from distutils.sysconfig import get_python_lib;'
                     'print get_python_lib(),'
