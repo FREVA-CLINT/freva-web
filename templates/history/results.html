@@ -152,6 +152,9 @@
   	
 	$(document).ready(function() {
 		
+		$("img.lazy").lazyload({
+		    effect : "fadeIn"
+		});
 	
 		$('.jqueryFileTree a').on('click', function(target){
 			var list_el = $(target.target).parent();
