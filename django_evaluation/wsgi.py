@@ -22,6 +22,24 @@ from django_evaluation import monitor
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
 
+# This is a quite nasty hack to overcome the troubles with python 2.6 on
+# the local machines.
+if "check_output" not in dir( subprocess ): # duck punch it in!
+    def f(*popenargs, **kwargs):
+        if 'stdout' in kwargs:
+            raise ValueError('stdout argument not allowed, it will be overridden.')
+        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+        output, unused_err = process.communicate()
+        retcode = process.poll()
+        if retcode:
+            cmd = kwargs.get("args")
+            if cmd is None:
+                cmd = popenargs[0]
+            raise subprocess.CalledProcessError(retcode, cmd)
+        return output
+    subprocess.check_output = f
+
+
 # Add the virtualenv packages to the site directory. This uses the technique
 # described at http://code.google.com/p/modwsgi/wiki/VirtualEnvironments
 
@@ -30,7 +48,7 @@ prev_sys_path = list(sys.path)
 
 # Get the path to the env's site-packages directory
 site_packages = subprocess.check_output([
-                    '/usr/local/ve_py/bin/python',
+                    VENV_PYTHON_DIR,
                     '-c',
                     'from distutils.sysconfig import get_python_lib;'
                     'print get_python_lib(),'
