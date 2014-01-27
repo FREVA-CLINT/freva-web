@@ -504,3 +504,5 @@ LOGGING = {
 
 INTERNAL_IPS = ('127.0.0.1')
 
+# path to the site packages used:
+VENV_PYTHON_DIR = '/usr/local/ve_py/bin/python'
