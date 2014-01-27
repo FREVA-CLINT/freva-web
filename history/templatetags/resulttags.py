@@ -47,12 +47,14 @@ def preview_tree(value, autoescape=None):
                     subdict = '\n<div class="row" >%s</div>\n' % (subdict,)
 
             #next lines define css-sytles of listitems
-            visible = 'style="display:none;"' if depth > 1 else ''
+            visible = 'display:none;' if depth > 1 else ''
             folder_image = 'directory collapsed' if depth >0 else 'directory expanded'
 
             if not subdict_item:
-                output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':key, 'preview':value, 'PREVIEW_URL':settings.PREVIEW_URL}))
+                output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':key, 'preview':value, 
+                                                                                         'PREVIEW_URL':settings.PREVIEW_URL,
+                                                                                         'visible':visible}))
             else:
-                output.append('<li class="%s" %s><a href="#">%s</a>%s</li>' % (folder_image, visible, escaper(force_text(key)), subdict))
+                output.append('<li class="%s" style="%s"><a href="#">%s</a>%s</li>' % (folder_image, visible, escaper(force_text(key)), subdict))
         return '\n'.join(output)
     return mark_safe(_helperDict(value))
