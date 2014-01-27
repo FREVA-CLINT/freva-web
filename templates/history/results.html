@@ -150,10 +150,14 @@
   		}
   	}
   	
+
 	$(document).ready(function() {
 		
-		$("img.lazy").lazyload({
-		    effect : "fadeIn"
+		$("img").lazyload({
+		    effect : "fadeIn",
+		    threshold : 200,
+		    placeholder: "{{STATIC_URL}}img/loading.gif",
+		    //event : "click",
 		});
 	
 		$('.jqueryFileTree a').on('click', function(target){
@@ -167,7 +171,7 @@
 			//toogle all child elements	
 			var next_list = $(target.target).next();	
 			$(next_list.children()).toggle();			
-
+			$('body,html').scroll();
 			return false; //don't activate the link
 		});	
 		
