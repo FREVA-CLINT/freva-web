@@ -26,7 +26,7 @@ def _restart(path=None):
     _queue.put(True)
     
     if path is None:
-        prefix = '(pid=%d):' % os.getpid()
+        prefix = '(pid=%d)' % os.getpid()
         print >> sys.stderr, 'Restart process %s by super-user.' % prefix
     else     
         prefix = 'monitor (pid=%d):' % os.getpid()

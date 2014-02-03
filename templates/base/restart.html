@@ -4,6 +4,10 @@
 {% block page_class %}home-page{% endblock %}
 {% block content %}
 
+{% load bootstrap3 %}
+
+{% bootstrap_javascript %}
+
 
 <div class="container">
 <div class="row">
@@ -11,23 +15,19 @@
 
         	<h1>Restart</h1>
           <p>Would you like to restart the web server?</p>
-          <form action="/dorestart" method="post" name="plugin_form" id="plugin_form">
+          <form action="dorestart" method="post" name="plugin_form" id="plugin_form">
           	{% csrf_token %}		
 			
-			{% bootstrap_form form %}
+		<input name="restart" type="hidden" value="1">
 			
-					<input name="restart" type="hidden" value="1">
-			
-	                <a class="btn-lg btn-primary btn-block btn" id="restart" type="submit">
+	        <button class="btn-lg btn-primary btn-block btn" id="restart" type="submit">
 	                        Restart
-	                </a>
-		  </form>
+	          </button>
+	  </form>
 </div>
 </div>
 </div>
 
 
-
-</script>
 
 {% endblock %}
