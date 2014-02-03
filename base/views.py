@@ -69,7 +69,12 @@ def dorestart(request):
     Perform the restart itself.
     """
     
-    if request.POST['restart']==1:
-        _restart(path=None)    
+    try:
+        if request.POST['restart']=='1':
+            _restart(path=None)
+        else:
+            print request.POST
+    except:
+        pass
     
     return render(request, 'base/home.html')
