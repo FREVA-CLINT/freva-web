@@ -58,23 +58,11 @@ def restart(request):
     """
     Restart formular for the webserver
     """
-        
-    return render(request, 'base/restart.html')
-
-
-@login_required()
-@user_passes_test(lambda u: u.is_superuser)
-def dorestart(request):
-    """
-    Perform the restart itself.
-    """
     
     try:
         if request.POST['restart']=='1':
             _restart(path=None)
-        else:
-            print request.POST
     except:
-        pass
-    
+        return render(request, 'base/restart.html')
+
     return render(request, 'base/home.html')
