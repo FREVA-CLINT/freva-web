@@ -15,7 +15,7 @@
 
         	<h1>Restart</h1>
           <p>Would you like to restart the web server?</p>
-          <form action="dorestart" method="post" name="plugin_form" id="plugin_form">
+          <form action="restart" method="post" name="plugin_form" id="plugin_form">
           	{% csrf_token %}		
 			
 		<input name="restart" type="hidden" value="1">
