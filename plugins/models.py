@@ -25,9 +25,9 @@ class PluginWeb(object):
         self.name = plugin.__class__.__name__
         self.short_description = plugin.__class__.__short_description__
         
-        if hasattr(plugin.__class__,'__long_descrtiption__'):
+        try:
             self.long_description = plugin.__class__.__long_descrtiption__
-        else:
+        except:
             self.long_description = plugin.__class__.__short_description__
 
 class PluginFileFieldWidget(Input):
