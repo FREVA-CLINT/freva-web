@@ -1,0 +1,33 @@
+{% extends "_layouts/menu.html" %}
+
+{% block page_title %}Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+
+        	<h1>Restart</h1>
+          <p>Would you like to restart the web server?</p>
+          <form action="/dorestart" method="post" name="plugin_form" id="plugin_form">
+          	{% csrf_token %}		
+			
+			{% bootstrap_form form %}
+			
+					<input name="restart" type="hidden" value="1">
+			
+	                <a class="btn-lg btn-primary btn-block btn" id="restart" type="submit">
+	                        Restart
+	                </a>
+		  </form>
+</div>
+</div>
+</div>
+
+
+
+</script>
+
+{% endblock %}
