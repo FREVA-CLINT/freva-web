@@ -25,7 +25,10 @@ class PluginWeb(object):
         self.name = plugin.__class__.__name__
         self.short_description = plugin.__class__.__short_description__
         
-    
+        try:
+            self.long_description = plugin.__long_description__
+        except AttributeError:
+            self.long_description = plugin.__short_description__
 
 class PluginFileFieldWidget(Input):
     def render(self, name, value, attrs=None):

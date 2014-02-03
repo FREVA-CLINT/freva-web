@@ -363,12 +363,19 @@ INSTALLED_APPS = INSTALLED_APPS + ('django_nose',)
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/miklip/integration/evaluation_system/database/db.db',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
+         'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'evaluationsystem',
+        'USER': 'evaluationsystem',
+        'PASSWORD': 'miklip',
+        'HOST': 'wwwdev-miklip',
+        'PORT': '3306',
+
+#	'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': '/miklip/integration/evaluation_system/database/db.db',
+#        'USER': '',
+#        'PASSWORD': '',
+#        'HOST': '',
+#        'PORT': '',
         #'OPTIONS': {
         #    'init_command': 'SET storage_engine=InnoDB',
         #    'charset' : 'utf8',
