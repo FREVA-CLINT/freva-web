@@ -28,7 +28,7 @@ def _restart(path=None):
     if path is None:
         prefix = '(pid=%d)' % os.getpid()
         print >> sys.stderr, 'Restart process %s by super-user.' % prefix
-    else     
+    else:
         prefix = 'monitor (pid=%d):' % os.getpid()
         print >> sys.stderr, '%s Change detected to \'%s\'.' % (prefix, path)
         print >> sys.stderr, '%s Triggering process restart.' % prefix
