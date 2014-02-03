@@ -36,7 +36,7 @@ def detail(request, plugin_name):
     
     plugin = get_plugin_or_404(plugin_name)
     plugin_web = PluginWeb(plugin)
-    
+    #logging.debug(plugin.__long_description__)    
     try:
         docu_flatpage = FlatPage.objects.get(title__iexact=plugin_name)
     except FlatPage.DoesNotExist:
