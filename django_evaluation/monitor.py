@@ -18,11 +18,21 @@ _running = False
 _queue = Queue.Queue()
 _lock = threading.Lock()
 
-def _restart(path):
+def _restart(path=None):
+    """
+    The restart routine has been slightly modified to allow a restart by
+    a super-user.
+    """
     _queue.put(True)
-    prefix = 'monitor (pid=%d):' % os.getpid()
-    print >> sys.stderr, '%s Change detected to \'%s\'.' % (prefix, path)
-    print >> sys.stderr, '%s Triggering process restart.' % prefix
+    
+    if path is None:
+        prefix = '(pid=%d):' % os.getpid()
+        print >> sys.stderr, 'Restart process %s by super-user.' % prefix
+    else     
+        prefix = 'monitor (pid=%d):' % os.getpid()
+        print >> sys.stderr, '%s Change detected to \'%s\'.' % (prefix, path)
+        print >> sys.stderr, '%s Triggering process restart.' % prefix
+        
     os.kill(os.getpid(), signal.SIGINT)
 
 def _modified(path):

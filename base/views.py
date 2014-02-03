@@ -5,7 +5,9 @@ import logging
 from django.http import Http404
 from django.shortcuts import render
 import django.contrib.auth as auth
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
+from django_evaluation.monitor import _restart
 
 @sensitive_variables('passwd')
 @sensitive_post_parameters('password')
@@ -49,3 +51,25 @@ def logout(request):
     auth.logout(request)
     
     return render(request, 'base/home.html',{'k':'logged out'})
+
+@login_required()
+@user_passes_test(lambda u: u.is_superuser)
+def restart(request):
+    """
+    Restart formular for the webserver
+    """
+        
+    return render(request, 'base/restart.html')
+
+
+@login_required()
+@user_passes_test(lambda u: u.is_superuser)
+def dorestart(request):
+    """
+    Perform the restart itself.
+    """
+    
+    if request.POST['restart']==1:
+        _restart(path=None)    
+    
+    return render(request, 'base/home.html')
