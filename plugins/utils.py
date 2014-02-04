@@ -3,6 +3,7 @@ from django.views.decorators.debug import sensitive_variables
 from django.http import Http404
 
 import paramiko
+import logging
 
 def get_plugin_or_404(plugin_name,user=None):
     
@@ -39,6 +40,7 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
                         look_for_keys=False)
             
             # nullify the hostname to exit the loop
+            sentto = hostname
             hostname = None
         except paramiko.SSHexception:
             # on exception try the next server
@@ -49,10 +51,12 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
             
         (stdin, stdout, stderr) = ssh.exec_command(command=command)
 
-   # poll until executed command has finished
-   stdout.channel.recv_exit_status()
+        logging.debug("sent command '%s' to '%s'" % (command, sentto))
+
+    # poll until executed command has finished
+    stdout.channel.recv_exit_status()
     
-        # close the connection
+    # close the connection
     ssh.close()
     
     return (stdin, stdout, stderr)
