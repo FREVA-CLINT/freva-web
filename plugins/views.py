@@ -78,7 +78,7 @@ def setup(request, plugin_name, row_id = None):
             # start the scheduler vie sbatch
             username = request.user.username
             password = request.POST['password_hidden']
-            hostnames = settings.SCHEDULER_HOSTS
+            hostnames = list(settings.SCHEDULER_HOSTS)
 
             # compose the plugin command
             # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
