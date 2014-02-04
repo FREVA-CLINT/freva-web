@@ -9,6 +9,4 @@ urlpatterns = patterns('base.views',
     url(r'^wiki', 'wiki', name='wiki'),
     url(r'^contact', 'contact', name='contact'),
     url(r'^restart', 'restart', name='restart'),
-    url(r'^dorestart', 'dorestart', name='dorestart'),
-
 )
