@@ -13,7 +13,7 @@ def get_plugin_or_404(plugin_name,user=None):
     
 
 @sensitive_variables('password')    
-def ssh_call(username, password, command, hostname='127.0.0.1'):
+def ssh_call(username, password, command, hostnames=['127.0.0.1']):
     """
     executes a command under the given user on a remote machine.
     :param username: login name
@@ -24,22 +24,35 @@ def ssh_call(username, password, command, hostname='127.0.0.1'):
             the stdout stdout.getlines()
     """
     
-    # create the ssh client
-    ssh = paramiko.SSHClient()
-
-    # except remote key anyways
-    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    ssh.connect(hostname=hostname,
-                username=username,
-                password=password,
-                look_for_keys=False)
-
-    (stdin, stdout, stderr) = ssh.exec_command(command=command)
-
-    # poll until executed command has finished
-    stdout.channel.recv_exit_status()
+    hostname = hostnames.pop()
     
-    # close the connection
+    while hostname:
+        # create the ssh client
+        ssh = paramiko.SSHClient()
+
+        try:
+            # except remote key anyways
+            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+            ssh.connect(hostname=hostname,
+                        username=username,
+                        password=password,
+                        look_for_keys=False)
+            
+            # nullify the hostname to exit the loop
+            hostname = None
+        except paramiko.SSHexception:
+            # on exception try the next server
+            if hostnames:
+                hostname = hostnames.pop()
+            else:
+                raise
+            
+        (stdin, stdout, stderr) = ssh.exec_command(command=command)
+
+   # poll until executed command has finished
+   stdout.channel.recv_exit_status()
+    
+        # close the connection
     ssh.close()
     
     return (stdin, stdout, stderr)
