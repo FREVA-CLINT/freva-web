@@ -79,7 +79,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # the host to start the scheduler
-SCHEDULER_HOST='miklip04.dkrz.de'
+SCHEDULER_HOST=['miklip04.dkrz.de','miklip03.dkrz.de','miklip02.dkrz.de','miklip01.dkrz.de']
 
 LOGIN_URL = '/?login_required=1'
 
