@@ -26,12 +26,13 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
     """
     
     hostname = hostnames.pop()
+    sentto = hostname
     
     while hostname:
-        # create the ssh client
-        ssh = paramiko.SSHClient()
-
         try:
+            # create the ssh client
+            ssh = paramiko.SSHClient()
+
             # except remote key anyways
             ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
             ssh.connect(hostname=hostname,
@@ -40,18 +41,20 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
                         look_for_keys=False)
             
             # nullify the hostname to exit the loop
-            sentto = hostname
             hostname = None
-        except paramiko.SSHexception:
+        except paramiko.SSHException:
             # on exception try the next server
+            logging.error('SSH connection to %s failed' % sentto)
+
             if hostnames:
                 hostname = hostnames.pop()
+                sentto = hostname
             else:
                 raise
             
-        (stdin, stdout, stderr) = ssh.exec_command(command=command)
+    (stdin, stdout, stderr) = ssh.exec_command(command=command)
 
-        logging.debug("sent command '%s' to '%s'" % (command, sentto))
+    logging.debug("sent command '%s' to '%s'" % (command, sentto))
 
     # poll until executed command has finished
     stdout.channel.recv_exit_status()
