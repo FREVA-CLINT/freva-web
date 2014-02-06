@@ -5,6 +5,7 @@ Created on 14.11.2013
 
 views for the solr application
 """
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
@@ -12,6 +13,14 @@ from evaluation_system.model.solr import SolrFindFiles
 
 import json
 import logging
+
+@login_required()
+def data_browser(request):
+    args = {'facet.limit':-1}
+    facets = SolrFindFiles.facets(facets=None,**args)        
+    logging.debug(facets)
+    return render(request, 'solr/data_browser.html', {'facets':facets})
+
 
 @login_required()
 def solr_search(request):
