@@ -1,0 +1,133 @@
+{% extends "_layouts/menu.html" %}
+{% block page_title %}Data Browser - Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+{% load custom_filters %}
+
+<style>
+UL.jqueryFileTree LI {
+	white-space:normal;
+}
+
+</style>
+
+<script src="{{ STATIC_URL }}js/data_browser.js?{% now "U" %}"></script>
+
+<script>
+	$(document).ready(function(){
+		//init files 
+		data_browser.get_files();
+
+	});
+	$(document).on('click','a',function(el){
+		if($(el.target).hasClass('facet_click')){
+			var facet = $(el.target).attr('data-facet');
+			var value = $(el.target).html();	
+			data_browser.add_facet(facet,value);
+			data_browser.get_files();
+			$('#collapse'+facet).collapse('toggle');
+			$('#collapseFiles').collapse('show');
+			return false;
+		}else if($(el.target).parent().hasClass('facet_remove')){
+			var facet = $(el.target).parent().attr('data-facet');
+			data_browser.remove_facet(facet);
+			data_browser.get_files();
+			$('#collapse'+facet).collapse('toggle');
+			$('#collapseFiles').collapse('show');
+			return false;
+
+		}else if($(el.target).hasClass('facet_clear')){
+			data_browser.clear_facets();
+			data_browser.get_files();
+                        $('#collapseFiles').collapse('show');
+                        return false;
+		}
+	});	
+
+</script>
+
+
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+        	<h1>Data-Browser</h1>
+	</div>
+      </div>
+      <div class="row">
+	<div class="col-md-12">
+	   <div class="panel panel-default" style="display:none;">
+		  <div class="panel-body" id="facet_selected2">
+    			<a href="#" class="facet_clear">Clear all</a>	
+		  </div>
+	   </div>
+
+	</div>
+      </div>
+
+	<div class="row">
+        <div class="col-md-12">
+  <div class="panel-group" id="accordion">    
+	{% for facet,facet_list in facets.iteritems %}
+	
+
+
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title" id="heading{{facet}}">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{facet}}">
+        	 {{facet}}
+	</a> <span class="facet_count">({{facet_list|length|divide:2}})</span> <span class="chosen_facet"></span>
+      </h4>
+    </div>
+
+  <div id="collapse{{facet}}" class="panel-collapse collapse">
+      <div class="panel-body">
+	<div class="row">
+        {% for item in facet_list %}
+ 	  {% if forloop.counter0|divisibleby:"2" %}
+		<div class="col-md-3"><a href="#" data-facet="{{facet}}" class="facet_click">{{item}}</a> [{{facet_list|lookup:forloop.counter}}]</div>
+	{%endif%}
+	{%endfor%}	
+	</div>
+	
+      </div>
+    </div>
+
+  </div>	
+	{%endfor%}
+  	
+  <div class="panel panel-default" style="display:none;">
+                  <div class="panel-body" id="facet_selected">
+
+                  </div>
+           </div>
+
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title" id="headingFiles">
+        <a data-toggle="collapse"  href="#collapseFiles">Files <span class="files_count"></span>
+        </a> 
+      </h4>
+    </div>
+
+    <div id="collapseFiles" class="panel-collapse collapse">
+      <div class="panel-body">
+        <div class="row">
+          <div class="col-md-12">lala</div>
+	</div>
+
+      </div>
+    </div>
+
+  </div>
+ </div> <!-- end panel group -->
+	</div>
+      </div>
+
+
+
+ </div>
+{% endblock %}

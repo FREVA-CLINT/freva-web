@@ -29,7 +29,14 @@ data_browser = new function(){
        		            }
 	            	});
         	    	cache[url] = answer;
-		}	
+		}
+		//mark facets as selected wehne only 1 possibility
+		this.no_options = {};
+		$.each(cache[url]['data'],function(facet,facet_list){
+			if(facet_list.length==2)
+			   data_browser.no_options[facet]=facet_list[0];
+		});
+		console.log(this.no_options);	
                 this.update_container(cache[url]);
 
 	};
@@ -59,8 +66,13 @@ data_browser = new function(){
 		this.get_facets();
 	};
 
+	this.clear_facets = function(){
+		this.query = {};
+		this.get_facets();
+	};
+
 	this.update_files_container = function(answer){
-		$('#headingFiles .files_count').html('('+answer['metadata']['numFound']+')');	
+		$('#headingFiles .files_count').html('['+answer['metadata']['numFound']+']');	
 		var result_list = '<div style="max-height:500px; overflow:auto;"><ul class="jqueryFileTree">';
 		$.each(answer['data'],function(key,val){
 			result_list += '<li class="file ext_nc" style="margin-bottom:5px;">'+val+'</li>';
@@ -70,13 +82,12 @@ data_browser = new function(){
 	};
 
 	this.update_container = function(answer){
-	    selected_html = '';
+	    selected_html = 'solr_search ';
 	    $.each(answer['data'],function(facet,facet_list){
 		if(facet_list.length == 0){
 			$('#heading'+facet).parent().parent().hide();
 			return
 		}
-		
 		$('#heading'+facet).parent().parent().show();
 		$('#heading'+facet+' .facet_count').html('('+facet_list.length/2+')');
 		html = '<div class="row">';
@@ -85,14 +96,18 @@ data_browser = new function(){
 		   if(val%2==0){
 		      if(facet in data_browser.query){	
 			var del_link = '<a href="#" class="facet_remove" data-facet="'+facet+'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
-		        html += '<div class="col-md-3">'+del_link+' <strong>'+facet_list[val]+'</strong> ('+facet_list[val+1]+')</div>';	
+		        html += '<div class="col-md-3">'+del_link+' <strong>'+facet_list[val]+'</strong> ['+facet_list[val+1]+']</div>';	
 			$('#heading'+facet+' .chosen_facet').html(': <strong>'+ facet_list[val]+'</strong> '+del_link);
 			$('#heading'+facet+' .facet_count').html('');
 			//updated selected panel
-			selected_html += del_link + ' '+facet+ ':<strong>'+facet_list[val]+'</strong>; ';
+			selected_html += del_link + ' '+facet+ '=<strong>'+facet_list[val]+'</strong> ';
 		      }else{
-                        html += '<div class="col-md-3"><a class="facet_click" data-facet="'+facet+'" href="#">'+facet_list[val]+'</a> ('+facet_list[val+1]+')</div>';
-			$('#heading'+facet+' .chosen_facet').html('');
+                        html += '<div class="col-md-3"><a class="facet_click" data-facet="'+facet+'" href="#">'+facet_list[val]+'</a> ['+facet_list[val+1]+']</div>';
+			
+			if(facet in data_browser.no_options)
+			   $('#heading'+facet+' .chosen_facet').html('<strong>'+ facet_list[val]+'</strong>');
+			else
+			   $('#heading'+facet+' .chosen_facet').html('');
 	 	      }
 
 		   }
@@ -102,6 +117,15 @@ data_browser = new function(){
 		collapsediv.children().html(html);
 	     });
 
+	     //Show clear all panel
+	     //dirty:
+	     var i=0;	
+	     $.each(this.query,function(key,val){i+=1});
+	     if(i>0)
+		$('#facet_selected2').parent().show();	
+	     else
+		$('#facet_selected2').parent().hide();	
+		
 	     //Show or hide selected panel+
 	     if(selected_html == '')
 		$('#facet_selected').parent().hide();
