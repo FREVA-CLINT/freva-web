@@ -55,7 +55,8 @@
 
   <!-- scripts concatenated and minified via django-compressor -->
   {% compress js %}
-  <script src="{{ STATIC_URL }}js/libs/bootstrap.min.js"></script>
+  
+  
   <script src="{{ STATIC_URL }}js/plugins.js"></script>
   <script src="{{ STATIC_URL }}js/main.js"></script>
   
@@ -71,6 +72,9 @@
   <script src="{{ STATIC_URL }}select2/select2.js"></script>
   
   <script src="{{ STATIC_URL }}lazyload/jquery.lazyload.min.js"></script>
+  
+  <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
+
   {% endcompress %}
   <!-- end scripts -->
   
