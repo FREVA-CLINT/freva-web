@@ -1,0 +1,87 @@
+{% extends "_layouts/menu.html" %}
+{% block page_title %}Data Browser - Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+<style>
+UL.jqueryFileTree LI {
+	white-space:normal;
+}
+
+</style>
+
+<script src="{{ STATIC_URL }}js/solr_search.js?{% now "U" %}"></script>
+<script>
+// resize iframe to display area
+ $(function() {
+   window.updateIframe = function() {
+     var h = $("#maincontent").height();
+     var h = this.contentWindow.document.body.offsetHeight;
+
+     $("#iframe").height(h);
+   }});
+//   window.updateIframe();
+//   window.resizeTo(window.updateIframe);
+
+
+solr.get_files = function(start, rows) {
+        if (!start){ start=0;}
+        if (!rows){ rows=10;}
+        this.rows = rows;
+
+        var url = this.url + '?start=' + start + '&rows=' + rows + '&' + this.get_search_query();
+        $.ajax(url, {
+            dataType: 'json',
+            success: function(response){
+                var items = [];
+
+                $.each(response['data'], function(pos, path) {
+                    items.push('<li class="file ext_nc">'+ path + '</li>');
+                });
+
+                $('div.files').empty().append(
+                $('<ul/>', {
+                     html: items.join('\n'),
+		     class: "jqueryFileTree",
+                }));
+        }		
+	});
+    }
+
+$(document).ready(function() {
+    visualSearch = VS.init({
+      container : $('.data_browser'),
+      query     : '',
+      callbacks : {
+        search       : function(query, searchCollection) {
+            solr.get_files(0, 100);
+        },
+        facetMatches : function(callback) {
+            callback(solr.get_all_facets());
+                  },
+        valueMatches : function(facet, searchTerm, callback) {
+            var facets = solr.get_facet_values(facet, searchTerm);
+            callback(facets);
+        }
+      }
+    });
+});
+
+</script>
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Data Browser</h2>
+          <div class="data_browser"></div>
+                <div class="files" style="margin-top:10px;  overflow-y:auto;"></div>
+        </div>
+
+
+
+	
+        </div>
+
+      </div>
+ </div>
+{% endblock %}
