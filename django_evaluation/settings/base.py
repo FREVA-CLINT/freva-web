@@ -252,7 +252,7 @@ TEMPLATE_LOADERS = (
 
 def custom_show_toolbar(request):
     """ Only show the debug toolbar to users with the superuser flag. """
-    return request.user.is_superuser
+    return DEBUG and request.user.is_superuser
 
 
 DEBUG_TOOLBAR_CONFIG = {
@@ -288,13 +288,6 @@ WSGI_APPLICATION = 'django_evaluation.wsgi.application'
 
 # Uncomment this and set to all slave DBs in use on the site.
 # SLAVE_DATABASES = ['slave']
-
-# Recipients of traceback emails and other notifications.
-ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
-)
-MANAGERS = ADMINS
-
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
@@ -363,7 +356,7 @@ INSTALLED_APPS = INSTALLED_APPS + ('django_nose',)
 
 DATABASES = {
     'default': {
-         'ENGINE': 'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'evaluationsystem',
         'USER': 'evaluationsystem',
         'PASSWORD': 'miklip',
@@ -397,7 +390,7 @@ ADMINS = (
 )
 MANAGERS = ADMINS
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 CACHES = {
     'default': {
@@ -408,7 +401,7 @@ CACHES = {
 # SECURITY WARNING: don't run with debug turned on in production!
 # Debugging displays nice error messages, but leaks memory. Set this to False
 # on all server instances and True only for development.
-DEBUG = TEMPLATE_DEBUG = True
+DEBUG = TEMPLATE_DEBUG = False
 
 # Is this a development instance? Set this to True on development/master
 # instances and False on stage/prod.
@@ -435,7 +428,7 @@ SECRET_KEY = 'hj1bkzobng0ck@0&%t509*1ki$#)i5y+i0)&=7zv@amu8pm5*t'
 ## Log settings
 
 # Remove this configuration variable to use your custom logging configuration
-LOGGING_CONFIG = None
+# LOGGING_CONFIG = None
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': True,
@@ -467,11 +460,13 @@ LOGGING = {
         'simple': {
             'format': '%(levelname)s %(message)s'
         },
+        'simple_mail': {
+            'format': 'Sent: %(levelname)s %(message)s'
+        },
     },
     'filters': {
-        'special': {
-            '()': 'project.logging.SpecialFilter',
-            'foo': 'bar',
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
         }
     },
     'handlers': {
@@ -484,28 +479,31 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        'mail_admins': {
+        'console_mail':{
             'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple_mail'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
-            'filters': ['special']
+            'formatter': 'verbose',
+            'filters': ['require_debug_false'],
         }
     },
     'loggers': {
         'django': {
-            'handlers': ['null'],
+            'handlers': ['mail_admins', 'console_mail'],
+            'propagate': False,
+            'level': 'ERROR',
+        },
+        'django.request': {
+            'handlers': ['mail_admins', 'console_mail'],
+            'level': 'ERROR',
             'propagate': True,
             'level': 'INFO',
         },
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'myproject.custom': {
-            'handlers': ['console', 'mail_admins'],
-            'level': 'INFO',
-            'filters': ['special']
-        }
+
     }
 }
 
