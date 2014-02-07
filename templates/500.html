@@ -6,13 +6,15 @@
   <style>
     ::-moz-selection { background: #fe57a1; color: #fff; text-shadow: none; }
     ::selection { background: #fe57a1; color: #fff; text-shadow: none; }
-    html { padding: 30px 10px; font-size: 20px; line-height: 1.4; color: #737373; background: #f0f0f0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+    html { padding: 30px 10px; font-size: 20px; line-height: 1.4; color: #f29631; background: #f0f0f0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
     html, input { font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
     body { max-width: 500px; _width: 500px; padding: 30px 20px 50px; border: 1px solid #b3b3b3; border-radius: 4px; margin: 0 auto; box-shadow: 0 1px 10px #a7a7a7, inset 0 1px 0 #fff; background: #fcfcfc; }
     h1 { margin: 0 10px; font-size: 50px; text-align: center; }
     h1 span { color: #bbb; }
     h3 { margin: 1.5em 0 0.5em; }
     p { margin: 1em 0; }
+    a:link{ color: #f29631;}
+    a:visited{ color: #f29631;}
     ul { padding: 0 0 0 40px; margin: 1em 0; }
     .container { max-width: 380px; _width: 380px; margin: 0 auto; }
     /* google search */
@@ -29,7 +31,12 @@
 <body>
   <div class="container">
     <h1>Server Error <span>:(</span></h1>
-    <p>Sorry, but the server encountered an error while processing your request.</p>
+    <p>Sorry, but the server encountered an error while processing your request. An error report has been sent to the administrators.</p>
+    <p> Would you like to 
+    <a href="javascript:history.back()">go back</a>
+    or return to the
+    <a href="/">main page</a>?
+    </p>
   </div>
 </body>
 </html>
