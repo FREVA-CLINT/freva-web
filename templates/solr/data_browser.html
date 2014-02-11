@@ -27,6 +27,7 @@ UL.jqueryFileTree LI {
 		if($(el.target).hasClass('facet_click')){
 			var facet = $(el.target).attr('data-facet');
 			var value = $(el.target).html();	
+			$('.facet_click').tooltip('hide');
 			data_browser.add_facet(facet,value);
 			data_browser.get_files();
 			$('#collapse'+facet).collapse('toggle');
