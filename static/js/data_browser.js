@@ -1,13 +1,17 @@
+var data_browser;
+$.getScript("/static/js/metadata.js", function(){
+
 
 var cache = {}; //all used urls and results are stored here to cache already done searches
 var cache_files =  {};
-var data_browser;
+//var data_browser;
 
 data_browser = new function(){
 	this.rows = 100;
 	this.url = '/solr/solr-search/';
 	this.query = {};
-	
+	this.metadata_facets = ['variable','institute','model'];	
+
 	this.get_query = function(){
 		result = '';
 		$.each(this.query,function(key,val){
@@ -36,7 +40,6 @@ data_browser = new function(){
 			if(facet_list.length==2)
 			   data_browser.no_options[facet]=facet_list[0];
 		});
-		console.log(this.no_options);	
                 this.update_container(cache[url]);
 
 	};
@@ -81,6 +84,17 @@ data_browser = new function(){
 		$('#collapseFiles').children().html(result_list);
 	};
 
+	this.getAttributes = function(facet, value){
+		if($.inArray(facet, this.metadata_facets) > -1)
+		{   
+		   if(facet == 'model')
+		     return source[value] + '<br>' + reference[value];
+		   else
+		     return window[facet][value];
+		}else
+		   return '';
+	};
+
 	this.update_container = function(answer){
 	    selected_html = 'solr_search ';
 	    $.each(answer['data'],function(facet,facet_list){
@@ -94,15 +108,19 @@ data_browser = new function(){
 		$.each(facet_list,function(val)
 		{
 		   if(val%2==0){
+		      //get title attribute
+		      var title = data_browser.getAttributes(facet,facet_list[val]);	
 		      if(facet in data_browser.query){	
 			var del_link = '<a href="#" class="facet_remove" data-facet="'+facet+'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 		        html += '<div class="col-md-3">'+del_link+' <strong>'+facet_list[val]+'</strong> ['+facet_list[val+1]+']</div>';	
 			$('#heading'+facet+' .chosen_facet').html(': <strong>'+ facet_list[val]+'</strong> '+del_link);
+			$('#heading'+facet+' .chosen_facet').attr('title',title);
+			$('#heading'+facet+' .chosen_facet').tooltip();
 			$('#heading'+facet+' .facet_count').html('');
 			//updated selected panel
 			selected_html += del_link + ' '+facet+ '=<strong>'+facet_list[val]+'</strong> ';
 		      }else{
-                        html += '<div class="col-md-3"><a class="facet_click" data-facet="'+facet+'" href="#">'+facet_list[val]+'</a> ['+facet_list[val+1]+']</div>';
+                        html += '<div class="col-md-3"><a title="'+title+'" class="facet_click" data-facet="'+facet+'" href="#">'+facet_list[val]+'</a> ['+facet_list[val+1]+']</div>';
 			
 			if(facet in data_browser.no_options)
 			   $('#heading'+facet+' .chosen_facet').html('<strong>'+ facet_list[val]+'</strong>');
@@ -117,7 +135,6 @@ data_browser = new function(){
 		collapsediv.children().html(html);
 	     });
 
-	     //Show clear all panel
 	     //dirty:
 	     var i=0;	
 	     $.each(this.query,function(key,val){i+=1});
@@ -132,9 +149,17 @@ data_browser = new function(){
 	     else
 		$('#facet_selected').parent().show();
 	     $('#facet_selected').html(selected_html);
+	    //Activate Bootstrap Tooltip
+	    $('.facet_click').tooltip({'placement':'right',
+				       'html':true,container: 'body'});
+
 	};
 
 
 }
 
+//init data_browser 
+data_browser.get_files();
+data_browser.clear_facets();
 
+});
