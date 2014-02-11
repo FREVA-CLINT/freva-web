@@ -318,13 +318,16 @@ INTERNAL_IPS = ('127.0.0.1')
 # Set this to true if you use a proxy that sets X-Forwarded-Host
 #USE_X_FORWARDED_HOST = False
 
-SERVER_EMAIL = "www-miklip@outlook.de"
-DEFAULT_FROM_EMAIL = "www-miklip@outlook.de"
+SERVER_EMAIL = "miklip@wgcast.de"
+DEFAULT_FROM_EMAIL = "miklip@wgcast.de"
 SYSTEM_EMAIL_PREFIX = "[django_evaluation]"
 
-EMAIL_HOST='smtp-mail.outlook.com'
-EMAIL_HOST_USER='www-miklip@outlook.de'
-EMAIL_HOST_PASSWORD='2e73d7ee68d0f8f'
+# EMAIL_HOST='smtp-mail.outlook.com'
+# EMAIL_HOST_USER='www-miklip@outlook.de'
+# EMAIL_HOST_PASSWORD='2e73d7ee68d0f8f'
+EMAIL_HOST='wgcast.de'
+EMAIL_HOST_USER='miklip@wgcast.de'
+EMAIL_HOST_PASSWORD='django'
 EMAIL_USE_TLS=True
 EMAIL_PORT=587
 
