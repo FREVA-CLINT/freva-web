@@ -176,7 +176,7 @@ def cancelSlurmjob(request):
     slurm_id = history_item.slurmId() 
     #slurm_id=2151
     try:
-	result = ssh_call(username=request.user.username, password=request.POST['password'], command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel  %s 2>&1;exit 0"' % (slurm_id,), hostname=settings.SCHEDULER_HOST)
+	result = ssh_call(username=request.user.username, password=request.POST['password'], command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel  %s 2>&1;exit 0"' % (slurm_id,), hostnames=settings.SCHEDULER_HOSTS)
         #logging.debug(result[1].readlines())
 	history_item.status=2
 	history_item.save()
