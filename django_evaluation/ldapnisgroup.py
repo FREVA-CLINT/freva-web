@@ -31,16 +31,21 @@ class LDAPNisGroupType(LDAPGroupType):
         result = []
 
         SEARCH_BASE = 'ou=netgroup,o=ldap,o=root'
-        ldap_filter='(nisNetgroupTriple=\(,%(user)s,\))'
+        uid = str(ldap_user.attrs['uid'][0])
+        ldap_filter='(nisNetgroupTriple=\(,%s,\))' % uid
         attrs = ['cn']
 
-        s = ldap_user.connect.search_s( SEARCH_BASE, ldap.SCOPE_SUBTREE,
-                                        ldap_filter,
-                                        attrs)
+        s = ldap_user.connection.search_s( SEARCH_BASE, ldap.SCOPE_SUBTREE,
+                                           ldap_filter,
+                                           attrs)
+
+        print 'Groups: ', str(s)
 
         for entry in s:
             result.append(entry[1]['cn'][0])
-            
+
+        print 'group_info: ', result
+
         return result
 
     def is_member(self, ldap_user, group_dn):
@@ -54,7 +59,7 @@ class LDAPNisGroupType(LDAPGroupType):
         information. The caller will have to call user_groups() instead and look
         for group_dn in the results.
         """
-                
+
         SEARCH_BASE = 'ou=netgroup,o=ldap,o=root'
         uid = str(ldap_user.attrs['uid'][0])
         ldap_filter='(&(nisNetgroupTriple=\(,%s,\))(cn=%s))' % (uid, group_dn)
@@ -68,5 +73,12 @@ class LDAPNisGroupType(LDAPGroupType):
         except Exception, e:
             raise Http404, str(e)
 
+
+        print 'Member check: ', len(s) > 0
+
         return len(s) > 0
 
+    def group_name_from_info(self, group_info):
+        result = []
+
+        return group_info
