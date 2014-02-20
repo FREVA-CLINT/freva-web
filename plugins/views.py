@@ -49,11 +49,18 @@ def detail(request, plugin_name):
 @login_required()    
 def setup(request, plugin_name, row_id = None):
     
-    user = User(request.user.username, request.user.email)
+    user = None
+
+    user_can_submit = request.user.has_perm('history.history_submit_job')
+
+    if user_can_submit:
+        user = User(request.user.username, request.user.email)
+    else:
+        user = User()
+
     home_dir = user.getUserHome()
     plugin = get_plugin_or_404(plugin_name, user=user)
     plugin_web = PluginWeb(plugin)
-    user = User(request.user.username, request.user.email)
     
         
     if request.method == 'POST':
@@ -128,7 +135,7 @@ def setup(request, plugin_name, row_id = None):
     
     
     return render(request, 'plugins/setup.html', {'tool' : plugin_web, 'form': form,
-                                                  'user_home': home_dir})
+                                                  'user_home': home_dir, 'disable_buttons':not user_can_submit})
   
 @login_required()  
 def dirlist(request):
