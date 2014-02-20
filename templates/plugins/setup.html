@@ -212,8 +212,10 @@ $(document).ready(function(){
 	return false;    	
     
     });
-    
-
+   
+   {% if disable_buttons %} 
+   $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+   {% endif %}
 });
 
 
