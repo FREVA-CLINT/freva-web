@@ -39,12 +39,8 @@ class LDAPNisGroupType(LDAPGroupType):
                                            ldap_filter,
                                            attrs)
 
-        print 'Groups: ', str(s)
-
         for entry in s:
             result.append(entry[1]['cn'][0])
-
-        print 'group_info: ', result
 
         return result
 
@@ -73,8 +69,6 @@ class LDAPNisGroupType(LDAPGroupType):
         except Exception, e:
             raise Http404, str(e)
 
-
-        print 'Member check: ', len(s) > 0
 
         return len(s) > 0
 
