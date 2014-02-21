@@ -14,6 +14,7 @@ class History(models.Model):
         permissions = (
                        ('history_submit_job', 'Can submit a job'),
                        ('history_cancel_job', 'Can cancel a job'),
+                       ('browse_full_data', 'Can search all data'),
                       )
 
 
