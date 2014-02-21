@@ -9,7 +9,10 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 
+
 from evaluation_system.model.solr import SolrFindFiles
+
+from django_evaluation import settings
 
 import json
 import logging
@@ -17,6 +20,13 @@ import logging
 @login_required()
 def data_browser(request):
     args = {'facet.limit':-1}
+
+    # Restrict search data for test users
+    if not request.user.has_perm('history.browse_full_data'):
+        tmp = settings.SOLR_RESTRICTIONS.copy()
+        tmp.update(args)
+        args = tmp
+
     facets = SolrFindFiles.facets(facets=None,**args)        
     logging.debug(facets)
     return render(request, 'solr/data_browser.html', {'facets':facets})
@@ -37,6 +47,19 @@ def solr_search(request):
         _token = args.pop('_')
     except KeyError:
         page_limit = 10
+
+    if not request.user.has_perm('history.browse_full_data'):
+        restrictions = settings.SOLR_RESTRICTIONS
+
+        for k in args.keys():
+            if not restrictions.get(k, None) is None:
+                args[k] = list(set(args[k]).intersection(set(restrictions[k])))
+                if not args[k]:
+                    args.pop(k)
+
+        tmp = restrictions
+        tmp.update(args)
+        args = tmp
 
     if 'start' in args: args['start'] = int(request.GET['start']) 
     if 'rows' in args: args['rows'] = int(request.GET['rows'])
@@ -68,6 +91,7 @@ def solr_search(request):
         if facets == '*':
             #means select all, 
             facets = None
+
         if facets == 'experiment_prefix':
 		args['experiment'] = args.pop('experiment_prefix')
 	  	results = SolrFindFiles.facets(facets='experiment', **args)
