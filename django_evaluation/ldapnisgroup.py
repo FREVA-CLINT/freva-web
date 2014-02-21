@@ -26,7 +26,12 @@ class LDAPNisGroupType(LDAPGroupType):
         connection: an LDAPObject that has been bound with credentials
 
         This is the primitive method in the API and must be implemented.
+
+        ATTENTION: Here we restrict all LDAP groups to the Django groups.
+        So, we can use LDAP_AUTH_MIRROR_GROUPS without introducing
+        non-relevant groups.
         """
+        from django.contrib.auth.models import Group
 
         result = []
 
@@ -42,7 +47,12 @@ class LDAPNisGroupType(LDAPGroupType):
         for entry in s:
             result.append(entry[1]['cn'][0])
 
-        return result
+        django_groups = []
+        for g in Group.objects.all():
+            django_groups.append(g.name)
+
+        intersection = list(set(result).intersection(set(django_groups)))
+        return intersection
 
     def is_member(self, ldap_user, group_dn):
         """
@@ -73,6 +83,8 @@ class LDAPNisGroupType(LDAPGroupType):
         return len(s) > 0
 
     def group_name_from_info(self, group_info):
+
         result = []
+        django_groups = []
 
         return group_info
