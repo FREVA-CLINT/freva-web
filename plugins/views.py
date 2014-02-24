@@ -135,7 +135,7 @@ def setup(request, plugin_name, row_id = None):
     
     
     return render(request, 'plugins/setup.html', {'tool' : plugin_web, 'form': form,
-                                                  'user_home': home_dir, 'disable_buttons':not user_can_submit})
+                                                  'user_home': home_dir, 'restricted_user':not user_can_submit})
   
 @login_required()  
 def dirlist(request):
