@@ -2,7 +2,7 @@
 
 import logging
 
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
 import django.contrib.auth as auth
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -15,22 +15,32 @@ def home(request):
     """ Default view for the root """    
         
     login_failed = False
-    
+
+    next = request.GET.get('next', None)
+
     if not request.user.is_authenticated():
         try:
             user = request.POST["user"]
             passwd = request.POST["password"]
+            forward = request.POST["next"]
+            print "next_page", forward
+
             u = auth.authenticate(username=user, password=passwd)
-        
+
             if u:
                 auth.login(request, u)
-            else:
-                login_failed = True
+                login_failed = False
+
+
+                if(forward):
+                    return HttpResponseRedirect(forward)
 
         except Exception, e:
             logging.debug(str(e))
         
-    return render(request, 'base/home.html',{'login_failed':login_failed})
+    return render(request, 'base/home.html',{'login_failed':login_failed, 'next' : next})
+    
+    # return render(request, 'base/home.html',{'login_failed':login_failed})
 
 def wiki(request):
     """
