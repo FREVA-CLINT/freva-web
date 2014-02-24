@@ -197,6 +197,16 @@ $(document).ready(function(){
 
     });
     
+    {% if restricted_user %} 
+    $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+
+    // actually the runbutton is a forwarding
+    $('#runButton').removeAttr('disabled');
+
+    $('#runButton').on('click', function(e){
+    	window.location.href="/history";
+    }); 
+    {% else %}
     $('#runButton').on('click', function(e){
     	$('#myModalPw').modal('show');
     }); 
@@ -212,9 +222,6 @@ $(document).ready(function(){
 	return false;    	
     
     });
-   
-   {% if disable_buttons %} 
-   $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
    {% endif %}
 });
 
