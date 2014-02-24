@@ -16,6 +16,13 @@
 		</div>
 	</div>
 </div>
+{% elif next %}
+<script type="text/javascript">
+$('document').ready(function() {
+// assig next parameter
+$("#next_page").val("{{next}}");
+});
+</script>
 {% endif %}
 {% if request.GET.login_required %}
 <div class="container">
