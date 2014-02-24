@@ -57,9 +57,10 @@ def solr_search(request):
                 if not args[k]:
                     args.pop(k)
 
-        tmp = restrictions
+        tmp = restrictions.copy()
         tmp.update(args)
         args = tmp
+
 
     if 'start' in args: args['start'] = int(request.GET['start']) 
     if 'rows' in args: args['rows'] = int(request.GET['rows'])
