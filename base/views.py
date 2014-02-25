@@ -16,14 +16,13 @@ def home(request):
         
     login_failed = False
 
-    next = request.GET.get('next', None)
+    guest_login = None
 
     if not request.user.is_authenticated():
         try:
             user = request.POST["user"]
             passwd = request.POST["password"]
             forward = request.POST["next"]
-            print "next_page", forward
 
             u = auth.authenticate(username=user, password=passwd)
 
@@ -31,6 +30,7 @@ def home(request):
                 auth.login(request, u)
                 login_failed = False
 
+                guest_login = u.groups.filter(name='Guest')
 
                 if(forward):
                     return HttpResponseRedirect(forward)
@@ -38,7 +38,7 @@ def home(request):
         except Exception, e:
             logging.debug(str(e))
         
-    return render(request, 'base/home.html',{'login_failed':login_failed, 'next' : next})
+    return render(request, 'base/home.html',{'login_failed':login_failed, 'guest_login' : guest_login})
     
     # return render(request, 'base/home.html',{'login_failed':login_failed})
 

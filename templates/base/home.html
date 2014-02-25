@@ -19,6 +19,9 @@
 {% elif next %}
 <script type="text/javascript">
 $('document').ready(function() {
+{% if guest_login %}
+$('#guestModal').modal('show');
+{% endif %}
 // assig next parameter
 $("#next_page").val("{{next}}");
 });
@@ -103,6 +106,30 @@ $("#next_page").val("{{next}}");
 
 
   </div>
+  
+  <!-- Modal Guest Dialog-->
+  <div class="modal fade" id="guestModal" tabindex="-1" role="dialog" aria-labelledby="guestModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Guest login</h4>
+        </div>
+        <div class="modal-body" id="guest_text">
+          	
+        	<div class="form-group">
+        		<p class="help-block">Welcome to the MiKlip homepage! You are currently logged in as Guest.
+        		You certainly have restricted access to the features of this homepage.
+        		</p>
+			</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+ 
 <script type="text/javascript">
 			$(function() {
 				console.log('test');
