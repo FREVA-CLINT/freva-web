@@ -18,6 +18,8 @@ def home(request):
 
     guest_login = None
 
+    next_page = request.GET.get('next', None)
+
     if not request.user.is_authenticated():
         try:
             user = request.POST["user"]
@@ -38,7 +40,10 @@ def home(request):
         except Exception, e:
             logging.debug(str(e))
         
-    return render(request, 'base/home.html',{'login_failed':login_failed, 'guest_login' : guest_login})
+    return render(request, 'base/home.html',
+                  {'login_failed':login_failed,
+                   'guest_login' : guest_login,
+                   'next' : next_page})
     
     # return render(request, 'base/home.html',{'login_failed':login_failed})
 
