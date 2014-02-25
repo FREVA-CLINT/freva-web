@@ -72,6 +72,9 @@ AUTH_LDAP_GROUP_SEARCH = LDAPSearch('ou=netgroup,o=ldap,o=root',
 #AUTH_LDAP_GROUP_TYPE = ldap_cfg.ActiveDirectoryGroupType()
 AUTH_LDAP_GROUP_TYPE = LDAPNisGroupType()
 
+# AUTH_LDAP_FIND_GROUP_PERMS = True
+AUTH_LDAP_MIRROR_GROUPS = True
+
 # register the LDAP authentication backend 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
