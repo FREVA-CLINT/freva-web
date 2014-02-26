@@ -75,9 +75,15 @@ def jobinfo(request, id, show_results = False):
                 pass
         
     if show_results and history_object.status in [History.processStatus.finished, History.processStatus.finished_no_output]:
-        return render(request, 'history/results.html', {'file_content':file_content, 'history_object': history_object, 'result_object' : -1})
+        return render(request, 'history/results.html', {'file_content':file_content,
+                                                        'history_object': history_object,
+                                                        'result_object' : -1,
+                                                        'analyze_command' : 'analyze --test'})
     else:
-        return render(request, 'history/jobinfo.html', {'file_content':file_content, 'history_object': history_object, 'result_object' : -1})
+        return render(request, 'history/jobinfo.html', {'file_content':file_content,
+                                                        'history_object': history_object,
+                                                        'result_object' : -1,
+                                                        'analyze_command' : 'analyze --test'})
     
 
 
