@@ -91,6 +91,11 @@ def results(request, id):
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
     except FlatPage.DoesNotExist:
         documentation = None
+    
+    try:
+       logging.debug(history_object.uid.email)
+    except: 
+       pass
     if history_object.status in [History.processStatus.running, History.processStatus.scheduled, History.processStatus.broken]:
         history_object = History.objects.get(id=id)
         file_content = []
