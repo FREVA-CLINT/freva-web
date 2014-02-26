@@ -44,6 +44,10 @@
 		 	 	{% endfor %}
 		 	 	</table>
 	 	 	</div>
+	 	 	<div class="col-md-12">
+	 	 	<button type="button" class="btn btn-info" id='btn_clipboard'>Copy analyze command</button>
+	 	 	</div>
+	 	 	
 	  </div>
       {% if history_object.status > 2 %}
       <script>
@@ -108,6 +112,11 @@
   	}
   	
 	$(document).ready(function() {
+	    $("#btn_clipboard").click(
+	    function copyToClipboard(text) {
+  			window.prompt("Copy to clipboard: Ctrl+C, Enter", {{analyze_command}});
+		}
+	    );
 		$(".fancybox").fancybox({
 			openEffect	: 'none',
 			closeEffect	: 'none'
