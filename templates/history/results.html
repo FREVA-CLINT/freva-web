@@ -18,7 +18,7 @@
       </div>
       <div class="row">
 	 	 	<div class="col-md-12">
-	 	 		<a class="btn btn-primary" onClick="toogleConfig('config_table');" id="config_button">Show configuration</a>
+	 	 		<a class="btn btn-primary" onClick="toogleConfig('config_table');toogleConfig('copy_button');" id="config_button">Show configuration</a>
 	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>
 	 	 		{% if documentation %}
 	 	 			<a class="btn btn-success" href="{{documentation.url}}">Documentation</a>
@@ -33,6 +33,7 @@
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	</table>
+	 	 		<a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="display:none; margin-bottom:10px;">Copy analyze command</a>
 	 	 	</div>
 	  </div>
       {% if file_content %}
