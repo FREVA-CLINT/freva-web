@@ -50,6 +50,8 @@ def jobinfo(request, id, show_results = False):
     history_object = History.objects.get(id=id)
     file_content = []
 
+    analyze_command = pm.getCommandString(id)
+
     # ensure that this process has been started with slurm
     if history_object.slurm_output == '0':
         file_content = [ 'This job has been started manually.', 'No further information is available.']
@@ -78,12 +80,12 @@ def jobinfo(request, id, show_results = False):
         return render(request, 'history/results.html', {'file_content':file_content,
                                                         'history_object': history_object,
                                                         'result_object' : -1,
-                                                        'analyze_command' : 'analyze --test'})
+                                                        'analyze_command' : analyze_command})
     else:
         return render(request, 'history/jobinfo.html', {'file_content':file_content,
                                                         'history_object': history_object,
                                                         'result_object' : -1,
-                                                        'analyze_command' : 'analyze --test'})
+                                                        'analyze_command' : analyze_command})
     
 
 
@@ -102,6 +104,9 @@ def results(request, id):
        logging.debug(history_object.uid.email)
     except: 
        pass
+
+    analyze_command = pm.getCommandString(id)
+
     if history_object.status in [History.processStatus.running, History.processStatus.scheduled, History.processStatus.broken]:
         history_object = History.objects.get(id=id)
         file_content = []
@@ -133,7 +138,8 @@ def results(request, id):
         return render(request, 'history/results.html', {'file_content':file_content, 
                                                         'history_object': history_object, 
                                                         'result_object' : -1,
-                                                        'documentation' : documentation})
+                                                        'documentation' : documentation,
+                                                        'analyze_command' : analyze_command})
     
     else:
         # result_object = Result.objects.order_by('id').filter(history_id = id).filter(preview_file_ne='')
@@ -153,7 +159,8 @@ def results(request, id):
                                                         'result_object' : result_object,
                                                         'PREVIEW_URL' : settings.PREVIEW_URL,
                                                         'file_list' : file_tree ,
-                                                        'documentation' : documentation})
+                                                        'documentation' : documentation,
+                                                        'analyze_command' : analyze_command})
         
         
 @login_required()
