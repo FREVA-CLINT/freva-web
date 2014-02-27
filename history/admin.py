@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 import logging
 class HistoryAmdin(admin.ModelAdmin):
     
-    list_display = ('id', 'timestamp', 'tool', 'uid_or_str','uid_email')
+    list_display = ('id', 'timestamp', 'tool', 'uid_or_str','uid_email','status_name')
     search_fields = ['tool', 'uid']
     date_hierarchy = 'timestamp'
     search_fields=['uid__username','tool','id']
