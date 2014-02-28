@@ -46,11 +46,9 @@ def jobinfo(request, id, show_results = False):
     
     #get history object
     history_object = History.objects.get(id=id)
-    
-    history_object = History.objects.get(id=id)
     file_content = []
 
-    analyze_command = pm.getCommandString(id)
+    analyze_command = pm.getCommandString(int(id))
 
     # ensure that this process has been started with slurm
     if history_object.slurm_output == '0':
@@ -105,7 +103,7 @@ def results(request, id):
     except: 
        pass
 
-    analyze_command = pm.getCommandString(id)
+    analyze_command = pm.getCommandString(int(id))
 
     if history_object.status in [History.processStatus.running, History.processStatus.scheduled, History.processStatus.broken]:
         history_object = History.objects.get(id=id)
