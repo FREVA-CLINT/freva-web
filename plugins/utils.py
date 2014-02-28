@@ -14,19 +14,19 @@ def get_plugin_or_404(plugin_name,user=None):
     
 
 @sensitive_variables('password')    
-def ssh_call(username, password, command, _hostnames=['127.0.0.1']):
+def ssh_call(username, password, command, hostnames=['127.0.0.1']):
     """
     executes a command under the given user on a remote machine.
     :param username: login name
     :param password: password
     :param command: the command to be executed
-    :param _hostnames: list of _hostnames default: ['127.0.0.1']
+    :param hostnames: list of _hostnames default: ['127.0.0.1']
     :return: triple of FileChannels (stdin, stdout, stderr) to read
             the stdout stdout.getlines()
     """
     
-    hostnames = _hostnames.copy()
-    hostname = hostnames.pop()
+    _hostnames = hostnames.copy()
+    hostname = _hostnames.pop()
     sentto = hostname
     
     while hostname:
@@ -47,8 +47,8 @@ def ssh_call(username, password, command, _hostnames=['127.0.0.1']):
             # on exception try the next server
             logging.error('SSH connection to %s failed' % sentto)
 
-            if hostnames:
-                hostname = hostnames.pop()
+            if _hostnames:
+                hostname = _hostnames.pop()
                 sentto = hostname
             else:
                 raise
