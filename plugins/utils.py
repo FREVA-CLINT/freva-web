@@ -25,7 +25,7 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
             the stdout stdout.getlines()
     """
     
-    _hostnames = hostnames.copy()
+    _hostnames = hostnames[:]
     hostname = _hostnames.pop()
     sentto = hostname
     
