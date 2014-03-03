@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseForbidden 
+from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.debug import sensitive_post_parameters
@@ -50,9 +51,8 @@ def jobinfo(request, id, show_results = False):
 
     # check user permissions
     if history_object.uid != request.user.username:
-        if not request.user.has_perm('results.results_view_others'):
-            return HttpResponseForbidden()
-
+        if not request.user.has_perm('history.results_view_others'):
+            raise PermissionDenied
 
     analyze_command = pm.getCommandString(int(id))
 
@@ -107,8 +107,8 @@ def results(request, id):
 
     # check user permissions
     if history_object.uid != request.user.username:
-        if not request.user.has_perm('results.results_view_others'):
-            return HttpResponseForbidden()
+        if not request.user.has_perm('history.results_view_others'):
+            raise PermissionDenied
     
     
     try:
