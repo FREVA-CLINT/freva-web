@@ -48,6 +48,12 @@ def jobinfo(request, id, show_results = False):
     history_object = History.objects.get(id=id)
     file_content = []
 
+    # check user permissions
+    if history_object.uid != request.user.username:
+        if not request.user.has_perm('results.results_view_others'):
+            return HttpResponseForbidden()
+
+
     analyze_command = pm.getCommandString(int(id))
 
     # ensure that this process has been started with slurm
