@@ -107,7 +107,6 @@ def results(request, id):
 
     # check user permissions
     if str(history_object.uid) != str(request.user.username):
-        print 'User comparison "%s", "%s"' % (history_object.uid,  request.user.username)
         if not request.user.has_perm('history.results_view_others'):
             raise PermissionDenied
     
