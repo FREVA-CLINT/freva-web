@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse 
+from django.http import HttpResponse, HttpResponseForbidden 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.debug import sensitive_post_parameters
@@ -91,12 +91,19 @@ def jobinfo(request, id, show_results = False):
 def results(request, id):
     from history.utils import pygtailwrapper
     
+    
     #get history object
     history_object = History.objects.get(id=id)
     try:
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
     except FlatPage.DoesNotExist:
         documentation = None
+
+    # check user permissions
+    if history_object.uid != request.user.username:
+        if not request.user.has_perm('results.results_view_others'):
+            return HttpResponseForbidden()
+    
     
     try:
        logging.debug(history_object.uid.email)
