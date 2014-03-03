@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse 
+from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.debug import sensitive_post_parameters
@@ -46,11 +47,14 @@ def jobinfo(request, id, show_results = False):
     
     #get history object
     history_object = History.objects.get(id=id)
-    
-    history_object = History.objects.get(id=id)
     file_content = []
 
-    analyze_command = pm.getCommandString(id)
+    # check user permissions
+    if str(history_object.uid) != str(request.user.username):
+        if not request.user.has_perm('history.results_view_others'):
+            raise PermissionDenied
+
+    analyze_command = pm.getCommandString(int(id))
 
     # ensure that this process has been started with slurm
     if history_object.slurm_output == '0':
@@ -93,19 +97,26 @@ def jobinfo(request, id, show_results = False):
 def results(request, id):
     from history.utils import pygtailwrapper
     
+    
     #get history object
     history_object = History.objects.get(id=id)
     try:
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
     except FlatPage.DoesNotExist:
         documentation = None
+
+    # check user permissions
+    if str(history_object.uid) != str(request.user.username):
+        if not request.user.has_perm('history.results_view_others'):
+            raise PermissionDenied
+    
     
     try:
        logging.debug(history_object.uid.email)
     except: 
        pass
 
-    analyze_command = pm.getCommandString(id)
+    analyze_command = pm.getCommandString(int(id))
 
     if history_object.status in [History.processStatus.running, History.processStatus.scheduled, History.processStatus.broken]:
         history_object = History.objects.get(id=id)

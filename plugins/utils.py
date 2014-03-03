@@ -20,12 +20,13 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
     :param username: login name
     :param password: password
     :param command: the command to be executed
-    :param hostname: The hostname default: localhost
+    :param hostnames: list of _hostnames default: ['127.0.0.1']
     :return: triple of FileChannels (stdin, stdout, stderr) to read
             the stdout stdout.getlines()
     """
     
-    hostname = hostnames.pop()
+    _hostnames = hostnames[:]
+    hostname = _hostnames.pop()
     sentto = hostname
     
     while hostname:
@@ -46,8 +47,8 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
             # on exception try the next server
             logging.error('SSH connection to %s failed' % sentto)
 
-            if hostnames:
-                hostname = hostnames.pop()
+            if _hostnames:
+                hostname = _hostnames.pop()
                 sentto = hostname
             else:
                 raise

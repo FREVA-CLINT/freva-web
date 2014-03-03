@@ -97,6 +97,14 @@ class Result(models.Model):
     #: specification of a file type 
     file_type       = models.IntegerField(max_length=2)
     
+    class Meta:
+        """
+        Set the user's permissions
+        """
+        permissions = (
+                       ('results_view_others', 'Can view results from other users'),
+                      )
+
     class Filetype:
         """
         Different IDs of file types
