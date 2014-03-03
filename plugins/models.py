@@ -39,11 +39,13 @@ class SolrFieldWidget(Input):
         self.facet = kwargs.pop('facet')
         self.group = kwargs.pop('group')
         self.multiple = kwargs.pop('multiple')
+        self.predefined_facets = kwargs.pop('predefined_facets')
         super(SolrFieldWidget,self).__init__(*args,**kwargs)
         
     def render(self, name, value, attrs=None, choices=()):
         return loader.render_to_string('plugins/solrfield.html', {'name': name, 'value': value, 'attrs':attrs, 
-                                                                  'facet':self.facet, 'group':self.group, 'multiple':self.multiple})
+                                                                  'facet':self.facet, 'group':self.group, 'multiple':self.multiple,
+                                                                  'predefined_facets':self.predefined_facets})
 
 class PluginRangeFieldWidget(Input):
     def render(self, name, value, attrs=None):
@@ -96,7 +98,8 @@ class PluginForm(forms.Form):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str, widget=PluginRangeFieldWidget({}))
             elif isinstance(param, parameters.SolrField):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str, 
-                                                   widget=SolrFieldWidget(facet=param.facet,group=param.group, multiple=param.multiple))
+                                                   widget=SolrFieldWidget(facet=param.facet,group=param.group, 
+                                                                          multiple=param.multiple, predefined_facets=param.predefined_facets))
             elif param_subtype == int:
                 self.fields[key] = forms.IntegerField(required=required, help_text=help_str)
             elif isinstance(param, parameters.File):

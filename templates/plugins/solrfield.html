@@ -22,6 +22,12 @@ $(document).ready(function() {
 		{% if multiple %}
 		multiple:true,
 		{%endif%}
+		
+		{% if predefined_facets %}
+		predefined_facets = '&project=reanalysis',
+		{%else%}
+		predefined_facets = '',
+		
 		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
 				//url: "/solr/solr-search",
 				dataType: 'json',
@@ -39,7 +45,7 @@ $(document).ready(function() {
 						res += index+'='+value+'&';
 						
 					});
-					res += tmp_data2;
+					res += tmp_data2 + predefined_facets;
 					return res;
 				},
 				results: function (data, page) { // parse the results into the format expected by Select2.
