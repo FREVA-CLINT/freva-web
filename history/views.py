@@ -50,7 +50,7 @@ def jobinfo(request, id, show_results = False):
     file_content = []
 
     # check user permissions
-    if history_object.uid != request.user.username:
+    if str(history_object.uid) != str(request.user.username):
         if not request.user.has_perm('history.results_view_others'):
             raise PermissionDenied
 
@@ -106,7 +106,8 @@ def results(request, id):
         documentation = None
 
     # check user permissions
-    if history_object.uid != request.user.username:
+    if str(history_object.uid) != str(request.user.username):
+        print 'User comparison "%s", "%s"' % (history_object.uid,  request.user.username)
         if not request.user.has_perm('history.results_view_others'):
             raise PermissionDenied
     
