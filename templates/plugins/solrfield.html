@@ -1,3 +1,4 @@
+{% load custom_filters %}
 
 <input type="hidden" class="col-md-12"  value="{% if value %}{{ value }}{%endif%}" id="{{ attrs.id }}" name="{{name}}" style="margin:0px; padding:0px;" data-facet="{{facet}}" data-group="{{group}}" data-multiple="{{multiple}}">
 
@@ -23,11 +24,6 @@ $(document).ready(function() {
 		multiple:true,
 		{%endif%}
 		
-		{% if predefined_facets %}
-		predefined_facets = '&project=reanalysis',
-		{%else%}
-		predefined_facets = '',
-		
 		ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
 				//url: "/solr/solr-search",
 				dataType: 'json',
@@ -45,7 +41,7 @@ $(document).ready(function() {
 						res += index+'='+value+'&';
 						
 					});
-					res += tmp_data2 + predefined_facets;
+					res += tmp_data2 + '{{predefined_facets|dict_to_url}}';
 					return res;
 				},
 				results: function (data, page) { // parse the results into the format expected by Select2.
