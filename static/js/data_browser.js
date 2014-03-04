@@ -114,7 +114,8 @@ data_browser = new function(){
 			var del_link = '<a href="#" class="facet_remove" data-facet="'+facet+'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 		        html += '<div class="col-md-3">'+del_link+' <strong>'+facet_list[val]+'</strong> ['+facet_list[val+1]+']</div>';	
 			$('#heading'+facet+' .chosen_facet').html(': <strong>'+ facet_list[val]+'</strong> '+del_link);
-			$('#heading'+facet+' .chosen_facet').attr('title',title);
+			$('#heading'+facet+' .chosen_facet').attr('title',title).delay(500);
+			$('#heading'+facet+' .chosen_facet').tooltip('destroy');
 			$('#heading'+facet+' .chosen_facet').tooltip();
 			$('#heading'+facet+' .facet_count').html('');
 			//updated selected panel
