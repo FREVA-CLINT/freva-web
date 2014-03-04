@@ -12,10 +12,16 @@ UL.jqueryFileTree LI {
 
 .tooltip-inner {max-width:750px; !important; }
 
+
+.modal-dialog {
+    margin-top: 15%;
+}
+
 </style>
 <script src="{{ STATIC_URL }}js/data_browser.js?{% now "U" %}"></script>
 
 <script>
+
 	$(document).ready(function(){
 		//init files 
 		//data_browser.get_files();
@@ -25,6 +31,8 @@ UL.jqueryFileTree LI {
 	});
 	$(document).on('click','a',function(el){
 		if($(el.target).hasClass('facet_click')){
+			//$('#myModal').modal('show');
+			wait_dialog.showPleaseWait();
 			var facet = $(el.target).attr('data-facet');
 			var value = $(el.target).html();	
 			$('.facet_click').tooltip('hide');
@@ -32,26 +40,46 @@ UL.jqueryFileTree LI {
 			data_browser.get_files();
 			$('#collapse'+facet).collapse('toggle');
 			$('#collapseFiles').collapse('show');
+			wait_dialog.hidePleaseWait();
 			return false;
 		}else if($(el.target).parent().hasClass('facet_remove')){
+			wait_dialog.showPleaseWait();
 			var facet = $(el.target).parent().attr('data-facet');
 			$('.chosen_facet').tooltip('hide');
 			data_browser.remove_facet(facet);
 			data_browser.get_files();
 			$('#collapse'+facet).collapse('toggle');
 			$('#collapseFiles').collapse('show');
+			wait_dialog.hidePleaseWait();
 			return false;
 
 		}else if($(el.target).hasClass('facet_clear')){
+			wait_dialog.showPleaseWait();
 			data_browser.clear_facets();
 			data_browser.get_files();
                         $('#collapseFiles').collapse('show');
+			wait_dialog.hidePleaseWait();
                         return false;
 		}
 	});	
 
 </script>
 
+
+<!-- Modal 
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+-->
 
     <div class="container">
       <div class="row">
@@ -83,18 +111,13 @@ UL.jqueryFileTree LI {
       <h4 class="panel-title" id="heading{{facet}}">
         <a data-toggle="collapse" data-parent="#accordion" href="#collapse{{facet}}">
         	 {{facet}}
-	</a> <span class="facet_count">({{facet_list|length|divide:2}})</span> <span class="chosen_facet"></span>
+	</a> <span class="facet_count">(0)</span> <span class="chosen_facet"></span>
       </h4>
     </div>
 
   <div id="collapse{{facet}}" class="panel-collapse collapse">
       <div class="panel-body">
 	<div class="row">
-        {% for item in facet_list %}
- 	  {% if forloop.counter0|divisibleby:"2" %}
-		<div class="col-md-3"><a href="#" data-facet="{{facet}}" class="facet_click">{{item}}</a> [{{facet_list|lookup:forloop.counter}}]</div>
-	{%endif%}
-	{%endfor%}	
 	</div>
 	
       </div>

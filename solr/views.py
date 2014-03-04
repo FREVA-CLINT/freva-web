@@ -17,18 +17,18 @@ from django_evaluation import settings
 import json
 import logging
 
+
 @login_required()
 def data_browser(request):
-    args = {'facet.limit':-1}
+    args = {}#{'facet.limit':-1}
 
     # Restrict search data for test users
     if not request.user.has_perm('history.browse_full_data'):
         tmp = settings.SOLR_RESTRICTIONS.copy()
         tmp.update(args)
         args = tmp
-
-    facets = SolrFindFiles.facets(facets=None,**args)        
-    logging.debug(facets)
+    facets = settings.FACETS
+    
     return render(request, 'solr/data_browser.html', {'facets':facets})
 
 
