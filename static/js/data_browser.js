@@ -114,7 +114,8 @@ data_browser = new function(){
 			var del_link = '<a href="#" class="facet_remove" data-facet="'+facet+'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
 		        html += '<div class="col-md-3">'+del_link+' <strong>'+facet_list[val]+'</strong> ['+facet_list[val+1]+']</div>';	
 			$('#heading'+facet+' .chosen_facet').html(': <strong>'+ facet_list[val]+'</strong> '+del_link);
-			$('#heading'+facet+' .chosen_facet').attr('title',title);
+			$('#heading'+facet+' .chosen_facet').attr('title',title).delay(500);
+			$('#heading'+facet+' .chosen_facet').tooltip('destroy');
 			$('#heading'+facet+' .chosen_facet').tooltip();
 			$('#heading'+facet+' .facet_count').html('');
 			//updated selected panel
@@ -158,8 +159,25 @@ data_browser = new function(){
 
 }
 
+
+
 //init data_browser 
+wait_dialog.showPleaseWait();
 data_browser.get_files();
 data_browser.clear_facets();
-
+wait_dialog.hidePleaseWait();
 });
+
+var wait_dialog;
+wait_dialog = wait_dialog || (function () {
+    var pleaseWaitDiv = $('<div class="modal " data-backdrop="static" data-keyboard="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="myModalLabel">Loading data...</h4></div><div class="modal-body" style="text-align:center;"><p>Please wait!</p><img src="/static/img/ajax-loader.gif" /></div></div></div></div>');
+    return {
+        showPleaseWait: function() {
+            pleaseWaitDiv.modal('show');
+        },
+        hidePleaseWait: function () {
+            pleaseWaitDiv.modal('hide');
+        },
+    };
+})();
+
