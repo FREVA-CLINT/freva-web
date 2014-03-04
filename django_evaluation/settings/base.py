@@ -19,6 +19,8 @@ from django_auth_ldap.config import LDAPSearch
 
 from django_evaluation.ldapnisgroup import LDAPNisGroupType
 
+from evaluation_system.model.solr import SolrFindFiles
+
 def get_env_setting(setting):
     """ Get the environment setting or return exception """
     try:
@@ -30,6 +32,8 @@ def get_env_setting(setting):
 
 # The server for LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldaps://dsp1.dkrz.de, ldaps://dsp2.dkrz.de"
+
+FACETS = SolrFindFiles.facets(facets=None,**args)
 
 # The directory with SSL certificates
 CA_CERT_DIR = '/etc/openldap/cacerts/'
