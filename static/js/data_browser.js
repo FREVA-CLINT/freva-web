@@ -159,8 +159,25 @@ data_browser = new function(){
 
 }
 
+
+
 //init data_browser 
+wait_dialog.showPleaseWait();
 data_browser.get_files();
 data_browser.clear_facets();
-
+wait_dialog.hidePleaseWait();
 });
+
+var wait_dialog;
+wait_dialog = wait_dialog || (function () {
+    var pleaseWaitDiv = $('<div class="modal " data-backdrop="static" data-keyboard="false" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h4 class="modal-title" id="myModalLabel">Loading data...</h4></div><div class="modal-body" style="text-align:center;"><p>Please wait!</p><img src="/static/img/ajax-loader.gif" /></div></div></div></div>');
+    return {
+        showPleaseWait: function() {
+            pleaseWaitDiv.modal('show');
+        },
+        hidePleaseWait: function () {
+            pleaseWaitDiv.modal('hide');
+        },
+    };
+})();
+
