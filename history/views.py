@@ -54,7 +54,11 @@ def jobinfo(request, id, show_results = False):
         if not request.user.has_perm('history.results_view_others'):
             raise PermissionDenied
 
-    analyze_command = pm.getCommandString(int(id))
+    analyze_command = 'An error occured'
+    try:
+        analyze_command = pm.getCommandString(int(id))
+    except Exception, e:
+        logging.debug(e)
 
     # ensure that this process has been started with slurm
     if history_object.slurm_output == '0':
@@ -116,7 +120,11 @@ def results(request, id):
     except: 
        pass
 
-    analyze_command = pm.getCommandString(int(id))
+    analyze_command = 'An error occured'
+    try:
+        analyze_command = pm.getCommandString(int(id))
+    except Exception, e:
+        logging.debug(e)
 
     if history_object.status in [History.processStatus.running, History.processStatus.scheduled, History.processStatus.broken]:
         history_object = History.objects.get(id=id)
