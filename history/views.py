@@ -42,63 +42,11 @@ def history(request):
     return render(request, 'history/history.html', {'history': history})
 
 @login_required
-def jobinfo(request, id, show_results = False):
-    from history.utils import pygtailwrapper
-    
-    #get history object
-    history_object = History.objects.get(id=id)
-    file_content = []
-
-    # check user permissions
-    if str(history_object.uid) != str(request.user.username):
-        if not request.user.has_perm('history.results_view_others'):
-            raise PermissionDenied
-
-    analyze_command = 'An error occured'
-    try:
-        analyze_command = pm.getCommandString(int(id))
-    except Exception, e:
-        logging.debug(e)
-
-    # ensure that this process has been started with slurm
-    if history_object.slurm_output == '0':
-        file_content = [ 'This job has been started manually.', 'No further information is available.']
-        
-    else:
-        # for a read-protected directory this will fail
-        try:
-            for line in pygtailwrapper(id, restart=True):
-                file_content.append(line)
-        except IOError:
-            file_content =  [ 'WARNING:',
-                               'This is not the content of the file \'' + history_object.slurm_output + '\'.',
-                               'Probably, your home directory denies read access to the file.',
-                               'In this case the results will be shown after the tool has finished.',
-                               'You can view the tool\'s progress in a terminal with the command',
-                               'tail -f ' + history_object.slurm_output]
-            
-            # make sure that the file exists
-            try:
-                if not os.path.isfile(history_object.slurm_output):
-                    file_content = ['Can not locate the slurm file \'%s\'' %  history_object.slurm_output]
-            except IOError:
-                pass
-        
-    if show_results and history_object.status in [History.processStatus.finished, History.processStatus.finished_no_output]:
-        return render(request, 'history/results.html', {'file_content':file_content,
-                                                        'history_object': history_object,
-                                                        'result_object' : -1,
-                                                        'analyze_command' : analyze_command})
-    else:
-        return render(request, 'history/jobinfo.html', {'file_content':file_content,
-                                                        'history_object': history_object,
-                                                        'result_object' : -1,
-                                                        'analyze_command' : analyze_command})
-    
-
+def jobinfo(request, id):
+    return results(request, id, True)
 
 @login_required()
-def results(request, id):
+def results(request, id, show_output_only = False):
     from history.utils import pygtailwrapper
     
     
@@ -126,42 +74,41 @@ def results(request, id):
     except Exception, e:
         logging.debug(e)
 
-    if history_object.status in [History.processStatus.running, History.processStatus.scheduled, History.processStatus.broken]:
-        history_object = History.objects.get(id=id)
-        file_content = []
+    history_object = History.objects.get(id=id)
+    file_content = []
 
-        # ensure that this process has been started with slurm
-        if history_object.slurm_output == '0':
-            file_content = [ 'This job has been started manually.', 'No further information is available.']
-            
-        else:
-            # for a read-protected directory this will fail
-            try:
-                for line in pygtailwrapper(id, restart=True):
-                    file_content.append(line)
-            except IOError:
-                file_content =  [ 'WARNING:',
-                                   'This is not the content of the file \'' + history_object.slurm_output + '\'.',
-                                   'Probably, your home directory denies read access to the file.',
-                                   'In this case the results will be shown after the tool has finished.',
-                                   'You can view the tool\'s progress in a terminal with the command',
-                                   'tail -f ' + history_object.slurm_output]
-                
-                # make sure that the file exists
-                try:
-                    if not os.path.isfile(history_object.slurm_output):
-                        file_content = ['Can not locate the slurm file \'%s\'' %  history_object.slurm_output]
-                except IOError:
-                    pass
+    # ensure that this process has been started with slurm
+    if history_object.slurm_output == '0':
+        file_content = [ 'This job has been started manually.', 'No further information is available.']
         
-        return render(request, 'history/results.html', {'file_content':file_content, 
-                                                        'history_object': history_object, 
-                                                        'result_object' : -1,
-                                                        'documentation' : documentation,
-                                                        'analyze_command' : analyze_command})
-    
     else:
-        # result_object = Result.objects.order_by('id').filter(history_id = id).filter(preview_file_ne='')
+        # for a read-protected directory this will fail
+        try:
+            for line in pygtailwrapper(id, restart=True):
+                file_content.append(line)
+        except IOError:
+            file_content =  [ 'WARNING:',
+                               'This is not the content of the file \'' + history_object.slurm_output + '\'.',
+                               'Probably, your home directory denies read access to the file.',
+                               'In this case the results will be shown after the tool has finished.',
+                               'You can view the tool\'s progress in a terminal with the command',
+                               'tail -f ' + history_object.slurm_output]
+            
+            # make sure that the file exists
+            try:
+                if not os.path.isfile(history_object.slurm_output):
+                    file_content = ['Can not locate the slurm file \'%s\'' %  history_object.slurm_output]
+            except IOError:
+                pass
+
+    # init result object
+    result_object = -1
+    file_tree = None
+    file_list = None
+
+    collapse = []
+    
+    if history_object.status in [History.processStatus.finished, History.processStatus.finished_no_output]:
         result_object = history_object.result_set.filter(~Q(preview_file = '')).order_by('output_file')
         
         # build the file structure
@@ -173,13 +120,23 @@ def results(request, id):
         file_tree = fd.compressed_copy()
         
         file_list = file_tree.get_list()
+
+        collapse.append('results')
+
+    else:
+        collapse.append('output')
+
+    if show_output_only:
+        collapse = ['output']
         
-        return render(request, 'history/results.html', {'history_object': history_object,
-                                                        'result_object' : result_object,
-                                                        'PREVIEW_URL' : settings.PREVIEW_URL,
-                                                        'file_list' : file_tree ,
-                                                        'documentation' : documentation,
-                                                        'analyze_command' : analyze_command})
+    return render(request, 'history/results.html', {'history_object': history_object,
+                                                    'result_object' : result_object,
+                                                    'file_content' : file_content,
+                                                    'collapse' : collapse,
+                                                    'PREVIEW_URL' : settings.PREVIEW_URL,
+                                                    'file_list' : file_tree ,
+                                                    'documentation' : documentation,
+                                                    'analyze_command' : analyze_command})
         
         
 @login_required()
