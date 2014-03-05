@@ -22,6 +22,13 @@
 	 	 		{% if documentation %}
 	 	 			<a class="btn btn-success" href="{{documentation.url}}">Documentation</a>
 	 	 		{%endif%}
+		 		{% if history_object.status > 2 and history_object.slurm_output != 0%}
+	 	 			
+	 			<a class="btn btn-danger mybtn-cancel" id="cancelButton_{{h_item.id}}" onClick="cancelDialog.show({{history_object.id}})">Cancel job</a>
+				{# Render a Bootstrap password/cancel dialog #}
+	 			{% cancel_dialog %} 	 		
+	 	 		{%endif%}
+	 	 		
 	 	 	</div>
 	</div>
 	  
