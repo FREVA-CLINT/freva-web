@@ -48,6 +48,7 @@ def preview_tree(value, autoescape=None):
 
             #next lines define css-sytles of listitems
             visible = 'display:none;' if depth > 1 else ''
+            wordwrap = 'word-wrap: break-word; white-space: normal;'
             folder_image = 'directory collapsed' if depth >0 else 'directory expanded'
 
             if not subdict_item:
@@ -55,6 +56,9 @@ def preview_tree(value, autoescape=None):
                                                                                          'PREVIEW_URL':settings.PREVIEW_URL,
                                                                                          'visible':visible}))
             else:
-                output.append('<li class="%s" style="%s"><a href="#">%s</a>%s</li>' % (folder_image, visible, escaper(force_text(key)), subdict))
+                output.append('<li class="%s" style="%s"><a href="#">%s</a>%s</li>' % (folder_image,
+                                                                                       visible + wordwrap,
+                                                                                       escaper(force_text(key)),
+                                                                                       subdict))
         return '\n'.join(output)
     return mark_safe(_helperDict(value))
