@@ -18,14 +18,26 @@
       </div>
       <div class="row">
 	 	 	<div class="col-md-12">
-	 	 		<a class="btn btn-primary" onClick="toogleConfig('config_table');toogleConfig('copy_button');" id="config_button">Show configuration</a>
 	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>
 	 	 		{% if documentation %}
 	 	 			<a class="btn btn-success" href="{{documentation.url}}">Documentation</a>
 	 	 		{%endif%}
 	 	 	</div>
-	 	 	<div class="col-md-12">
-		 	 	<table class="table col-md-12" id="config_table" style="display:none; margin-top:10px;">
+	</div>
+	  
+<!-- Configuration -->
+<div class="panel panel-default" style="margin-top:10px;">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#collapseConfig">
+          Configuration
+        </a>
+      </h4>
+    </div><!-- panel-heading -->
+    <div id="collapseConfig" class="panel-collapse collapse">
+      <div class="panel-body">
+   	 	 	<div class="col-md-12">
+		 	 	<table class="table col-md-12" id="config_table" style="margin-top:10px;">
 		 	 	{% for key,value in history_object.config_dict.items %}
 		 	 		<tr>
 		 	 			<td>{{key}}:</td>
@@ -33,10 +45,26 @@
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	</table>
-	 	 		<a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="display:none; margin-bottom:10px;">Copy analyze command</a>
+	 	 		<a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
 	 	 	</div>
-	  </div>
+      </div><!-- panel-body -->
+    </div><!-- panel-collapse collapse-->
+  </div><!-- panel panel-default-->
+	  
+
+<!-- Slurm File -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#collapseOutput">
+          Programm output
+        </a>
+      </h4>
+    </div><!-- panel-heading -->
+    <div id="collapseOutput" class="panel-collapse collapse">
+      <div class="panel-body">
       {% if file_content %}
+      {% if history_object.status > 2 %}
       <script>
       function doUpdate() {
       
@@ -65,10 +93,13 @@
 		}
 		setTimeout("doUpdate()", 2000);
 		</script>
+		{% endif %}
       
 	      <div class="row">
 	        <div class="col-md-12">
-	        	<p>The tool is still running. Here you can see the output:</p>
+	            {% if history_object.status > 2 %}
+	          	<p>The tool is still running. Here you can see the output:</p>
+	          	{% endif %}
 		        <div id="logOutputDiv" class="well well-lg" style="height:450px; overflow-y:scroll; overflow-x: hidden;">
 	
 		        {% for line in file_content %}
@@ -80,53 +111,6 @@
 		        </div>
 	        </div>
 	      </div>
-	  
-	  {%else%}
-	  	  
-	  
-	    <div class="row">	   
-	 	 {%if result_object  >= 0 %}
-		 	
-		 	 	<div class="col-md-12">
-		 	 		<h2>Results</h2>
-		 	 	</div>
-		 	 	
-		 	 	{% if history_object.status == history_object.processStatus.finished_no_output %}
-		 	 		<div class="col-md-3">
-		 	 			<p>There was no output produced!</p>
-		 	 		</div>
-		 	 	{%elif result_object.count == 0 %}
-		 	 		<div class="col-md-3">
-		 	 			<p>{{history_object.tool}} produced no plots.</p>
-		 	 		</div>
-
-	  <div class="col-md-12">
-	  <h2><br>Files created:</h2>
-	  <ul >
-	  {{ file_list|unordered_list }}
-	  </ul>
-	  </div>
-		 	 	{%else%}
-		 	 	<!--
-			 	 	{% for r_item in result_object %}
-				        <div class="col-md-3">
-				        	<a rel="gallery1" class="thumbnail fancybox" href="{{ PREVIEW_URL }}{{r_item.preview_file}}" title="{{r_item.output_file}}">
-								<img src="{{ PREVIEW_URL }}{{r_item.preview_file}}" alt="{{r_item.output_file}}" />
-							</a>
-						</div>
-			 	 	{% endfor %}
-				-->
-		     </div>
-	   
-
-	  <div class="row">
-	  <div class="col-md-12">
-
-	  <ul class="jqueryFileTree">
-	  {{ file_list|preview_tree }}
-	  </ul>
-	  </div>
-			 	{%endif%}
 	      {%else%}
 	      </div>
 	      <div class="row">
@@ -135,23 +119,64 @@
 	      	 </div>
 	        
 	  	  {%endif%}
+	      
+	      
+      </div><!-- panel-body -->
+    </div><!-- panel-collapse collapse-->
+  </div><!-- panel panel-default-->
+
+	  
+	  	  
+<!-- Results -->
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" href="#collapseResults">
+
+       {% if history_object.status > 0 %}
+         No Results (Process status: {{history_object.status_name}})
+       {% else %}
+          Results
+       {%endif%}
+        </a>
+      </h4>
+    </div><!-- panel-heading -->
+    <div id="collapseResults" class="panel-collapse collapse">
+      <div class="panel-body">	  
+	    <div class="row">	   
+	 	 {%if not file_list %}		 	 	
+		 	 	{% if history_object.status == history_object.processStatus.finished_no_output %}
+		 	 		<div class="col-md-3">
+		 	 			<p>There was no output produced!</p>
+		 	 		</div>
+		 	 		
+		 	 		<div class="col-md-3">
+		 	 			<p>{{history_object.tool}} produced no plots.</p>
+		 	 		</div>
+                   <div class="col-md-12">
+                   <h2><br>Files created:</h2>
+                   <ul >
+	                   {{ file_list|unordered_list }}
+	               </ul>
+	               </div>
+               {% endif %}
+		 	{%else%}
+	   
+	        <div class="col-md-12">
+
+	        <ul class="jqueryFileTree">
+	        {{ file_list|preview_tree }}
+	        </ul>
+	        </div>
+			{%endif%}
 		</div> 
-	  {%endif%}
+		
+      </div><!-- panel-body -->
+    </div><!-- panel-collapse collapse-->
+  </div><!-- panel panel-default-->
 
 </div>
 <script>
-  	function toogleConfig(id){
-  		
-  		if($('#'+id).is(":hidden")){
-  			$('#'+id).show();
-  			$('#config_button').html('Hide configuration');
-  		}else{
-  		  	$('#'+id).hide();
-  		  	$('#config_button').html('Show configuration');
-  		}
-  	}
-  	
-
 	$(document).ready(function() {
 		
 		$("img").lazyload({
@@ -180,6 +205,16 @@
 			openEffect	: 'none',
 			closeEffect	: 'none'
 		});
+		
+		{% if "configuration" in collapse %} 
+		$('#collapseConfig').collapse();
+		{% endif %}
+		{% if "output" in collapse %} 
+		$('#collapseOutput').collapse();
+		{% endif %}
+		{% if "results" in collapse %} 
+		$('#collapseResults').collapse();
+		{% endif %}
 
 	});
 </script>
