@@ -524,3 +524,6 @@ VENV_PYTHON_DIR = '/usr/local/ve_py/bin/python'
 
 # Restrictions for the data browser
 SOLR_RESTRICTIONS = {'project':['cmip5', 'cordex', 'observations', 'reanalysis', 'baseline0', 'baseline1', 'prototype']}
+
+# Path to miklip-logo
+MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
