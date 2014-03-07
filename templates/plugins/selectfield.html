@@ -1,0 +1,27 @@
+{% load custom_filters %}
+
+<style>
+.select2-container{
+   padding:0px;
+}
+</style>
+<select class="col-md-12" id="{{name}}" name="{{name}}" >
+<option></option>
+{% for key,val in options.iteritems %}
+<option value="{{key}}" {%if val == value %}selected{%endif%}>{{val}}</option>
+{%endfor%}
+</select>
+
+<script>
+$(document).ready(function(){
+
+	$('#{{name}}').select2({
+	   placeholder: "Select a {{name}}",
+	   allowClear: true,
+	});
+});
+</script>
+
+<!--
+<input type="hidden" class="col-md-12"  value="{% if value %}{{ value }}{%endif%}" id="{{ attrs.id }}" name="{{name}}" style="margin:0px; padding:0px;" data-facet="{{facet}}" data-group="{{group}}" data-multiple="{{multiple}}">
+!-->
