@@ -162,10 +162,14 @@ data_browser = new function(){
 
 
 //init data_browser 
-wait_dialog.showPleaseWait();
-data_browser.get_files();
-data_browser.clear_facets();
-wait_dialog.hidePleaseWait();
+//wait_dialog.showPleaseWait();
+$('html').addClass('wait');
+setTimeout(function(){
+   data_browser.get_files();
+   data_browser.clear_facets();
+   $('html').removeClass('wait');
+},50);
+//wait_dialog.hidePleaseWait();
 });
 
 var wait_dialog;
