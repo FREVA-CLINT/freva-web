@@ -28,7 +28,7 @@ $(document).ready(function() {
 				//url: "/solr/solr-search",
 				dataType: 'json',
 				url: function (term, page) {
-					
+					term=term.replace('/','');
 					tmp_data = {
 						facet : '{{facet}}',
 						{{facet}}: term+'*', // search term
