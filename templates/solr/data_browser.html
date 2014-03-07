@@ -10,6 +10,8 @@ UL.jqueryFileTree LI {
 	white-space:normal;
 }
 
+html.wait, html.wait * { cursor: wait !important; }
+
 .tooltip-inner {max-width:750px; !important; }
 
 
@@ -32,33 +34,52 @@ UL.jqueryFileTree LI {
 	$(document).on('click','a',function(el){
 		if($(el.target).hasClass('facet_click')){
 			//$('#myModal').modal('show');
-			wait_dialog.showPleaseWait();
-			var facet = $(el.target).attr('data-facet');
-			var value = $(el.target).html();	
-			$('.facet_click').tooltip('hide');
-			data_browser.add_facet(facet,value);
-			data_browser.get_files();
-			$('#collapse'+facet).collapse('toggle');
-			$('#collapseFiles').collapse('show');
-			wait_dialog.hidePleaseWait();
+			//wait_dialog.showPleaseWait();
+			//$('body').css('cursor','wait');
+			$('html').addClass('wait');
+			function rest(){
+			   var facet = $(el.target).attr('data-facet');
+			   var value = $(el.target).html();	
+			   $('.facet_click').tooltip('hide');
+			   data_browser.add_facet(facet,value);
+			   data_browser.get_files();
+			   $('#collapse'+facet).collapse('toggle');
+			   $('#collapseFiles').collapse('show');
+			   $('html').removeClass('wait');
+			}
+			setTimeout(function(){rest()},50);
+			//wait_dialog.hidePleaseWait();
+			//$('body').css('cursor','auto');
 			return false;
 		}else if($(el.target).parent().hasClass('facet_remove')){
-			wait_dialog.showPleaseWait();
+			//wait_dialog.showPleaseWait();
+			//$(el.target).css('cursor','wait');
+			$('html').addClass('wait');
+			function rest(){
 			var facet = $(el.target).parent().attr('data-facet');
-			$('.chosen_facet').tooltip('hide');
-			data_browser.remove_facet(facet);
-			data_browser.get_files();
-			$('#collapse'+facet).collapse('toggle');
-			$('#collapseFiles').collapse('show');
-			wait_dialog.hidePleaseWait();
+			   $('.chosen_facet').tooltip('hide');
+			   data_browser.remove_facet(facet);
+			   data_browser.get_files();
+			   $('#collapse'+facet).collapse('toggle');
+			   $('#collapseFiles').collapse('show');
+			   $('html').removeClass('wait');
+			}
+			setTimeout(function(){rest()},50);
+			//$('html').removeClass('wait');
+			//wait_dialog.hidePleaseWait();
 			return false;
 
 		}else if($(el.target).hasClass('facet_clear')){
-			wait_dialog.showPleaseWait();
-			data_browser.clear_facets();
-			data_browser.get_files();
-                        $('#collapseFiles').collapse('show');
-			wait_dialog.hidePleaseWait();
+			//wait_dialog.showPleaseWait();
+			$('html').addClass('wait');
+			function rest(){
+			   data_browser.clear_facets();
+			   data_browser.get_files();
+                           $('#collapseFiles').collapse('show');
+			   $('html').removeClass('wait');
+			}
+			 setTimeout(function(){rest()},50);
+			//wait_dialog.hidePleaseWait();
                         return false;
 		}
 	});	
