@@ -34,6 +34,14 @@ class PluginFileFieldWidget(Input):
     def render(self, name, value, attrs=None):
         return loader.render_to_string('plugins/filefield.html', {'name': name, 'value': value, 'id':attrs['id']})
 
+class PluginSelectFieldWidget(Input):
+    def __init__(self,*args,**kwargs):
+	self.options=kwargs.pop('options')
+	super(PluginSelectFieldWidget,self).__init__(*args,**kwargs)
+
+    def render(self, name, value, attrs=None):
+	return loader.render_to_string('plugins/selectfield.html', {'name':name, 'value':value, 'attrs':attrs, 'options':self.options})
+
 class SolrFieldWidget(Input):
     def __init__(self, *args, **kwargs):
         self.facet = kwargs.pop('facet')
@@ -96,7 +104,9 @@ class PluginForm(forms.Form):
                 self.fields[key] = forms.BooleanField(required=required, help_text=help_str, widget=forms.RadioSelect(choices=(('False', 'False'), ('True', 'True'))))
             elif isinstance(param, parameters.Range):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str, widget=PluginRangeFieldWidget({}))
-            elif isinstance(param, parameters.SolrField):
+            elif isinstance(param, parameters.SelectField):
+		self.fields[key] = forms.CharField(required=required, help_text=help_str, widget=PluginSelectFieldWidget(options=param.options))
+	    elif isinstance(param, parameters.SolrField):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str, 
                                                    widget=SolrFieldWidget(facet=param.facet,group=param.group, 
                                                                           multiple=param.multiple, predefined_facets=param.predefined_facets))
