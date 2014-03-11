@@ -281,6 +281,7 @@ var variable = {
 "intppico" : "Net Primary Mole Productivity of Carbon by Picophytoplankton",
 "lai" : "Leaf Area Index",
 "landcoverfrac" : "",
+"ldai": "Large-scale Dynamical Activity Index",
 "loadbc" : "Load of Black Carbon Aerosol",
 "loaddust" : "Load of Dust",
 "loadnh4" : "Load of NH4",
