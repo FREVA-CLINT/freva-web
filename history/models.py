@@ -17,6 +17,41 @@ class History(models.Model):
                        ('browse_full_data', 'Can search all data'),
                       )
 
+        
+
+    class processStatus:
+        """
+        The allowed statuses
+        finished           - the process finished and produced output files
+        finished_no_output - the process finished, but no output files were created
+        scheduled          - the job was send to slurm
+        running            - the job is executed
+        broken             - an exception occurred
+        not_scheduled      - an error occurred during scheduling
+        """
+        finished, finished_no_output, broken, running, scheduled, not_scheduled = range(6)
+        
+    class flag:
+        """
+        The possible flags are:
+        public  - the data is accessible for everyone
+        shared  - the data is can be only accessed by certain users
+        private - the data is private
+        deleted - the data set will be hidden
+        """
+        public, shard, private, deleted = range(4)
+        
+    STATUS_CHOICES = ((processStatus.finished, 'finished'),
+                      (processStatus.finished_no_output, 'finished (no output)'),
+                      (processStatus.broken, 'broken'),
+                      (processStatus.running, 'running'),
+                      (processStatus.scheduled, 'scheduled'),
+                      (processStatus.not_scheduled, 'not scheduled'),)
+    
+    FLAG_CHOICES = ((flag.public, 'public'),
+                    (flag.shared, 'shared'),
+                    (flag.private, 'private'),
+                    (flag.deleted, 'deleted'),)
 
     #: Date and time when the process were scheduled
     timestamp       = models.DateTimeField()
@@ -31,7 +66,9 @@ class History(models.Model):
     #: User ID
     uid             = models.ForeignKey(User, null=True, to_field='username', db_column='uid')#models.CharField(max_length=20)
     #: Status (scheduled, running, finished, cancelled)
-    status          = models.IntegerField(max_length=1)
+    status          = models.IntegerField(max_length=1, choices=STATUS_CHOICES)
+    #: Flag (deleted, private, shared, public)
+    flag            = models.IntegerField(max_length=1, choices=FLAG_CHOICES, default=flag.public)
 
     
     def __init__(self, *args, **kwargs):
@@ -67,19 +104,6 @@ class History(models.Model):
         return self.status_dict[self.status]
 
         
-
-    class processStatus:
-        """
-        The allowed statuses
-        finished           - the process finished and produced output files
-        finished_no_output - the process finished, but no output files were created
-        scheduled          - the job was send to slurm
-        running            - the job is executed
-        broken             - an exception occurred
-        not_scheduled      - an error occurred during scheduling
-        """
-        finished, finished_no_output, broken, running, scheduled, not_scheduled = range(6)
-        
         
             
 
@@ -88,22 +112,6 @@ class Result(models.Model):
     This class belongs to a table storing results.
     The output files of process will be recorded here.
     """
-    #: history id
-    history_id      = models.ForeignKey(History)
-    #: path to the output file
-    output_file     = models.TextField()
-    #: path to preview file
-    preview_file    = models.TextField(default='')
-    #: specification of a file type 
-    file_type       = models.IntegerField(max_length=2)
-    
-    class Meta:
-        """
-        Set the user's permissions
-        """
-        permissions = (
-                       ('results_view_others', 'Can view results from other users'),
-                      )
 
     class Filetype:
         """
@@ -113,7 +121,29 @@ class Result(models.Model):
         preview   - a local preview picture (copied or converted) 
         """
         data, plot, preview = range(3)
-        
+
+    FILE_TYPE_CHOICES = ((Filetype.data, 'data'),
+                         (Filetype.plot, 'plot'),
+                         (Filetype.preview, 'preview'),)       
+
+    
+    #: history id
+    history_id      = models.ForeignKey(History)
+    #: path to the output file
+    output_file     = models.TextField()
+    #: path to preview file
+    preview_file    = models.TextField(default='')
+    #: specification of a file type 
+    file_type       = models.IntegerField(max_length=2, choices=FILE_TYPE_CHOICES)
+    
+    class Meta:
+        """
+        Set the user's permissions
+        """
+        permissions = (
+                       ('results_view_others', 'Can view results from other users'),
+                      )
+
 
     def fileExtension(self):
         """
@@ -127,3 +157,24 @@ class Result(models.Model):
     # group           = models.IntegerField(max_length=2)
     ##: Defines an order for each group
     # group_order     = models.IntegerField(max_length=2)
+
+class ResultTag(models.Model):
+    """
+    This class belongs to a table storing results.
+    The output files of process will be recorded here.
+    """
+
+    class flagType:
+        caption = range(1)    
+    
+    
+    TYPE_CHOICES = ((flagType.caption, 'Caption'),)
+    
+    #: result id
+    result_id      = models.ForeignKey(Result)
+    #: specification of a file type 
+    type           = models.IntegerField(max_length=2, choices = TYPE_CHOICES)
+    #: path to the output file
+    text           = models.TextField()
+    
+
