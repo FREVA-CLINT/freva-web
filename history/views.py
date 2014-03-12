@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.flatpages.models import FlatPage
+from django_datatables_view.base_datatable_view import BaseDatatableView
 
 import json
 import os
@@ -14,13 +15,14 @@ from evaluation_system.model.db import _result_preview
 from evaluation_system.model.user import User
 from evaluation_system.misc import utils
 
-from models import History, Result
+from models import History, Result, ResultTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
 from history.utils import FileDict
 
 import logging
+from history.models import ResultTag
 
 
 @login_required()
@@ -40,6 +42,10 @@ def history(request):
         history = History.objects.order_by('-id').filter(uid=user)
 
     return render(request, 'history/history.html', {'history': history})
+
+# @login_required
+class history2(BaseDatatableView):
+    model = History
 
 @login_required
 def jobinfo(request, id):
@@ -115,7 +121,11 @@ def results(request, id, show_output_only = False):
         fd = FileDict()
         
         for r in result_object:
-            fd.add_file(r.output_file, r.preview_file)
+            caption = ResultTag.objects.filter(result_id_id=r.id).order_by('-id')
+            if caption:
+                fd.add_file(r.output_file, r.preview_file + '\n' + caption[0].text)            
+            else:    
+                fd.add_file(r.output_file, r.preview_file)
     
         file_tree = fd.compressed_copy()
         
