@@ -1,0 +1,136 @@
+{% extends "_layouts/menu.html" %}
+
+
+{% block page_title %}History - Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+
+
+
+{% block content %}
+
+{% load bootstrap3 %}
+{% load dialogtags %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_javascript %}  
+
+<script type="text/javascript" src="{{ STATIC_URL }}js/datatableview.js"></script>
+
+
+<style type="text/css">
+.tooltip-inner {max-width: 650px; !important; }
+
+.tooltip.left .tooltip-arrow{visibility: hidden;}
+
+.datatable th[data-name="row-id"] {
+    width : 58px;
+}
+.datatable th[data-name="tool"] {
+    width : 92px;
+}
+.datatable th[data-name="version"] {
+    width : 62px;
+}
+.datatable th[data-name="timestamp"] {
+    width : 192px;
+}
+.datatable th[data-name="status"] {
+    width : 148px;
+}
+.datatable th[data-name="info"] {
+    width : 250px;
+}
+</style>
+
+<link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
+
+    <div class="container">
+      <!-- Example row of columns -->
+      <div class="row">
+        <div class="col-lg-12">
+          <h2>History</h2>
+          
+    {{ datatable }}
+        </div>
+
+      </div>
+
+      <hr>
+   </div>
+
+{# Render a Bootstrap password/cancel dialog #}
+{% cancel_dialog %}
+	 
+<!-- Modal Passwort Dialog-->
+  <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Enter password</h4>
+        </div>
+        <div class="modal-body" id="browsefield">
+          	
+        	<div class="form-group">
+        		<p class="help-block">To schedule the analysis you have to re-enter your password</p>
+				<input id="password_temp" class="form-control" type="password" name="password_temp" style="width: 90%;">
+				<input id="button_id" class="form-control" type="hidden" name="button_id" style="width: 90%;">
+			</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="submit_analysis">Submit analysis</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+ 
+	 
+<script>
+
+$(document).ready(function() {
+    // the very first initialization needs this line of code
+    $('.ttbtn').tooltip({html:true});
+		
+    // for re-drawing (previous, next) this line is needed
+    $('#DataTables_Table_0').on('draw', function() {$('.ttbtn').tooltip({html:true});
+       $('.ttbtn').hover(function(){
+          $('.tooltip').css('top', -110 + 'px')
+        });
+    });
+
+    // Script for the password modal
+    // set focus to pw-field
+    $('#myModalPw').on('shown.bs.modal', function () {
+        $('#password_temp').focus();
+    })
+
+//    $('.btn-cancel').on('click', function(){
+//            var id = this.id;
+//            alert("click!");
+//            cancelDialog.show(id.split('cancelButton_')[1]);
+//    });
+
+    $('.ttbtn').hover(function(){
+        $('.tooltip').css('top', -110 + 'px')
+    //    $('.tooltip').css('top',parseInt($('.tooltip').css('top')) + 0 + 'px')
+    });
+
+    
+} );
+
+</script>
+
+{% endblock %}
+
+ 
+<!--history_list.backup
+{# mymodel_list.html #}
+
+{% block media %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTable.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/datatableview.js"></script>
+{% endblock %}-->
+
+
