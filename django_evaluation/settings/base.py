@@ -527,3 +527,6 @@ SOLR_RESTRICTIONS = {'project':['cmip5', 'cordex', 'observations', 'reanalysis',
 
 # Path to miklip-logo
 MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
+
+# send an email to the admins whenever a guest logs-in
+SEND_MAIL_AT_GUEST_LOGIN = True
