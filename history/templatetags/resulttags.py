@@ -6,6 +6,8 @@ from django.template.loader import render_to_string
 
 from django_evaluation import settings
 
+from history.utils import FileDict
+
 import logging
 
 register = template.Library()
@@ -35,13 +37,13 @@ def preview_tree(value, autoescape=None):
         for key,value in sorted(dict_.items()):
             subdict = ''
             subdict_item = None
-            if isinstance(dict_[key], dict):
+            if isinstance(dict_[key], FileDict):
                 subdict_item = dict_[key]
 
             #if child is a dictionary use recursion
             if subdict_item:
                 subdict = _helperDict(subdict_item,depth+1)
-                if isinstance(subdict_item.values()[0],dict):
+                if isinstance(subdict_item.values()[0],FileDict):
                     subdict = '\n<ul class="jqueryFileTree">\n%s\n</ul>\n' % (subdict,)
                 else:
                     subdict = '\n<div class="row" >%s</div>\n' % (subdict,)
@@ -52,7 +54,17 @@ def preview_tree(value, autoescape=None):
             folder_image = 'directory collapsed' if depth >0 else 'directory expanded'
 
             if not subdict_item:
-                output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':key, 'preview':value, 
+                caption = None
+
+                if isinstance(value,dict):
+                    caption = value.get('caption', None)
+                
+                if caption:
+                    caption = '<br>'.join([key, caption])
+                else:
+                    caption = key
+
+                output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
                                                                                          'PREVIEW_URL':settings.PREVIEW_URL,
                                                                                          'visible':visible}))
             else:
