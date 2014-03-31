@@ -1,10 +1,15 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
+from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.flatpages.models import FlatPage
+from django.utils.html import escape
+import datatableview
+from datatableview import helpers
+from datatableview.views import DatatableView
 
 import json
 import os
@@ -14,17 +19,25 @@ from evaluation_system.model.db import _result_preview
 from evaluation_system.model.user import User
 from evaluation_system.misc import utils
 
-from models import History, Result
+from models import History, Result, ResultTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
 from history.utils import FileDict
 
+from django.shortcuts import get_object_or_404
+
 import logging
+
+
 
 
 @login_required()
 def history(request):
+    user = request.GET.get('uid', None)
+
+    if not (user and request.user.has_perm('history.results_view_others')):
+        user = request.user
     
     
     try: 
@@ -32,6 +45,7 @@ def history(request):
         user = request.GET['uid']
     except KeyError:
         user = request.user
+
         
     try:
         tool = request.GET['plugin']
@@ -41,6 +55,119 @@ def history(request):
 
     return render(request, 'history/history.html', {'history': history})
 
+# @login_required
+class history2(DatatableView):
+    model = History
+    uid = None
+
+    datatable_options = {
+        'columns' : [('Row Id', 'id'),
+                     ('User', 'uid'),
+                     ('Tool', 'tool'),
+                     ('Version', 'version'),
+                     ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%Y %H:%M:%S')),
+                     ('Status', 'status', 'display_status'),
+                     ('Info', 'configuration', 'info_button'),
+                    ]
+    } 
+
+    def get_queryset(self):
+        user = self.kwargs.get('uid', None)
+
+        if not (user and
+                self.request.user.has_perm('history.results_view_others')):
+            user = self.request.user
+    
+        # return History.objects.all()
+        return History.objects.order_by('-id').filter(uid=user)
+        # MyModel.objects.filter(user=self.request.user)
+
+    def display_status(self, instance, *args, **kwargs):
+        return instance.get_status_display()
+
+    def info_button(self, instance, *args, **kwargs):
+        # default text and format (scheduled jobs)
+        information = 'Information to scheduled job:'
+        css_class = "class='btn btn-primary btn-sm ttbtn'"
+        button_text = 'Info'
+
+        # change things for manually started jobs slightly
+        if instance.slurm_output == '0':
+            information = 'Restricted information to manually started job:'
+            css_class = "class='btn btn-info btn-sm ttbtn'"
+            button_text = 'info'
+
+        try:
+            url = reverse('history:jobinfo', args=[instance.id])
+            href = "href='%s'" % url
+        except Exception, e:
+            return escape(str(e))
+
+        tooltip_style = "data-toggle='tooltip' data-placement='left'"
+
+        config = '%s<br><br><table class="table-condensed">' % information
+        
+        # fill configuration
+        try:
+            for key, value in instance.config_dict().items():
+                config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, escape(str(value)))
+        except Exception, e:
+            print "Tooltip error:", e
+ 
+        config = config + "</table>"
+
+        title = "title='%s'" % config
+
+        info_button = "<a %s %s %s %s>%s</a>" % (css_class,
+                                                 href,
+                                                 tooltip_style,
+                                                 title,
+                                                 button_text)
+
+
+        result_text = 'Results'
+        style = "class='btn btn-success btn-sm' style='width:80px'"
+
+        try:
+            url = reverse('history:results', args=[instance.id])
+            href = "href='%s'" % url
+        except Exception, e:
+            return escape(str(e))
+        
+        second_button_text = 'Edit Config'
+        second_button_style = 'class="btn btn-success btn-sm" style="width:90px;"'
+        second_button_onclick = ''
+
+        try:
+            url = reverse('plugins:setup', args=[instance.tool, instance.id])
+            second_button_href = "href='%s'" % url
+        except Exception, e:
+            return escape(str(e))
+        
+
+
+        if instance.status in [instance.processStatus.finished_no_output,
+                               instance.processStatus.broken,
+                               instance.processStatus.not_scheduled,
+                              ]:
+             result_text = 'Report'
+
+        elif instance.status in [instance.processStatus.scheduled,
+                                 instance.processStatus.running,
+                                ]:
+            result_text = 'Progress'
+            second_button_text = 'Cancel Job'
+            second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel" style="width:90px;"'
+
+            second_button_href = 'onclick="cancelDialog.show(%i);"' % instance.id
+
+        result_button = "<a  %s %s>%s</a>" % (style, href, result_text)
+
+        second_button = "<a %s %s>%s</a>" % (second_button_style,
+                                             second_button_href,
+                                             second_button_text,)
+
+        return '%s\n%s\n%s' % (result_button, second_button, info_button)
 @login_required
 def jobinfo(request, id):
     return results(request, id, True)
@@ -51,7 +178,7 @@ def results(request, id, show_output_only = False):
     
     
     #get history object
-    history_object = History.objects.get(id=id)
+    history_object = get_object_or_404(History, id=id)
     try:
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
     except FlatPage.DoesNotExist:
@@ -73,6 +200,7 @@ def results(request, id, show_output_only = False):
         analyze_command = pm.getCommandString(int(id))
     except Exception, e:
         logging.debug(e)
+    analyze_command = pm.getCommandString(int(id))
 
     history_object = History.objects.get(id=id)
     file_content = []
@@ -115,7 +243,16 @@ def results(request, id, show_output_only = False):
         fd = FileDict()
         
         for r in result_object:
-            fd.add_file(r.output_file, r.preview_file)
+            caption = ResultTag.objects.filter(result_id_id=r.id).order_by('-id')
+
+            result_info = {}
+
+            result_info['preview_file'] = r.preview_file
+
+            if caption:
+                result_info['caption'] = caption[0].text
+
+            fd.add_file(r.output_file, result_info)
     
         file_tree = fd.compressed_copy()
         
@@ -143,7 +280,7 @@ def results(request, id, show_output_only = False):
 def tailFile(request, id):
     from history.utils import pygtailwrapper
 
-    history_object = History.objects.get(id=id)
+    history_object = get_object_or_404(History, id=id)
     new_lines = list()
     
     try: 
