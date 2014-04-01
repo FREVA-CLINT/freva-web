@@ -29,6 +29,8 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}js/documentcloud-visualsearch-4550d61/build-min/visualsearch-datauri.css">
   
   <link rel="stylesheet" href="{{ STATIC_URL }}select2/select2.css">
+
+  <link href="{{STATIC_URL}}js/bootstrap-tour/build/css/bootstrap-tour.min.css" rel="stylesheet">
   
   {% block css %}{% endblock %}
   {% endcompress %}
@@ -36,6 +38,10 @@
     body {
       padding-top: 60px;
       padding-bottom: 40px;
+    }
+    .tour {
+      max-width: 500px;
+      width: auto;
     }
   </style>
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
@@ -75,6 +81,10 @@
   
   <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 
+  <script src="{{ STATIC_URL }}js/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
+  
+  <script src="{{ STATIC_URL }}js/guest_tour.js"></script>
+
   {% endcompress %}
   <!-- end scripts -->
   
@@ -89,7 +99,7 @@
 
 
   <div role="main">
-  	{% block menu %}{% endblock %}
+	{% block menu %}{% endblock %}
     
     <div id="maincontent">{% block content %}{% endblock %}</div>
     
@@ -98,7 +108,13 @@
 
 
 
+{% if request.user.isGuest  %}
+<script>
+startTour();
 
+</script>
+
+{%endif%}
   
 
   <!-- Asynchronous Google Analytics snippet. Change UA-XXXXX-X to be your site's ID.
