@@ -37,7 +37,8 @@ $("#next_page").val("{{next}}");
 <script type="text/javascript">
 {% if guest_login %}
 $('document').ready(function() {
-$('#guestModal').modal('show');
+//$('#guestModal').modal('show');
+restartTour();
 });
 {% endif %}
 {% endif %}
