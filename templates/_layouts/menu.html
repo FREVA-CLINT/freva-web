@@ -36,8 +36,8 @@
 
     <div class="navbar bs-docs-nav" role="banner">
       
-        <div class="container">
-          <div class="navbar-header">
+        <div class="container" id="navigation">
+          <div class="navbar-header" >
 	          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
 	            <span class="icon-bar"></span>
 	            <span class="icon-bar"></span>
@@ -47,13 +47,13 @@
           <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
             <!-- Navigation links starts here -->
 	          <ul class="nav navbar-nav ">
-	            <li><a href="{% url 'plugins:home' %}">Tools</a></li>
-	            <li><a href="{% url 'history:history' %}">History</a></li>
-		    <li><a href="{% url 'solr:data_browser' %}">Data-Browser</a></li>
-		    <li><a href="{% url 'plugins:about' %}">Docu</a></li>
-	            <li><a href="{% url 'base:contact' %}">Contact</a></li>
+	            <li><a id="plugin_menu" href="{% url 'plugins:home' %}">Tools</a></li>
+	            <li><a id="history_menu" href="{% url 'history:history' %}">History</a></li>
+		    <li><a id="browser_menu"href="{% url 'solr:data_browser' %}">Data-Browser</a></li>
+		    <li><a id="docu_menu"href="{% url 'plugins:about' %}">Docu</a></li>
+	            <li><a id="contact_menu"href="{% url 'base:contact' %}">Contact</a></li>
 	            <!-- <li><a href="https://code.zmaw.de/projects/miklip-d-integration/issues/new" target="_blank">Contact</a></li> -->
-	            <li><a href="{% url 'base:wiki' %}">Wiki</a></li>
+	            <li><a id="wiki_menu"href="{% url 'base:wiki' %}">Wiki</a></li>
 	            <!-- <li><a href="https://code.zmaw.de/projects/miklip-d-integration/wiki" target="_blank">Wiki</a> -->
 	          </ul>
 
@@ -101,7 +101,7 @@
          <h4>About Us</h4>
 <!--    INTEGRAted data and evaluation system for decadal scale predicTION. -->
 <p>
-The <a href="http://fona-miklip.de/en/332.php" target="_blank">INTEGRATION project</a> provides a standardized data and evaluation system for application within the MiKlip system.
+The <a href="http://fona-miklip.de/en/332.php" style='color:#F29631'target="_blank">INTEGRATION project</a> provides a standardized data and evaluation system for application within the MiKlip system.
 </p>
 
 <p>

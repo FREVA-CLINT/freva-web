@@ -32,6 +32,8 @@ class PluginWeb(object):
 
 class PluginFileFieldWidget(Input):
     def render(self, name, value, attrs=None):
+        if value is not None and type(value) == list:
+            value = PrintableList(value)
         return loader.render_to_string('plugins/filefield.html', {'name': name, 'value': value, 'id':attrs['id']})
 
 class PluginSelectFieldWidget(Input):
