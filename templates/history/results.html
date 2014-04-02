@@ -14,7 +14,7 @@
       <div class="row">
 	      <div class="col-md-12">
 	      	<h1>{{ history_object.tool|capfirst }}</h1>
-	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' %}?uid={{history_object.uid}}">{{history_object.uid}}</a></p>
+	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' history_object.uid %}">{{history_object.uid}}</a></p>
 	      </div>
       </div>
       <div class="row">
