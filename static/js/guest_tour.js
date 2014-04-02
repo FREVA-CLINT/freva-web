@@ -11,16 +11,20 @@ var tour2 = new Tour({
     orphan: true,
     //element: "#maincontent",
     title: "Guest login",
-    content: "Dear Guest,<br><br>welcome to the MiKlip homepage of the decadal climate prediction and evaluation system! It is a production system relying on the CMIP5 data standards, enabling clear data structures and direct access to a multiplicity of consistent data sets.<br><br>You certainly have restricted permissions and not access to all features of this homepage.<br><br>But we invite you to explore the homepage and the evaluation system. Enjoy the browsing! ",
+   content: 
+"Dear Guest,<br><br>welcome to the MiKlip homepage of the decadal climate prediction and evaluation system! It is a production system relying on the CMIP5 data standards, enabling clear data structures and direct access to a multiplicity of consistent data sets.<br><br>You certainly have restricted permissions and not access to all features of this homepage.<br><br>But we invite you to explore the homepage on your own or to follow this guided tour explaining the main features. Enjoy browsing! ",
     placement: "left",
     backdrop: true,
+
+
   },
   {
     path: "/plugins/",
     //orphan: true,
     element: "#plugin_menu",
     title: "Tools",
-    content: "Here you find several tools developed within the MiKlip project. The project INTEGRATION provides a standardized framework for tool development. It enables an user-friendly and consistent way of using several software packages, without any need to understand different programming languages. The plugin management allows software developers to stay in their familiar code environment and benefit from the instantaneous appearance in the command-line and web system.",
+    content: 
+    "Here you can access several tools developed within the MiKlip project. The project INTEGRATION provides a standardized framework for tool development. The interfaces of the framework allow a unified access to the tools from the shell and the webpage, as well. There is no need to understand the programming languages underlying the tools and their development environments.",
     placement: "left",
     backdrop: false,
   },
@@ -29,7 +33,8 @@ var tour2 = new Tour({
     //orphan: true,
     element: "#navigation",
     title: "MurCSS",
-    content: "One tool for evaluating decadal climate prediction is the MurCSS plugin. It enables the MiKlip project verification methods following the decadal evaluation framework suggested by Goddard et al. (2013). Here you could start an analysis, show your history with the tool and look up the documentation. Let's start an analysis...",
+    content:
+    "One tool for the evaluation of decadal climate predictions is the MurCSS plugin. It offers the user verification methods following the decadal evaluation framework suggested by Goddard et al. (2013). Here you can choose if you would like to start an analysis, browse your history with all the tool runs, or look up the documentation. Let&#039;s start an analysis...",
     placement: "top",
     backdrop: false,
   },
@@ -38,7 +43,8 @@ var tour2 = new Tour({
     orphan: true,
     //element: "#navigation",
     title: "MurCSS setup",
-    content: "For starting an analysis like MurCSS, you have to choose some standard options like output directories or some specific options like the leadtimes for decadal analysis. Instead of pointing to some input directories or collecting all datasets, you only have to specify the CMOR options of the experiments you want to evaluate. The inbuild search framwork helps the users to find the data they need, by giving possible suggestions like e.g. variables to be choosen. The setup checks possibilities even for the observational or reanalysis data sets to be compared to.<br><br>All tools running on a high performance computer enables a fast evaluation. Lets have look the results.",
+    content: 
+    "To start an analysis with MurCSS, you have to set several options. Some options are very specific for a single tool like the lead times for decadel analysis. For generic options, like output directories which are included in almost any tool, the webpage offers standardized selection methods. Here, we would like to point out the selection of the input files. Instead of giving the path to some input directories or collecting all datasets, you only have to specify the CMOR options of the experiments you want to evaluate. The built-in search framework supports you to find the data you need by giving possible suggestions, e.g. variables to be choosen. The setup checks possibilities even for the observational or reanalysis data sets to be compared to.<br><br>All tools run on a high performance computer enabling a fast evaluation. Let&#039;s have look at the results.",
     placement: "top",
     backdrop: false,
   },
@@ -47,7 +53,8 @@ var tour2 = new Tour({
     orphan: true,
     //element: "#history_menu",
     title: "MurCSS results",
-    content: "You automatically land on the result page of your analysis where you can follow the progress of that evaluation in “Program's output”. After the tool is finished you can check the “Results” by browsing through the quickview section. All results are generally stored in the users home or scratch directories, including non-graphically output like netcdf files for further investigations. You can always check the “Configuration” of the analysis, to see what has been done and maybe “Edit configuration” to rerun it with for example an other observational dataset.",
+    content: 
+    "You are automatically redirected to the result page of your analysis where you can follow the progress of the submitted evaluation in “Program's output”. After the tool is finished you can browse the results in the quickview section “Results”. All results are generally stored in the user&#039;s home or scratch directories, including non-graphically output like netcdf files for further investigations. You can always check the “Configuration” of the analysis, to see what has been done and maybe “Edit configuration” to re-run it, for example with a different observational dataset.",
     placement: "left",
     backdrop: true,
   },
@@ -66,7 +73,8 @@ var tour2 = new Tour({
     //orphan: true,
     element: "#history_menu",
     title: "History",
-    content: "For the very important part in climate science of transparency and reproducibilty, all analyses made with the evaluation system including the command-line version are saved in a database, can be redone and shared with other scientists. The very fast history “Search” enables to look for specfic analyses you made, by browsing the configurations, which can be viewed on-mouse over the “info” button.",
+    content: 
+    "The evaluation system covers one very important part in climate science: transparency and reproducibilty of the results. For this purpose the evaluation system stores all performed analysis (from command line and web interface) in a common database. So, every analysis can be redone and shared with other scientists easily. The very fast history “Search” enables you to look for specfic analyses you made, by browsing the configurations, which can be viewed by mouse-over on the “info” button.",
     placement: "left",
     backdrop: false,
   },
@@ -75,7 +83,8 @@ var tour2 = new Tour({
     orphan: true,
     //element: "",
     title: "Data-Browser",
-    content: "With direct access to the MiKlip prediction system results (baseline0,baseline1,prototype) and the CMIP5 ESGF data-node of the DKRZ, different reanalyses and observational datasets, there is a clear need for support in finding the data. The project INTEGRATION provides “solr_search” an advanced but easy2use search tool, using different standards (CMOR, DRS, CORDEX, etc). The “Data-Browser” enables this search tool in the web for looking up files, its directories or maybe just the right CMOR options for the “Tools”. Still having trouble to understand the variable names in CMOR? Head your mouse over a variable and view the CF-longname for clarification.",
+    content: 
+ "The system offers you direct access to the results of the MiKlip prediction system (baseline0, baseline1, prototype), the CMIP5 ESGF data-node of the DKRZ, and different reanalysis respectively observational data. Due to the huge amount of different data sets there is a clear need for support in finding data. The project INTEGRATION provides “solr_search” an advanced but easy2use search tool using different standards (CMOR, DRS, CORDEX, etc.). The “Data-Browser” is the web-based pendant to “solr_search”. It enables you to find files or to look up the right CMOR options for the tools.<br>Still having trouble to understand the variable names in CMOR? Head your mouse over a variable and view the CF-longname for clarification.",
     placement: "center",
     backdrop: true,
   },
@@ -94,7 +103,8 @@ var tour2 = new Tour({
     //orphan: true,
     element: "#docu_menu",
     title: "Documentation",
-    content: "The documentation area is still under development, using web versions of, for example latex, to access informations directly from the tool on the hpc-system. This ensures one common way of providing documentations of tools and administrating not a shell and a webversion.",
+    content: 
+    "The documentation area is still under development, using web versions of, for example latex, to access informations directly from the tool on the hpc-system. This ensures one common way of providing documentations of tools for the shell and web version.",
     placement: "left",
     backdrop: false,
   },
@@ -123,7 +133,7 @@ var tour2 = new Tour({
     orphan: true,
     //element: "",
     title: "The End",
-    content: "Thanks for visting the webpage of the MiKlip project! For more informations on the scientific tasks of MiKlip please visit: <a href='http://www.fona-miklip.de' target='_blank'>www.fona-miklip.de</a><br><br>If you have any question, don't hesitate to write us an email - see footer!<br><br>Good Bye",
+    content: "Thanks for visting the webpage of the MiKlip project! For more informations on the scientific tasks of MiKlip please visit: <a href='http://www.fona-miklip.de' target='_blank'>www.fona-miklip.de</a><br><br>If you have any question, don't hesitate to write us an email - see footer!<br><br>Have fun!",
     placement: "center",
     backdrop: true,
     template: endTemplate,
