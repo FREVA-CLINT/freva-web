@@ -49,7 +49,7 @@ var tour2 = new Tour({
     backdrop: false,
   },
   {
-    path: "/history/3966/results/",
+    path: "/history/4841/results/",
     orphan: true,
     //element: "#history_menu",
     title: "MurCSS results",
@@ -59,7 +59,7 @@ var tour2 = new Tour({
     backdrop: true,
   },
   {
-    path: "/history/3966/results/",
+    path: "/history/4841/results/",
     orphan: true,
     //element: "",
     title: "MurCSS results",
