@@ -75,8 +75,34 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+ 
   
-	
+{% if restricted_user %} 
+ <!-- Modal Guest Dialog-->
+  <div class="modal fade" id="guestModal" tabindex="-1" role="dialog" aria-labelledby="guestModal" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Guest login</h4>
+        </div>
+        <div class="modal-body" id="guest_text">
+          	
+        	<div class="form-group">
+        		<p class="help-block">Dear Guest,</p>
+        		<p class="help-block">you do not have the permissions to start any job.
+        		You will be automatically redirected to the history. There you can view
+        		example results of the tools available.
+        		</p>
+			</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+ {% else %}	
 	
   <!-- Modal Passwort Dialog-->
   <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -109,6 +135,7 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+{% endif %}
 
 <script>
 
@@ -204,6 +231,7 @@ $(document).ready(function(){
     $('#runButton').removeAttr('disabled');
     $('.tourbtn').removeAttr('disabled');
     $('#runButton').on('click', function(e){
+    	$('#guestModal').modal('show');
     	window.location.href="/history";
     }); 
     {% else %}
