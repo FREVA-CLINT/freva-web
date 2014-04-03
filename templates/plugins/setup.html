@@ -97,7 +97,7 @@
 			</div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+          <button type="button" class="btn btn-default tourbtn" data-dismiss="modal" onclick='window.location.href="/history";'>Ok</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -231,8 +231,7 @@ $(document).ready(function(){
     $('#runButton').removeAttr('disabled');
     $('.tourbtn').removeAttr('disabled');
     $('#runButton').on('click', function(e){
-    	$('#guestModal').modal('show');
-    	window.location.href="/history";
+    	$('#guestModal').modal({show : true, backdrop : 'static'});
     }); 
     {% else %}
     $('#runButton').on('click', function(e){
