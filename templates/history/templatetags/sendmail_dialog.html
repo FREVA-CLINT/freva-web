@@ -1,0 +1,87 @@
+{% load static %} 
+ 
+  <!-- Modal Sendmail Dialog-->
+  <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Send email to MiKlip users</h4>
+        </div>
+        <div class="modal-body" id="browsefield">
+          	<div class="alert alert-danger" id="wrongPw"><strong>Wrong password!</strong> Please try again.</div>
+        	<div class="form-group">
+        	    <select length="15">
+        	    {% for tuple in user_info %}
+        	    <option value="{{tuple.3}}">{{tuple.1}}, {{tuple.2}}</option>
+        	    {% endfor %}
+        	    </select>
+        		<p class="help-block">Select user to mail to</p>
+				<input id="password_temp" class="form-control" type="password" name="password_temp" style="width: 90%;">
+				<input id="job_id" type="hidden" name="job_id">
+			</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" name="submitCancelBtn" id="submitCancelBtn">Send</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
+<script>
+
+	var cancelDialog;
+	cancelDialog = cancelDialog || (function () {
+	        return {
+		        show: function(id, errormsg=false) {
+		            $('#job_id').val(id);
+					console.log(id);
+					if(errormsg)
+						$('#wrongPw').show();
+					else
+						$('#wrongPw').hide();
+					$('#password_temp').val('');
+					$('#password_temp').focus();
+					$('#waitingCancel').hide();
+					$('#browsefield').show();
+					$('#submitCancelBtn').button('reset');
+			    	$('#myModalPw').modal('show');
+		        },
+		        process: function () {
+		            var jobId = $('#job_id').val();
+					$('#waitingCancel').show();
+					$('#browsefield').hide();
+					$('#submitCancelBtn').button('loading');
+					
+					var data = {'id':jobId, 'password':$('#password_temp').val()};
+					var url = '{% url 'history:cancelSlurmjob' %}';
+					var self = this;
+					$.post(url, data, function(resp){
+						if(resp == 'wrong password'){
+							self.show(jobId,true);
+						}else{
+							 $('#myModalPw').modal('hide');
+							 window.location.href=window.location.href;
+						}
+					});
+		        },
+	
+	    	};
+	})();
+    
+	$(document).ready(function(){
+		
+		$('#submitCancelBtn').on('click', function(){
+			cancelDialog.process();
+			
+		});
+		
+	});    
+
+	// simulate click on submit when enter is pressed
+	$('#password_temp').keypress(function (e) {
+		if (e.which == 13) {
+			$('#submitCancelBtn').click();
+			return false;
+	  	}
+	});
+</script>

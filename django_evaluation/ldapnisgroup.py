@@ -2,6 +2,9 @@ import ldap
 
 from django.http import Http404
 from django_auth_ldap.config import LDAPGroupType
+from django_evaluation import settings
+from exceptions import ValueError
+import re
 
 class LDAPNisGroupType(LDAPGroupType):
     """
@@ -88,3 +91,98 @@ class LDAPNisGroupType(LDAPGroupType):
         django_groups = []
 
         return group_info
+    
+
+class miklip_user_information:
+    """
+    A class to access additional LDAP information using the
+    agent user and no binding with the logged in user
+    """
+    
+    def __init__(self):
+        self.ldap_keys = ['sn', 'givenName', 'uid', 'mail']
+        self.miklip_user = []
+        self.user_info = []
+       
+    def load_from_ldap(self):
+        """
+        Loads the miklip user ids and the info belonging to the user
+        """
+        
+        # whenever a CA_CERTDIR is set use it.
+        try:
+            ldap.set_option(ldap.OPT_X_TLS_CACERTDIR, settings.CA_CERT_DIR)
+        except:
+            pass
+        
+        LDAP_SERVERS = settings.AUTH_LDAP_SERVER_URI[:]
+        
+        SERVER = LDAP_SERVERS.pop()
+        
+        con = None
+        connected_to = None
+        
+        # try any LDAP server in list
+        while(SERVER):
+            try:
+                con = ldap.initialize(SERVER)
+                connected_to = SERVER
+                SERVER = None
+            except:
+                SERVER = LDAP_SERVERS.pop()
+                if not SERVER:
+                    raise
+         
+        # bind with the simple DKRZ user
+        con.simple_bind_s(settings.LDAP_USER_DN, settings.LDAP_USER_PW)
+        
+        # search all users belonging 
+        res= con.search_s(settings.LDAP_GROUP_BASE,
+                          ldap.SCOPE_SUBTREE,
+                          attrlist=['nisnetgrouptriple'],
+                          filterstr=settings.LDAP_MIKLIP_GROUP_FILTER)
+        
+        self.miklip_user = []
+        self.user_info = []
+        user_list = res[1]['cn']
+
+        nisnetgrouptriple_pattern = "^\(,.*,\)$"
+        nisnetgrouptriple_re = re.compile(nisnetgrouptriple_pattern)
+        
+             
+        # fill the users list
+        for user in user_list:
+            uid = None
+            if nisnetgrouptriple_re.match(user):
+                uid = user[2:-2]
+                self.miklip_user.append(uid)
+            else:
+                raise ValueError('NisNetGroupTriple has not the expected pattern')
+            
+        
+            # look up the user entries in the LDAP System
+            res= con.search_s(settings.LDAP_USER_BASE,
+                              ldap.SCOPE_SUBTREE,
+                              attrlist=self.ldap_keys,
+                              filterstr='uid=%s' % uid)
+            
+            self.user_info.append((uid,
+                                   res[1]['sn'],
+                                   res[1]['givenName'],
+                                   res[1]['mail'],))
+            
+            
+        # gracefully close the connection
+        con.unbind_s()
+            
+        return self.user_info
+    
+    def get_user_info(self):
+        """
+        Returns the user info and loads it whenever necessary
+        """
+        if not self.user_info:
+            self.load_from_ldap()
+            
+        return self.user_info
+
