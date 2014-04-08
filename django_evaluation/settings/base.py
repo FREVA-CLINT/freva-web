@@ -48,9 +48,12 @@ AUTH_LDAP_GLOBAL_OPTIONS = {
     ldap.OPT_X_TLS_CACERTDIR: CA_CERT_DIR,
 }
 
+# this is not used by django directly, but we use it for
+# python-ldap access, as well.
+LDAP_USER_BASE = "ou=People,o=ldap,o=root"
 
 # Verify the user by bind to LDAP
-AUTH_LDAP_USER_DN_TEMPLATE = "uid=%(user)s,ou=People,o=ldap,o=root"
+AUTH_LDAP_USER_DN_TEMPLATE = "uid=%%(user)s, %s" % LDAP_USER_BASE
 
 # keep the authenticated user for group search
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER=True
@@ -78,6 +81,12 @@ AUTH_LDAP_GROUP_TYPE = LDAPNisGroupType()
 
 # AUTH_LDAP_FIND_GROUP_PERMS = True
 AUTH_LDAP_MIRROR_GROUPS = True
+
+# agent user for LDAP
+LDAP_USER_DN = 'cn=dkrzagent, ou=Special User, dc=adm'
+LDAP_USER_PW = 'dkrzprox'
+LDAP_GROUP_BASE = 'ou=netgroup, o=ldap, o=root'
+LDAP_MIKLIP_GROUP_FILTER = '(cn=miklip)'
 
 # register the LDAP authentication backend 
 AUTHENTICATION_BACKENDS = (
@@ -128,6 +137,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'compressor',
     'bootstrap3',
+    'datatableview',
     #'debug_toolbar_user_panel',
 
     # Database migrations
