@@ -2,7 +2,7 @@ import ldap
 
 from django.http import Http404
 from django_auth_ldap.config import LDAPGroupType
-from django_evaluation import settings
+import settings
 from exceptions import ValueError
 import re
 
