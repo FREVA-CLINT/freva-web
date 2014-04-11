@@ -83,7 +83,7 @@ AUTH_LDAP_GROUP_TYPE = LDAPNisGroupType()
 AUTH_LDAP_MIRROR_GROUPS = True
 
 # agent user for LDAP
-LDAP_USER_DN = 'cn=dkrzagent, ou=Special User, dc=adm'
+LDAP_USER_DN = 'cn=dkrzagent, ou=Special Users, dc=adm'
 LDAP_USER_PW = 'dkrzprox'
 LDAP_GROUP_BASE = 'ou=netgroup, o=ldap, o=root'
 LDAP_MIKLIP_GROUP_FILTER = '(cn=miklip)'
@@ -534,6 +534,7 @@ VENV_PYTHON_DIR = '/usr/local/ve_py/bin/python'
 
 # Restrictions for the data browser
 SOLR_RESTRICTIONS = {'project':['cmip5', 'cordex', 'observations', 'reanalysis', 'baseline0', 'baseline1', 'prototype']}
+EMAIL_RESTRICTIONS = ['b324031', 'b324057','u290038']
 
 # Path to miklip-logo
 MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
