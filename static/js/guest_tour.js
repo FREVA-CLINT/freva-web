@@ -60,6 +60,15 @@ var tour2 = new Tour({
   },
   {
     path: "/history/4841/results/",
+    //orphan: true,
+    element: "#sendButton_",
+    title: "Share your results",
+    content: "You can easily share results of your analysis with colleagues in the MiKlip project. They recieve an email containing a customizable message and a link to the results.",
+    placement: "top",
+    backdrop: false,
+  },
+  {
+    path: "/history/4841/results/",
     orphan: true,
     //element: "",
     title: "MurCSS results",
