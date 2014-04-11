@@ -4,9 +4,10 @@
 $(document).ready(function() { 
 	$("#mail_to_field").select2({
 		data: {{user_data}},
-		placeholder: "Select recepients",
+		placeholder: "Select recipients",
 		allowClear: true,
 		multiple:true,
+        	maximumSelectionSize: 5,
 		
 	});
 	
