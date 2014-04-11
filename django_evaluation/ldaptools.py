@@ -16,6 +16,7 @@ class miklip_user_information:
         self.ldap_keys = ['sn', 'givenName', 'uid', 'mail']
         self.miklip_user = []
         self.user_info = []
+        self.user_info_dict = {}
        
     def load_from_ldap(self):
         """
@@ -94,7 +95,7 @@ class miklip_user_information:
             
         return self.user_info
     
-    def get_user_info(self):
+    def get_user_info(self, uid = None):
         """
         Returns the user info and loads it whenever necessary
         """
@@ -107,5 +108,25 @@ class miklip_user_information:
                 self.load_from_ldap()
                 cache.set('LDAP_user_info', self.user_info, 3600)
             
-        return self.user_info
+
+        if uid:
+            if not self.user_info_dict:
+
+                get_cache('default')
+                self.user_info_dict = cache.get('LDAP_user_info_dict')
+                
+                if not self.user_info_dict:
+                    self.user_info_dict = {}
+
+                    for user in self.user_info:
+                        self.user_info_dict[user[0]] = user
+
+                    cache.set('LDAP_user_info_dict', self.user_info_dict, 3600)
+
+            return self.user_info_dict.get(uid, None)
+
+        else:
+            return self.user_info
+
+
 
