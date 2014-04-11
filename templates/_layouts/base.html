@@ -20,7 +20,8 @@
   <meta name="viewport" content="width=device-width">
 
   {% compress css %}
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/MurCSS.css" />
+   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
   
   <link rel="stylesheet" href="{{ STATIC_URL }}jqueryfiletree/jqueryFileTree.css">
   
@@ -84,10 +85,16 @@
   <script src="{{ STATIC_URL }}js/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
   
   <script src="{{ STATIC_URL }}js/guest_tour.js"></script>
-
+  
+  
   {% endcompress %}
   <!-- end scripts -->
   
+  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" ></script> 
+  <style type="text/css"> 
+.MathJax_MathML {text-indent: 0;} 
+</style> 
+
 </head>
 <body class="body" >
 {% block body %}
