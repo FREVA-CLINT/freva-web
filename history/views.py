@@ -10,6 +10,10 @@ from django.utils.html import escape
 import datatableview
 from datatableview import helpers
 from datatableview.views import DatatableView
+from datatableview.utils import get_datatable_structure
+from django.views.generic.base import TemplateView
+
+from django_evaluation.ldaptools import miklip_user_information
 
 import json
 import os
@@ -26,6 +30,7 @@ from plugins.utils import ssh_call
 from history.utils import FileDict
 
 from django.shortcuts import get_object_or_404
+from django.core.mail import send_mail
 
 import logging
 
@@ -55,10 +60,24 @@ def history(request):
 
     return render(request, 'history/history.html', {'history': history})
 
+class history_view(TemplateView):
+    template_name = 'history/history_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(history_view, self).get_context_data(**kwargs)
+ 
+        htable = history_table()
+        options = htable.get_datatable_options()
+        datatable = get_datatable_structure('table', options)
+ 
+        context['datatable'] = datatable
+        context['user'] = self.kwargs.get('uid', None)
+        return context
+ 
+
 # @login_required
-class history2(DatatableView):
+class history_table(DatatableView):
     model = History
-    uid = None
 
     datatable_options = {
         'columns' : [('Row Id', 'id'),
@@ -72,15 +91,35 @@ class history2(DatatableView):
     } 
 
     def get_queryset(self):
-        user = self.kwargs.get('uid', None)
-
+        user = None
+        user = self.datatable_options.get('uid', None)
         if not (user and
                 self.request.user.has_perm('history.results_view_others')):
             user = self.request.user
-    
+
+        # status = self.get_context_data().get('filter_status', None)
+
+        status = self.datatable_options.get('status', 0)
+     
+        print 'STATUS STATUS STATUS:', status, user
+
         # return History.objects.all()
+        if status:
+            return History.objects.order_by('-id').filter(uid=user).filter(status=status)
+
         return History.objects.order_by('-id').filter(uid=user)
         # MyModel.objects.filter(user=self.request.user)
+
+    # def get_context_data(self, **kwargs):
+        # context = super(DatatableView, self).get_context_data(**kwargs)
+
+        # try:
+        #     pass
+            # context['filter_status'] = request.GET['status']
+        # except:
+        #     pass
+
+        # return context
 
     def display_status(self, instance, *args, **kwargs):
         return instance.get_status_display()
@@ -317,4 +356,58 @@ def cancelSlurmjob(request):
     
     
     
-    
+@login_required()
+def sendMail(request):
+    import base64
+    import json
+
+    action = request.POST['action']
+    rec = request.POST['rec'].split(',')
+    user_text = request.POST['text']
+
+    print 'Recipients:', rec
+
+    status = '<h4>Status:</h4><p>'
+    addresses = []
+    names = []
+
+    user_info = miklip_user_information() 
+
+    for uid in rec:
+        info= user_info.get_user_info(uid)
+        names.append("%s %s" % (info[2], info[1]))
+        addresses.append(info[3])
+
+
+    if action == 'results':
+        url = request.POST['url']
+        subject = '%s %s shares results with you' % (request.user.first_name, request.user.last_name)
+
+        index = 0
+
+        for addr in addresses:
+            text = 'Dear %s,\n\n' % names[index]
+            text += 'you can access my new results from the MiKlip evaluation system\'s web page.\n'
+            text += '%s\n\n' % url
+
+            if user_text:
+                text += 'Message from the user:\n%s\n\n' % user_text
+                
+            text += 'Best regards,\n%s %s' % (request.user.first_name, request.user.last_name)
+
+            from_email = request.user.email
+
+            to_email = [addresses[index]]
+
+            try:
+                send_mail(subject=subject, message=text, from_email = from_email, recipient_list = to_email)
+                status = '%sSent to %s<br>' % (status, names[index])
+            except Exception, e:
+                print e
+                status = '%s<font color="red">WARNING: Not sent to %s</font><br>' % (status, names[index])
+
+            index = index + 1
+
+        status = status + "</p>"
+    return HttpResponse(status)
+

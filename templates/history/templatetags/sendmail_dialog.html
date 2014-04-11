@@ -1,32 +1,64 @@
 {% load static %} 
+{% load dialogtags %}
  
   <!-- Modal Sendmail Dialog-->
-  <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal fade" id="sendmail_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
           <h4 class="modal-title">Send email to MiKlip users</h4>
         </div>
         <div class="modal-body" id="browsefield">
-          	<div class="alert alert-danger" id="wrongPw"><strong>Wrong password!</strong> Please try again.</div>
         	<div class="form-group">
-        	    <select length="15">
-        	    {% for tuple in user_info %}
-        	    <option value="{{tuple.3}}">{{tuple.1}}, {{tuple.2}}</option>
-        	    {% endfor %}
-        	    </select>
         		<p class="help-block">Select user to mail to</p>
-				<input id="password_temp" class="form-control" type="password" name="password_temp" style="width: 90%;">
-				<input id="job_id" type="hidden" name="job_id">
-			</div>
+			<input type="hidden" id="myurl" name="myurl" value='{{url}}'>
+                       {% mailfield is_guest %}
+			<p class="help-block">Message:</p>
+			<textarea class='form-control' id="user_text" name="user_text" rows=3></textarea>
+		</div>
+        </div>
+        <div class="modal-body" id='status_div'>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" name="submitCancelBtn" id="submitCancelBtn">Send</button>
+          <button type="button" class="btn btn-primary" name="sendBtn" id="sendBtn">Send</button>
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
+
+<script>
+	$(document).ready(function(){
+		
+		$('#sendBtn').on('click', function(){
+			sendmail();
+			
+		});
+		
+	});    
+
+
+{% if is_guest %}
+	function sendmail() {
+		$('#status_div').html("<font color='red'>No email has been sent, because you are a guest user</font>")
+		$('#mail_to_field').select2("val", "")
+        }
+{% else %}
+        function sendmail() {
+		var data = {'url': $('#myurl').val(),
+                            'rec' : $('#mail_to_field').val(),
+                            'text' : $('#user_text').val(),
+                            'action' : 'results'};
+		var url = '{% url 'history:sendMail' %}';
+		var self = this;
+		$.post(url, data, function(resp){
+                                                         $('#status_div').html(resp)
+					});
+		$('#mail_to_field').select2("val", "")
+        }
+{% endif %}
+</script>
   
+<!--
 <script>
 
 	var cancelDialog;
@@ -85,3 +117,4 @@
 	  	}
 	});
 </script>
+-->
