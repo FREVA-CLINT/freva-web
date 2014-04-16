@@ -91,7 +91,7 @@ def ncdump(request):
     test for ncdump
     """
     
-    file = request.POST.get('ncd_file', None)
+    file = request.POST.get('ncd_file', '')
     stdout = ''
     stderr = ''
     exception = ''
