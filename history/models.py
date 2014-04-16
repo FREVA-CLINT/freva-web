@@ -31,7 +31,7 @@ class History(models.Model):
         """
         finished, finished_no_output, broken, running, scheduled, not_scheduled = range(6)
         
-    class flag:
+    class Flag:
         """
         The possible flags are:
         public  - the data is accessible for everyone
@@ -48,10 +48,10 @@ class History(models.Model):
                       (processStatus.scheduled, 'scheduled'),
                       (processStatus.not_scheduled, 'not scheduled'),)
     
-    FLAG_CHOICES = ((flag.public, 'public'),
-                    (flag.shared, 'shared'),
-                    (flag.private, 'private'),
-                    (flag.deleted, 'deleted'),)
+    FLAG_CHOICES = ((Flag.public, 'public'),
+                    (Flag.shared, 'shared'),
+                    (Flag.private, 'private'),
+                    (Flag.deleted, 'deleted'),)
 
     #: Date and time when the process were scheduled
     timestamp       = models.DateTimeField()
@@ -68,7 +68,7 @@ class History(models.Model):
     #: Status (scheduled, running, finished, cancelled)
     status          = models.IntegerField(max_length=1, choices=STATUS_CHOICES)
     #: Flag (deleted, private, shared, public)
-    flag            = models.IntegerField(max_length=1, choices=FLAG_CHOICES, default=flag.public)
+    flag            = models.IntegerField(max_length=1, choices=FLAG_CHOICES, default=Flag.public)
 
     
     def __init__(self, *args, **kwargs):
