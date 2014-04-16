@@ -9,6 +9,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django_evaluation.monitor import _restart
 
+from subprocess import Popen, STDOUT, PIPE
+
+
 @sensitive_variables('passwd')
 @sensitive_post_parameters('password')
 def home(request):
@@ -81,3 +84,27 @@ def restart(request):
         return render(request, 'base/restart.html')
 
     return render(request, 'base/home.html')
+
+
+def ncdump(request):
+    """
+    test for ncdump
+    """
+    
+    file = request.POST.get('ncd_file', None)
+    stdout = ''
+    stderr = ''
+    exception = ''
+
+    if not file is None:
+        command = '/usr/local/www-bin/ncdump ' + file
+        try:
+            p = Popen(command, stdout=PIPE, stderr=STDOUT)
+            (stdout, stderr) = p.communicate()
+        except Exception, e:
+            exception = str(e)
+
+    return render(request, 'base/ncdump.html', {'ncd_file': file,
+                                                'ncd_out' : stdout,
+                                                'ncd_err' : stderr,
+                                                'ncd_exc' : exception})

@@ -1,0 +1,42 @@
+{% extends "_layouts/menu.html" %}
+
+{% block page_title %}Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+{% load bootstrap3 %}
+
+{% bootstrap_javascript %}
+
+
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+
+        <h1>ncdump test</h1>
+          <form action="ncdump" method="post" role="form">
+          	{% csrf_token %}		
+			
+                <div class="form-group">
+                  <label for="ncd_file">Enter ncdump extension (options, file)</label>
+		  <input name="ncd_file" class="form-control" id='ncd_file' value="{{ncd_file}}">
+                </div>
+			
+	        <button class="btn-lg btn-primary btn-block btn" id="ncdump" type="submit">
+	                        Execute
+	          </button>
+	  </form>
+
+          <h2>Output</h2>
+          {{ncd_out}}
+          <h2>Error</h2>
+          {{ncd_err}}
+          <h2>Exception</h2>
+          {{ncd_exc}}
+</div>
+</div>
+</div>
+
+
+
+{% endblock %}
