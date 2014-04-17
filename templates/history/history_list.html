@@ -45,13 +45,39 @@
 <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 
+<link type="text/css" href="select2.css" rel="stylesheet"/>
+<script type="text/javascript" src="select2.js"></script>
+
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-lg-12">
           <h2>History</h2>
-          
+
     {{ datatable }}
+
+          <div class="navbar-default" style="{margin-top:20px}">
+          <form class="navbar-form navbar-left" role="form" action="{% url 'history:history' request.user %}" method="get">
+           <label for="filter_flag" class="control-label" style="{text-align:right;}">Filter entries:</label>
+            <div class="form-group">
+               <select id="filter_flag" class="form-control" name="flag">
+                 <option value = "-1">non-deleted</option>
+                 <option value = "1">deleted</option>
+               </select>
+            </div>
+            <label for="filter_status" class="control-label" style="{text-align:right;}">Process Status:</label>
+            <div class="form-group">
+               <select id="filter_status" class="form-control" name="status">
+                 <option value = "-1">All</option>
+                 {% for status in STATUS_CHOICES %}
+                 <option value = "{{status.0}}">{{status.1}}</option>
+                 {% endfor %}
+               </select>
+            </div> <!-- end of form-group -->
+            <button type="submit" class="btn btn-default navbar-btn">Filter</button>
+          </form>
+          </div> <!-- navbar -->
+          
         </div>
 
       </div>
@@ -117,7 +143,8 @@ $(document).ready(function() {
     //    $('.tooltip').css('top',parseInt($('.tooltip').css('top')) + 0 + 'px')
     });
 
-    
+    $('#filter_flag').val("{{flag}}");
+    $('#filter_status').val("{{status}}");
 } );
 
 </script>
