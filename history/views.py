@@ -31,6 +31,7 @@ from history.utils import FileDict
 
 from django.shortcuts import get_object_or_404
 from django.core.mail import send_mail
+from django.db.models import Q
 
 import logging
 
@@ -60,22 +61,17 @@ def history(request):
 
     return render(request, 'history/history.html', {'history': history})
 
-class history_view(TemplateView):
-    template_name = 'history/history_list.html'
+# # @login_required
+# class history_view(TemplateView):
+#     def get_context_data(self, **kwargs):
+#         context = super(history_view, self).get_context_data(**kwargs)
+#         table_view = history_table()
+#         options = table_view.get_datatable_options()
+#         datatable = get_datatable_structure(reverse('historytable'), options)
+#         context['datatable'] = datatable
+#         return context
 
-    def get_context_data(self, **kwargs):
-        context = super(history_view, self).get_context_data(**kwargs)
- 
-        htable = history_table()
-        options = htable.get_datatable_options()
-        datatable = get_datatable_structure('table', options)
- 
-        context['datatable'] = datatable
-        context['user'] = self.kwargs.get('uid', None)
-        return context
- 
 
-# @login_required
 class history_table(DatatableView):
     model = History
 
@@ -97,17 +93,23 @@ class history_table(DatatableView):
                 self.request.user.has_perm('history.results_view_others')):
             user = self.request.user
 
-        # status = self.get_context_data().get('filter_status', None)
 
-        status = self.datatable_options.get('status', 0)
+        objects = History.objects.order_by('-id').filter(uid=user)
+
+        status = self.get_datatable_options().get('filter_status', -1)
+        flag = self.get_datatable_options().get('filter_flag', -1)
+
+        if status >= 0:
+            objects = objects.filter(status=status)
      
-        print 'STATUS STATUS STATUS:', status, user
+        if flag >= 0:
+            objects = objects.filter(flag=flag)
+        else:
+            objects = objects.filter(~Q(flag=History.Flag.deleted))
+     
+        return objects
 
-        # return History.objects.all()
-        if status:
-            return History.objects.order_by('-id').filter(uid=user).filter(status=status)
-
-        return History.objects.order_by('-id').filter(uid=user)
+        # return History.objects.order_by('-id').filter(uid=user)
         # MyModel.objects.filter(user=self.request.user)
 
     # def get_context_data(self, **kwargs):
@@ -207,6 +209,35 @@ class history_table(DatatableView):
                                              second_button_text,)
 
         return '%s\n%s\n%s' % (result_button, second_button, info_button)
+
+
+class history_view(TemplateView):
+    template_name = 'history/history_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(history_view, self).get_context_data(**kwargs)
+
+        flag = int(self.request.GET.get('flag', -1))
+        status = int(self.request.GET.get('status', -1))
+ 
+        htable = history_table()
+        options = htable.get_datatable_options()
+        options['filter_status']  = status
+        options['filter_flag']  = flag
+        datatable = get_datatable_structure('historytable', options)
+ 
+
+        context['datatable'] = datatable
+        context['user'] = self.kwargs.get('uid', None)
+        context['STATUS_CHOICES'] = History.STATUS_CHOICES
+        context['flag'] = flag
+        context['status'] = status
+
+        return context
+ 
+
+
+
 @login_required
 def jobinfo(request, id):
     return results(request, id, True)
