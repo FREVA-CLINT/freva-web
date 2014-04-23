@@ -91,10 +91,11 @@ def ncdump(request):
     test for ncdump
     """
     
-    file = request.POST.get('ncd_file', None)
+    file = request.POST.get('ncd_file', '')
     stdout = ''
     stderr = ''
     exception = ''
+    command = ''
 
     if not file is None:
         command = '/usr/local/www-bin/ncdump ' + file
@@ -107,4 +108,5 @@ def ncdump(request):
     return render(request, 'base/ncdump.html', {'ncd_file': file,
                                                 'ncd_out' : stdout,
                                                 'ncd_err' : stderr,
-                                                'ncd_exc' : exception})
+                                                'ncd_exc' : exception,
+                                                'ncd_cmd' : command})
