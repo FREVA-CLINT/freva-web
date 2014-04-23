@@ -69,6 +69,8 @@ AUTH_LDAP_REQUIRE_GROUP = ALLOWED_GROUP
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
     "email": "mail",
+    "last_name" : "sn",
+    "first_name" : "givenname",
 }
 
 
