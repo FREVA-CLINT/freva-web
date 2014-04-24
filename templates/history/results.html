@@ -31,8 +31,10 @@
 	 	 		{%endif%}
 	 	 		
 	 			<a class="btn btn-info mybtn-sendmail" id="sendButton_{{h_item.id}}" onClick="$('#sendmail_modal').modal('show')">Share Results</a>
-				{# Render a Bootstrap password/cancel dialog #}
-	 			{% sendmail_dialog request.build_absolute_uri request.user.isGuest %} 	 		
+				{# Render a Bootstrap sendmail dialog #}
+				{% if request.user != history_object.uid %}
+	 			{% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
+	 			{% endif %} 	 		
 	 	 	</div>
 	</div>
 	  
@@ -216,6 +218,10 @@
 			openEffect	: 'none',
 			closeEffect	: 'none'
 		});
+		
+		{% if request.user != history_object.uid %}
+		$('#sendButton_{{h_item.id}}').attr('disabled', true); 
+		{% endif %}
 		
 		{% if "configuration" in collapse %} 
 		$('#collapseConfig').collapse();
