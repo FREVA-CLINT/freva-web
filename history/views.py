@@ -260,7 +260,7 @@ def changeFlag(request):
 
     changed = 0
     
-    if not flag is None:
+    if not (flag is None or request.user.isGuest()):
         for id in ids:
             changed += 1
             try:
