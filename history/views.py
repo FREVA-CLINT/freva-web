@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
@@ -19,7 +19,7 @@ import json
 import os
 
 import evaluation_system.api.plugin_manager as pm
-from evaluation_system.model.db import _result_preview
+from evaluation_system.model.db import _result_preview, UserDB
 from evaluation_system.model.user import User
 from evaluation_system.misc import utils
 
@@ -76,7 +76,8 @@ class history_table(DatatableView):
     model = History
 
     datatable_options = {
-        'columns' : [('Row Id', 'id'),
+        'columns' : [('', '', 'checkbox'),
+                     ('Id', 'id'),
                      ('User', 'uid'),
                      ('Tool', 'tool'),
                      ('Version', 'version'),
@@ -125,6 +126,11 @@ class history_table(DatatableView):
 
     def display_status(self, instance, *args, **kwargs):
         return instance.get_status_display()
+
+    def checkbox(self, instance, *args, **kwargs):
+        id = "cb_%i"  % instance.id
+        cb = '<input type="checkbox" id="%s" class="chksel">' % id
+        return cb
 
     def info_button(self, instance, *args, **kwargs):
         # default text and format (scheduled jobs)
@@ -219,51 +225,98 @@ class history_view(TemplateView):
 
         flag = int(self.request.GET.get('flag', -1))
         status = int(self.request.GET.get('status', -1))
+        uid = kwargs.get('uid', self.request.user)
  
         htable = history_table()
         options = htable.get_datatable_options()
         options['filter_status']  = status
         options['filter_flag']  = flag
+        options['uid'] = uid
         datatable = get_datatable_structure('historytable', options)
  
 
         context['datatable'] = datatable
-        context['user'] = self.kwargs.get('uid', None)
         context['STATUS_CHOICES'] = History.STATUS_CHOICES
         context['flag'] = flag
         context['status'] = status
+        context['uid'] = uid
 
         return context
- 
 
+
+
+@login_required
+def changeFlag(request):
+    print 'Calling changeFlag'
+
+    ids = json.loads(request.POST.get('ids', ''))
+    flag = request.POST.get('flag', None)
+
+
+    print 'IDs', ids, 'Flag', flag
+
+    user = str(request.user)
+    db = UserDB(user)
+
+    changed = 0
+    
+    if not flag is None:
+        for id in ids:
+            changed += 1
+            try:
+                db.changeFlag(id, user, flag)
+            except:
+                changed -= 1
+
+    retstr = ''
+
+    if changed != len(ids):
+        retstr = 'Changed %i of %i entries' % (changed, len(ids))
+
+    return HttpResponse(retstr, content_type="text/plain")
 
 
 @login_required
 def jobinfo(request, id):
     return results(request, id, True)
 
-@login_required()
 def results(request, id, show_output_only = False):
     from history.utils import pygtailwrapper
     
     
     #get history object
     history_object = get_object_or_404(History, id=id)
+
+
+    # check if the user has the permission to access the result
+    flag = history_object.flag
+
+    if not flag == History.Flag.free:
+        if not request.user.is_authenticated():
+            raise Http404
+
+        elif not history_object.uid == request.user:
+            if request.user.isGuest():
+                if flag != History.Flag.guest:
+                    raise Http404
+
+
+            elif not (request.user.has_perm('history.results_view_others')
+                      and flag in [History.Flag.public,
+                                   History.Flag.shared,
+                                   History.Flag.guest]):
+
+                raise PermissionDenied
+
     try:
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
     except FlatPage.DoesNotExist:
         documentation = None
 
-    # check user permissions
-    if str(history_object.uid) != str(request.user.username):
-        if not request.user.has_perm('history.results_view_others'):
-            raise PermissionDenied
-    
-    
     try:
-       logging.debug(history_object.uid.email)
+        logging.debug(history_object.uid.email)
     except: 
-       pass
+        pass
 
     analyze_command = 'An error occured'
     try:
@@ -375,7 +428,7 @@ def cancelSlurmjob(request):
         return HttpResponse(json.dumps('Job already finished'), content_type="application/json")
     
     slurm_id = history_item.slurmId() 
-    #slurm_id=2151
+
     try:
 	result = ssh_call(username=request.user.username, password=request.POST['password'], command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel  %s 2>&1;exit 0"' % (slurm_id,), hostnames=settings.SCHEDULER_HOSTS)
         #logging.debug(result[1].readlines())

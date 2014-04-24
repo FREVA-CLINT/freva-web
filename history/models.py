@@ -40,6 +40,8 @@ class History(models.Model):
         deleted - the data set will be hidden
         """
         public, shared, private, deleted = range(4)
+        guest = 8
+        free = 9
         
     STATUS_CHOICES = ((processStatus.finished, 'finished'),
                       (processStatus.finished_no_output, 'finished (no output)'),
@@ -51,7 +53,10 @@ class History(models.Model):
     FLAG_CHOICES = ((Flag.public, 'public'),
                     (Flag.shared, 'shared'),
                     (Flag.private, 'private'),
-                    (Flag.deleted, 'deleted'),)
+                    (Flag.deleted, 'deleted'),
+                    (Flag.guest, 'users and guest'),
+                    (Flag.free, 'no login required'),
+                   )
 
     #: Date and time when the process were scheduled
     timestamp       = models.DateTimeField()
