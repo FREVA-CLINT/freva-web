@@ -15,7 +15,7 @@ from evaluation_system.model.slurm import slurm_file
 from evaluation_system.misc import config
 
 from plugins.utils import get_plugin_or_404, ssh_call
-from plugins.models import PluginForm, PluginWeb
+from plugins.forms import PluginForm, PluginWeb
 from history.models import History
 from django_evaluation import settings
 
