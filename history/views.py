@@ -30,7 +30,7 @@ from plugins.utils import ssh_call
 from history.utils import FileDict
 
 from django.shortcuts import get_object_or_404
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.db.models import Q
 
 import logging
@@ -486,8 +486,17 @@ def sendMail(request):
 
             to_email = [addresses[index]]
 
+            replyto = {'Reply-To' : request.user.email}
+
             try:
-                send_mail(subject=subject, message=text, from_email = from_email, recipient_list = to_email)
+                email = EmailMessage(subject,
+                                     text,
+                                     from_email,
+                                     to_email,
+                                     headers = replyto)
+
+                email.send()
+
                 status = '%sSent to %s<br>' % (status, names[index])
             except Exception, e:
                 print e
