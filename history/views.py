@@ -38,41 +38,7 @@ import logging
 
 
 
-@login_required()
-def history(request):
-    user = request.GET.get('uid', None)
-
-    if not (user and request.user.has_perm('history.results_view_others')):
-        user = request.user
-    
-    
-    try: 
-        request.GET['uid']
-        user = request.GET['uid']
-    except KeyError:
-        user = request.user
-
-        
-    try:
-        tool = request.GET['plugin']
-        history = History.objects.filter(uid=user).filter(tool=tool).order_by('-id')
-    except KeyError:
-        history = History.objects.order_by('-id').filter(uid=user)
-
-    return render(request, 'history/history.html', {'history': history})
-
-# # @login_required
-# class history_view(TemplateView):
-#     def get_context_data(self, **kwargs):
-#         context = super(history_view, self).get_context_data(**kwargs)
-#         table_view = history_table()
-#         options = table_view.get_datatable_options()
-#         datatable = get_datatable_structure(reverse('historytable'), options)
-#         context['datatable'] = datatable
-#         return context
-
-
-class history_table(DatatableView):
+class history(DatatableView):
     model = History
 
     datatable_options = {
@@ -87,9 +53,9 @@ class history_table(DatatableView):
                     ]
     } 
 
-    def get_queryset(self):
-        user = None
-        user = self.datatable_options.get('uid', None)
+    def get_queryset(self, **kwargs):
+        user = kwargs.get('uid', self.request.user)
+
         if not (user and
                 self.request.user.has_perm('history.results_view_others')):
             user = self.request.user
@@ -97,8 +63,8 @@ class history_table(DatatableView):
 
         objects = History.objects.order_by('-id').filter(uid=user)
 
-        status = self.get_datatable_options().get('filter_status', -1)
-        flag = self.get_datatable_options().get('filter_flag', -1)
+        status = int(self.request.GET.get('status', -1))
+        flag = int(self.request.GET.get('flag', -1))
 
         if status >= 0:
             objects = objects.filter(status=status)
@@ -107,7 +73,7 @@ class history_table(DatatableView):
             objects = objects.filter(flag=flag)
         else:
             objects = objects.filter(~Q(flag=History.Flag.deleted))
-     
+
         return objects
 
         # return History.objects.order_by('-id').filter(uid=user)
@@ -217,31 +183,59 @@ class history_table(DatatableView):
         return '%s\n%s\n%s' % (result_button, second_button, info_button)
 
 
-class history_view(TemplateView):
     template_name = 'history/history_list.html'
 
+    def get_datatable(self, uid=None, flag=None, status=None):
+        """
+        Customized implementation of the structure getter.  The custom argument ``type`` is managed
+        by us, and is used in the context and GET parameters to control which table we return.
+        """
+
+        datatable_options = self.get_datatable_options()
+
+        if uid is None:
+            uid = self.request.user
+
+        if status is None:
+            status = int(self.request.GET.get('status', -1))
+
+        if flag is None:
+            flag = int(self.request.GET.get('flag', -1))
+ 
+        ajax_url = (self.request.path +
+                    "?status={status}".format(status=status) +
+                    "&flag={flag}".format(flag=flag))
+ 
+        datatable = get_datatable_structure(ajax_url, datatable_options)
+ 
+        return datatable
+
+
     def get_context_data(self, **kwargs):
-        context = super(history_view, self).get_context_data(**kwargs)
+        context = super(history, self).get_context_data(**kwargs)
 
         flag = int(self.request.GET.get('flag', -1))
         status = int(self.request.GET.get('status', -1))
         uid = kwargs.get('uid', self.request.user)
  
-        htable = history_table()
-        options = htable.get_datatable_options()
-        options['filter_status']  = status
-        options['filter_flag']  = flag
-        options['uid'] = uid
-        datatable = get_datatable_structure('historytable', options)
- 
 
-        context['datatable'] = datatable
         context['STATUS_CHOICES'] = History.STATUS_CHOICES
         context['flag'] = flag
         context['status'] = status
         context['uid'] = uid
 
         return context
+
+# # @login_required
+# class history_view(TemplateView):
+#     def get_context_data(self, **kwargs):
+#         context = super(history_view, self).get_context_data(**kwargs)
+#         table_view = history_table()
+#         options = table_view.get_datatable_options()
+#         datatable = get_datatable_structure(reverse('historytable'), options)
+#         context['datatable'] = datatable
+#         return context
+
 
 
 
