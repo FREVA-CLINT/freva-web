@@ -53,8 +53,8 @@ class history(DatatableView):
                     ]
     } 
 
-    def get_queryset(self, **kwargs):
-        user = kwargs.get('uid', self.request.user)
+    def get_queryset(self):
+        user = self.kwargs.get('uid', self.request.user)
 
         if not (user and
                 self.request.user.has_perm('history.results_view_others')):
@@ -185,7 +185,8 @@ class history(DatatableView):
 
     template_name = 'history/history_list.html'
 
-    def get_datatable(self, uid=None, flag=None, status=None):
+    # def get_datatable(self, uid=None, flag=None, status=None):
+    def get_datatable(self):
         """
         Customized implementation of the structure getter.  The custom argument ``type`` is managed
         by us, and is used in the context and GET parameters to control which table we return.
@@ -193,14 +194,11 @@ class history(DatatableView):
 
         datatable_options = self.get_datatable_options()
 
-        if uid is None:
-            uid = self.request.user
+        uid = self.kwargs.get('uid', self.request.user)
 
-        if status is None:
-            status = int(self.request.GET.get('status', -1))
+        status = int(self.request.GET.get('status', -1))
 
-        if flag is None:
-            flag = int(self.request.GET.get('flag', -1))
+        flag = int(self.request.GET.get('flag', -1))
  
         ajax_url = (self.request.path +
                     "?status={status}".format(status=status) +
@@ -216,7 +214,7 @@ class history(DatatableView):
 
         flag = int(self.request.GET.get('flag', -1))
         status = int(self.request.GET.get('status', -1))
-        uid = kwargs.get('uid', self.request.user)
+        uid = self.kwargs.get('uid', self.request.user)
  
 
         context['STATUS_CHOICES'] = History.STATUS_CHOICES
@@ -241,13 +239,9 @@ class history(DatatableView):
 
 @login_required
 def changeFlag(request):
-    print 'Calling changeFlag'
-
     ids = json.loads(request.POST.get('ids', ''))
     flag = request.POST.get('flag', None)
 
-
-    print 'IDs', ids, 'Flag', flag
 
     user = str(request.user)
     db = UserDB(user)
