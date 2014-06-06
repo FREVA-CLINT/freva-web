@@ -34,7 +34,13 @@ def preview_tree(value, autoescape=None):
         :param depth: tree depth
         '''
         output = []
-        for key,value in sorted(dict_.items()):
+
+
+        print 'Sorted:\n', sorted(dict_.items(), key=lambda(k, v) : '*' + str(k) if isinstance(v,FileDict) else str(k))
+
+        sort_key = lambda(k, v) : ('d' if isinstance(v,FileDict) else 'f') + str(k)
+
+        for key,value in sorted(dict_.items(), key=sort_key):
             subdict = ''
             subdict_item = None
             if isinstance(dict_[key], FileDict):
@@ -42,8 +48,16 @@ def preview_tree(value, autoescape=None):
 
             #if child is a dictionary use recursion
             if subdict_item:
+                print key, subdict_item.values()[-1].__class__.__name__
                 subdict = _helperDict(subdict_item,depth+1)
-                if isinstance(subdict_item.values()[0],FileDict):
+
+                has_filedict = False
+
+                for v in subdict_item.values():
+                    has_filedict = has_filedict or isinstance(v, FileDict)
+
+                # if isinstance(subdict_item.values()[0],FileDict):
+                if has_filedict:
                     subdict = '\n<ul class="jqueryFileTree">\n%s\n</ul>\n' % (subdict,)
                 else:
                     subdict = '\n<div class="row" >%s</div>\n' % (subdict,)
