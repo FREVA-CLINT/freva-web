@@ -198,20 +198,28 @@
 		    placeholder: "{{STATIC_URL}}img/loading.gif",
 		    //event : "click",
 		});
-	
+
 		$('.jqueryFileTree a').on('click', function(target){
 			var list_el = $(target.target).parent();
 			list_el.toggleClass("expanded");
 			list_el.toggleClass("collapsed");
-			//activate fancybox link
-			if(list_el.hasClass('fancybox'))
-				return true;
-			
-			//toogle all child elements	
 			var next_list = $(target.target).next();	
-			$(next_list.children()).toggle();			
-			$('body,html').scroll();
-			return false; //don't activate the link
+
+                        var children = $(next_list.parent()).children();
+                        var len = children.length;
+			var ret = false;
+
+			if(list_el.hasClass('fancybox'))
+				ret = true;
+
+                        for (var i = 0; i < len; i++)
+				if(!$(children[i]).hasClass('a')) {
+					// ret = true;
+					$($(children[i]).children()).toggle();
+			}
+
+			
+			return ret; //don't activate the link
 		});	
 		
 		$(".fancybox").fancybox({

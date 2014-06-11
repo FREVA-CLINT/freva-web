@@ -40,27 +40,35 @@ def preview_tree(value, autoescape=None):
 
         sort_key = lambda(k, v) : ('d' if isinstance(v,FileDict) else 'f') + str(k)
 
+        first_dir = True
+        first_file = True
+
         for key,value in sorted(dict_.items(), key=sort_key):
             subdict = ''
             subdict_item = None
+
+            # set the matching html environment
             if isinstance(dict_[key], FileDict):
                 subdict_item = dict_[key]
+                if first_dir:
+                    output.append('<ul class="jqueryFileTree">')
+                    first_dir = False
+                    if not first_file:
+                        output.append('</div>')
+                        first_file = True
 
+            else:
+                if first_file:
+                    if not first_dir:
+                        output.append('</ul>')
+                        first_dir = True
+
+                    output.append('<div class="row" >')
+                    first_file = False
+                    
             #if child is a dictionary use recursion
             if subdict_item:
-                print key, subdict_item.values()[-1].__class__.__name__
                 subdict = _helperDict(subdict_item,depth+1)
-
-                has_filedict = False
-
-                for v in subdict_item.values():
-                    has_filedict = has_filedict or isinstance(v, FileDict)
-
-                # if isinstance(subdict_item.values()[0],FileDict):
-                if has_filedict:
-                    subdict = '\n<ul class="jqueryFileTree">\n%s\n</ul>\n' % (subdict,)
-                else:
-                    subdict = '\n<div class="row" >%s</div>\n' % (subdict,)
 
             #next lines define css-sytles of listitems
             visible = 'display:none;' if depth > 1 else ''
@@ -78,6 +86,7 @@ def preview_tree(value, autoescape=None):
                 else:
                     caption = key
 
+ 
                 output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
                                                                                          'PREVIEW_URL':settings.PREVIEW_URL,
                                                                                          'visible':visible}))
@@ -86,5 +95,12 @@ def preview_tree(value, autoescape=None):
                                                                                        visible + wordwrap,
                                                                                        escaper(force_text(key)),
                                                                                        subdict))
+        # close the html environment
+        if not first_file:
+            output.append('</div>')
+
+        if not first_dir:
+            output.append('</ul>')
+
         return '\n'.join(output)
     return mark_safe(_helperDict(value))
