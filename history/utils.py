@@ -40,7 +40,7 @@ class FileDict(dict):
             self[split_path[0]] = value
         else:
             fdict = self.get(split_path[0], None)
-            
+
             if not isinstance(fdict, FileDict):
                 fdict = FileDict()
                      
@@ -88,6 +88,23 @@ class FileDict(dict):
             else:
                 fdcopy[k] = fdict
         return fdcopy
+
+    def uncompress_single_files(self):
+        """
+        Single files will end as one entry containing the whole path.
+        This routing splits up this path. Browsing will be more convenient.
+        """
+        for k in self.keys():
+            entry = self[k]
+            if isinstance(entry, FileDict):
+                entry.uncompress_single_files()
+            else:
+                (head, tail) = os.path.split(k)
+                if tail and head:
+                    self.pop(k)
+                    subdict = FileDict()
+                    subdict.add_file(tail, entry)
+                    self[head]=subdict
     
     def get_list(self):
         """

@@ -343,7 +343,6 @@ def results(request, id, show_output_only = False):
     # init result object
     result_object = -1
     file_tree = None
-    file_list = None
 
     collapse = []
     
@@ -366,9 +365,8 @@ def results(request, id, show_output_only = False):
             fd.add_file(r.output_file, result_info)
     
         file_tree = fd.compressed_copy()
+        file_tree.uncompress_single_files()
         
-        file_list = file_tree.get_list()
-
         collapse.append('results')
 
     else:
