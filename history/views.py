@@ -281,7 +281,9 @@ def results(request, id, show_output_only = False):
 
     if not flag == History.Flag.free:
         if not request.user.is_authenticated():
-            raise PermissionDenied
+            from django.contrib.auth.views import redirect_to_login
+            path = request.get_full_path()
+            return redirect_to_login(path)
 
         elif not history_object.uid == request.user:
             if request.user.isGuest():
