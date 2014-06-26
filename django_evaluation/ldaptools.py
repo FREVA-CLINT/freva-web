@@ -13,7 +13,7 @@ class miklip_user_information:
     """
     
     def __init__(self):
-        self.ldap_keys = ['sn', 'givenName', 'uid', 'mail']
+        self.ldap_keys = ['sn', 'givenName', 'uid', 'mail', 'mailForwardingAddress']
         self.miklip_user = []
         self.user_info = []
         self.user_info_dict = {}
@@ -81,8 +81,15 @@ class miklip_user_information:
                               filterstr='uid=%s' % uid)
             
             mail = res[0][1].get('mail', None)
-
-            if mail:
+            forward = res[0][1].get('mailForwardingAddress', None)
+            
+            if forward:
+                user_info.append((uid,
+                                  ' '.join(res[0][1]['sn']),
+                                  ' '.join(res[0][1].get('givenName', '')),
+                                  forward[-1],))
+                
+            elif mail:
                 user_info.append((uid,
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
