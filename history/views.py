@@ -281,12 +281,12 @@ def results(request, id, show_output_only = False):
 
     if not flag == History.Flag.free:
         if not request.user.is_authenticated():
-            raise Http404
+            raise PermissionDenied
 
         elif not history_object.uid == request.user:
             if request.user.isGuest():
                 if flag != History.Flag.guest:
-                    raise Http404
+                    raise PermissionDenied
 
 
             elif not (request.user.has_perm('history.results_view_others')
