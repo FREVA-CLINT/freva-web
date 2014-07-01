@@ -377,6 +377,15 @@ def results(request, id, show_output_only = False):
     if show_output_only:
         collapse = ['output']
         
+        
+    # repository stuff
+    repos = history_object.version_details.repository
+    
+    tool_repos = repos.split(';')[0]
+    api_repos= repos.split(';')[1]
+    tool_version = history_object.version_details.internal_version_tool
+    api_version = history_object.version_details.internal_version_api
+        
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
                                                     'file_content' : file_content,
@@ -384,7 +393,11 @@ def results(request, id, show_output_only = False):
                                                     'PREVIEW_URL' : settings.PREVIEW_URL,
                                                     'file_list' : file_tree ,
                                                     'documentation' : documentation,
-                                                    'analyze_command' : analyze_command})
+                                                    'analyze_command' : analyze_command,
+                                                    'api_repos' : api_repos,
+                                                    'tool_repos' : tool_repos,
+                                                    'api_version' : api_version,
+                                                    'tool_version' : tool_version,})
         
         
 @login_required()
