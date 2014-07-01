@@ -57,27 +57,36 @@
 		 	 			<td>{{value}}</td>
 		 	 		</tr>
 		 	 	{% endfor %}
+		 	 	<tr class='additional' style='display:none;'>
+		 	 	<th colspan="2">Additional Information</th>
+		 	 	</tr>
+                <tr class='additional' style='display:none;'>
+                <td>Analyze command:</td>
+                <td>{{analyze_command}}</td>
+                </tr>
+                <tr class='additional' style='display:none;'>
+	 	 	    <td>Tool repository:</td>
+	 	 	    <td>{{tool_repos}}</td> 
+	 	 	    <tr class='additional' style='display:none;'>
+                <td>Tool internal version:</td>
+                <td>{{tool_version}}</td>
+                </tr>
+                <tr class='additional' style='display:none;'>
+                <td>System repository:</td>
+                <td>{{api_repos}}</td>
+                </tr> 
+                <tr class='additional' style='display:none;'>
+                <td>System internal version:</td>
+                <td>{{api_version}}</td>
+                </tr>
 		 	 	</table>
+           </div> <!-- col-md-12 --> 
 		 	<div class="col-md-3">
-	 	 	<a class="btn btn-info" onClick="$('#additional').toggle()">Additional information</a>
+	 	 	<a class="btn btn-info" onClick="$('.additional').toggle()">Additional information</a>
 	 	 	</div>
 		 	<div class="col-md-3">
             <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
             </div>
-            <table class="table col-md-12" id="config_table" style="margin-top:10px;" style="display:none" id="additional">
-            <tr>
-            <td>Analyze command:</td>
-	 	 	<td>{{analyze_command}}</td>
-	 	 	<tr>
-	 	 	   <td>Tool repository: {{tool_repos}}</td> 
-               <td>Tool internal version: {{tool_version}}</td>
-            </tr>
-            <tr> 
-               <td>System repository: {{api_repos}}</td> 
-               <td>System internal version: {{api_version}}</td>
-            </tr>
-            </table>
-            </div> <!-- col-md-12 --> 
 	 	 	
       </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
