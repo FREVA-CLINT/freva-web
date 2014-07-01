@@ -58,14 +58,12 @@
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	</table>
-	 	 	</div>
 	 	 	<a class="btn btn-info" onClick="$('#additional').toggle()">Additional information</a>
             <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
-            <div class="col-md-12" style="visible:hidden" id="additional">
-            <table class="table col-md-12" id="config_table" style="margin-top:10px;">
+            <table class="table col-md-12" id="config_table" style="margin-top:10px;" style="visible:hidden" id="additional">
             <tr>
             <td>Analyze command:</td>
-	 	 	<td>{{analyze_command | escapejs}}</td>
+	 	 	<td>{{analyze_command}}</td>
 	 	 	<tr>
 	 	 	   <td>Tool repository: {{tool_repos}}</td> 
                <td>Tool internal version: {{tool_version}}</td>
