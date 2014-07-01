@@ -58,9 +58,13 @@
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	</table>
+		 	<div class="col-md-3">
 	 	 	<a class="btn btn-info" onClick="$('#additional').toggle()">Additional information</a>
+	 	 	</div>
+		 	<div class="col-md-3">
             <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
-            <table class="table col-md-12" id="config_table" style="margin-top:10px;" style="visible:hidden" id="additional">
+            </div>
+            <table class="table col-md-12" id="config_table" style="margin-top:10px;" style="display:none" id="additional">
             <tr>
             <td>Analyze command:</td>
 	 	 	<td>{{analyze_command}}</td>
@@ -69,10 +73,11 @@
                <td>Tool internal version: {{tool_version}}</td>
             </tr>
             <tr> 
-               <p>System repository: {{api_repos}}</p> 
-               <p>System internal version: {{api_version}}</p>
+               <td>System repository: {{api_repos}}</td> 
+               <td>System internal version: {{api_version}}</td>
             </tr>
-            </table> 
+            </table>
+            </div> <!-- col-md-12 --> 
 	 	 	
       </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
