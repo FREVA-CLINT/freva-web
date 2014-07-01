@@ -58,8 +58,21 @@
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	</table>
-	 	 		<a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
 	 	 	</div>
+	 	 	<a class="btn btn-info" onClick="$('#additional').toggle()">
+            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>            
+	 	 	<div class="row" id="additional">
+	 	 	   <p>Analyze command:<br>{{analyze_command | escapejs}}</p>
+	 	 	   <div class="col-md-6">
+	 	 	   <p>Tool repository: {{tool_repos}}</p> 
+               <p>Tool internal version: {{tool_version}}</p> 
+	 	 	   </div>
+               <div class="col-md-6">
+               <p>System repository: {{api_repos}}</p> 
+               <p>System internal version: {{api_version}}</p> 
+               </div>
+	 	 	</div>
+	 	 	
       </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
   </div><!-- panel panel-default-->
