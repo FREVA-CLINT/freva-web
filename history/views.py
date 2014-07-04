@@ -431,11 +431,11 @@ def cancelSlurmjob(request):
     slurm_id = history_item.slurmId() 
 
     try:
-	result = ssh_call(username=request.user.username, password=request.POST['password'], command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel  %s 2>&1;exit 0"' % (slurm_id,), hostnames=settings.SCHEDULER_HOSTS)
+        result = ssh_call(username=request.user.username, password=request.POST['password'], command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel  %s 2>&1;exit 0"' % (slurm_id,), hostnames=settings.SCHEDULER_HOSTS)
         #logging.debug(result[1].readlines())
-	history_item.status=2
-	history_item.save()
-	return HttpResponse(json.dumps(result[2].readlines()), content_type="application/json")
+        history_item.status=2
+        history_item.save()
+        return HttpResponse(json.dumps(result[2].readlines()), content_type="application/json")
     except AuthenticationException:
         return HttpResponse(json.dumps('wrong password'), content_type="application/json")    
     
