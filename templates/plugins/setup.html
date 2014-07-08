@@ -140,7 +140,9 @@
   </div><!-- /.modal -->
 {% endif %}
 
+{% if not restricted_user %} <!-- offer warnings and errors only operational -->
 {% error_warning_dialog tool.name %}
+{% endif %}
 
 <script>
 
@@ -238,6 +240,9 @@ $(document).ready(function(){
     $('#runButton').on('click', function(e){
     	$('#guestModal').modal({show : true, backdrop : 'static'});
     }); 
+    {% elif error_message %}
+    $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+    $('#okBtn').removeAttr('disabled');
     {% else %}
     $('#runButton').on('click', function(e){
     	$('#myModalPw').modal('show');

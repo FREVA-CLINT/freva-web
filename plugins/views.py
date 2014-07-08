@@ -62,6 +62,7 @@ def setup(request, plugin_name, row_id = None):
     plugin = get_plugin_or_404(plugin_name, user=user)
     plugin_web = PluginWeb(plugin)
     
+    errormsg = pm.getErrorWarning(plugin_name)[0]
         
     if request.method == 'POST':
         form = PluginForm(request.POST, tool=plugin, uid=user.getName())
@@ -134,8 +135,11 @@ def setup(request, plugin_name, row_id = None):
         form = PluginForm(initial=config_dict,tool=plugin, uid=user.getName())
     
     
-    return render(request, 'plugins/setup.html', {'tool' : plugin_web, 'form': form,
-                                                  'user_home': home_dir, 'restricted_user':not user_can_submit})
+    return render(request, 'plugins/setup.html', {'tool' : plugin_web,
+                                                  'form': form,
+                                                  'user_home': home_dir,
+                                                  'error_message': errormsg,
+                                                  'restricted_user':not user_can_submit})
   
 @login_required()  
 def dirlist(request):

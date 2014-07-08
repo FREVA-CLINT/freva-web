@@ -21,7 +21,11 @@
 <script>
 	$(document).ready(function(){
 		
-		$('#myModalInfo').modal('{{show}}')
+		$('#myModalInfo').modal('{{show}}');
+		$('#okBtn').on('click', function(){
+			$('#myModalInfo').modal('hide');
+		});
+	
 		
 	});    
 </script>
