@@ -3,6 +3,7 @@
 {% block page_title %}{{tool.name}} setup - Evaluation System{% endblock %}
 {% block page_class %}home-page{% endblock %}
 {% block content %}
+{% load infotag %}
 
 <script src="{{ STATIC_URL }}js/solr_search.js?{% now "U" %}"></script>
 
@@ -103,6 +104,8 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
  {% else %}	
+ 
+ 
 	
   <!-- Modal Passwort Dialog-->
   <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -136,6 +139,8 @@
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
 {% endif %}
+
+{% error_warning_dialog tool.name %}
 
 <script>
 
