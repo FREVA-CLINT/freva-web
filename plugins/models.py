@@ -9,7 +9,7 @@ class Version(models.Model):
     #: Name of the tool
     tool = models.CharField(max_length=50)
     #: Version of the tool
-    version = models.CharField(max_length=10)
+    version = models.CharField(max_length=20)
     #: The tools internal version of a code versioning system 
     internal_version_tool = models.CharField(max_length=40)
     #: The evaluation system's internal version 
