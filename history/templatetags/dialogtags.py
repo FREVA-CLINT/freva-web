@@ -4,7 +4,8 @@ from django.utils.safestring import mark_safe
 from django_evaluation import settings
 
 import json
-
+import re
+#
 register = template.Library()
 
 @register.inclusion_tag('history/templatetags/dialog.html')
@@ -14,6 +15,26 @@ def cancel_dialog():
 @register.inclusion_tag('history/templatetags/sendmail_dialog.html') #, takes_context = True)
 def sendmail_dialog(url, is_guest):
     return {'url' : url, 'is_guest' : is_guest}
+
+@register.inclusion_tag('history/templatetags/caption_dialog.html') #, takes_context = True)
+def caption_dialog(current, default, toolname, isguest):
+    
+    current = current.strip().captialize()
+    default = default.strip().captialize()
+    toolname = toolname.strip().captialize()
+    
+    pattern = '\(' + toolname + '\)$'
+    
+    if re.search(pattern, current) is None:
+        current += '(' + toolname + ')'
+
+    if re.search(pattern, default) is None:
+        current += '(' + toolname + ')'
+    
+    return {'current_caption' : current,
+            'default_caption' : default,
+            'toolname' : toolname,
+            'isguest' : isguest,}
 
 @register.inclusion_tag('history/templatetags/mailfield.html')
 def mailfield(is_guest):
