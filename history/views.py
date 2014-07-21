@@ -393,6 +393,7 @@ def results(request, id, show_output_only = False):
         
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
+                                                    'result_caption' : result_object.tool,
                                                     'file_content' : file_content,
                                                     'collapse' : collapse,
                                                     'PREVIEW_URL' : settings.PREVIEW_URL,
