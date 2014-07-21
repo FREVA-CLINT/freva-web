@@ -15,5 +15,6 @@ urlpatterns = patterns('history.views',
     url(r'^(?P<id>\w+)/tail-file/$', 'tailFile', name='tailFile'),
     url(r'^change-flag/$', 'changeFlag', name='changeFlag'),
     url(r'^cancel-slurmjob/$', 'cancelSlurmjob', name='cancelSlurmjob'),
+    url(r'^generate-caption/$', 'generate_caption', name='generate-caption'),
     url(r'^sendmail/$', 'sendMail', name='sendMail'),
 )
