@@ -393,7 +393,7 @@ def results(request, id, show_output_only = False):
         
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
-                                                    'result_caption' : result_object.tool,
+                                                    'result_caption' : history_object.tool,
                                                     'file_content' : file_content,
                                                     'collapse' : collapse,
                                                     'PREVIEW_URL' : settings.PREVIEW_URL,
@@ -425,6 +425,25 @@ def tailFile(request, id):
     
     return HttpResponse(json.dumps(new_lines), content_type="application/json")
     
+@login_required()
+def generate_caption(request): 
+    import re
+
+    caption = request.POST['caption'].strip().capitalize() 
+    toolname = request.POST['tool'].strip().capitalize() 
+ 
+    retval = toolname 
+ 
+    if caption != toolname: 
+        pattern = '\(' + toolname + '\)$' 
+        if re.search(pattern, caption, re.IGNORECASE) is None: 
+            retval = caption + ' (' + toolname + ')' 
+        else: 
+            retval = caption 
+ 
+ 
+    return HttpResponse(json.dumps(retval), content_type="application/json")    
+
 @sensitive_post_parameters('password')
 @login_required()
 def cancelSlurmjob(request):
