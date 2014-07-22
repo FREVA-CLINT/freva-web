@@ -187,4 +187,26 @@ class ResultTag(models.Model):
     #: path to the output file
     text           = models.TextField()
     
+class HistoryTag(models.Model):
+    """
+    This class belongs to a table storing results.
+    The output files of process will be recorded here.
+    """
+
+    class tagType:
+        caption = range(1)    
+    
+    
+    TYPE_CHOICES = ((tagType.caption, 'Caption'),)
+    
+    #: result id
+    history_id      = models.ForeignKey(History)
+    #: specification of a file type 
+    type            = models.IntegerField(max_length=2, choices = TYPE_CHOICES)
+    #: path to the output file
+    text            = models.TextField()
+    #: the user, who tagged the history entry
+    uid             = models.ForeignKey(User, to_field='username', db_column='uid', null=True, default=None)
+    
+
 
