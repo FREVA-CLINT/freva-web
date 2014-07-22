@@ -27,7 +27,7 @@
 		
 		$('#applyBtn').on('click', function(){
 			var data = {'caption':$('#caption_field').val(),
-					'tool': '{{toolname}}' };
+					'tool': '{{history_object.tool}}' };
 			var url = '{% url 'history:generate-caption' history_object.id 1%}';
 			$.post(url, data, function(resp){
 				$('#result_caption').text(resp);

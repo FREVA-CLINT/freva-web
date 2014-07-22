@@ -395,21 +395,38 @@ def results(request, id, show_output_only = False):
     
     
     # do caption related things
-    historytag_objects = HistoryTag.objects.get(id=id)
-    caption_objects = historytag_objects.get(type=HistoryTag.tagType.caption) 
-    
-    # check for a user defined caption
-    usercaption_object = caption_objects.get(uid=request.user)
-    defaultcaption_object = caption_objects.get(uid=None)
-    
+    caption_objects = None
+    defaultcaption_object = None
+    usercaption_object = None
     result_caption = history_object.tool
     default_caption = history_object.tool
+
+    try:
+        historytag_objects = HistoryTag.objects.filter(history_id_id=id)
+        caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
+    except HistoryTag.DoesNotExist:
+        pass
+    
+    
+    # check for a user defined caption
+    if caption_objects:
+        try:
+            usercaption_object = caption_objects.filter(uid=request.user)
+            result_caption = history_object.tool
+        except:
+            pass
+        try:
+            defaultcaption_object = caption_objects.filter(uid=None)
+            default_caption = history_object.tool
+        except:
+            pass
+    
     
     if usercaption_object:
-        result_caption = usercaption_object.text
+        result_caption = usercaption_object.order_by('-id')[0].text
 
     if defaultcaption_object:
-        default_caption = defaultcaption_object.text
+        default_caption = defaultcaption_object.order_by('-id')[0].text
         
         
     return render(request, 'history/results.html', {'history_object': history_object,
@@ -467,12 +484,19 @@ def generate_caption(request, id, type):
         else: 
             retval = caption 
  
- 
+    # change type to integer
+    type = int(type)
+
     if not request.user.isGuest():
+        db = UserDB(request.user)
+
+        caption_type = HistoryTag.tagType.caption
+        user = str(request.user)
+
         if type == 2 and History.objects.get(id=id).uid == request.user:
-            UserDB.addHistoryTag(id, HistoryTag.tagType.caption)
+            db.addHistoryTag(id, caption_type, retval)
         elif type == 1:
-            UserDB.addHistoryTag(id, HistoryTag.tagType.caption, uid=request.user)
+            db.addHistoryTag(id, caption_type, retval, user)
         else:
             retval = '*' + retval
  
