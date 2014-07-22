@@ -175,7 +175,7 @@ class ResultTag(models.Model):
     """
 
     class flagType:
-        caption = range(1)    
+        [caption,] = range(1)    
     
     
     TYPE_CHOICES = ((flagType.caption, 'Caption'),)
@@ -194,7 +194,7 @@ class HistoryTag(models.Model):
     """
 
     class tagType:
-        caption = range(1)    
+        [caption,] = range(1)    
     
     
     TYPE_CHOICES = ((tagType.caption, 'Caption'),)
