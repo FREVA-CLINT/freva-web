@@ -37,7 +37,7 @@
 	 			{% endif %} 	 		
 	 			<a class="btn btn-info mybtn-caption" id="sendButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
-	 			{% caption_dialog result_caption history_object.tool history_object.tool request.user.isGuest %}
+	 			{% caption_dialog result_caption default_caption history_object.tool request.user.isGuest %}
 		 	 	</div>
 	</div>
 	  

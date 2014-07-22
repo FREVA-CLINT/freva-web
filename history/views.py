@@ -34,6 +34,8 @@ from django.core.mail import EmailMessage
 from django.db.models import Q
 
 import logging
+from history.models import HistoryTag
+import evaluation_system
 
 
 
@@ -390,10 +392,30 @@ def results(request, id, show_output_only = False):
     api_repos= repos.split(';')[1]
     tool_version = history_object.version_details.internal_version_tool
     api_version = history_object.version_details.internal_version_api
+    
+    
+    # do caption related things
+    historytag_objects = HistoryTag.objects.get(id=id)
+    caption_objects = historytag_objects.get(type=HistoryTag.tagType.caption) 
+    
+    # check for a user defined caption
+    usercaption_object = caption_objects.get(uid=request.user)
+    defaultcaption_object = caption_objects.get(uid=None)
+    
+    result_caption = history_object.tool
+    default_caption = history_object.tool
+    
+    if usercaption_object:
+        result_caption = usercaption_object.text
+
+    if defaultcaption_object:
+        default_caption = defaultcaption_object.text
+        
         
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
-                                                    'result_caption' : history_object.tool,
+                                                    'result_caption' : result_caption,
+                                                    'default_caption' : default_caption, 
                                                     'file_content' : file_content,
                                                     'collapse' : collapse,
                                                     'PREVIEW_URL' : settings.PREVIEW_URL,
@@ -426,7 +448,7 @@ def tailFile(request, id):
     return HttpResponse(json.dumps(new_lines), content_type="application/json")
     
 @login_required()
-def generate_caption(request): 
+def generate_caption(request, id, type): 
     import re
 
     caption = request.POST['caption'].strip().capitalize() 
@@ -435,12 +457,27 @@ def generate_caption(request):
     retval = toolname 
  
     if caption != toolname: 
+        pattern = "^\*"
+        if re.search(pattern, caption, re.IGNORECASE):
+            caption = caption[1:]
+        
         pattern = '\(' + toolname + '\)$' 
         if re.search(pattern, caption, re.IGNORECASE) is None: 
             retval = caption + ' (' + toolname + ')' 
         else: 
             retval = caption 
  
+ 
+    if not request.user.isGuest():
+        if type == 2 and History.objects.get(id=id).uid == request.user:
+            UserDB.addHistoryTag(id, HistoryTag.tagType.caption)
+        elif type == 1:
+            UserDB.addHistoryTag(id, HistoryTag.tagType.caption, uid=request.user)
+        else:
+            retval = '*' + retval
+ 
+    else:
+        retval = '*' + retval
  
     return HttpResponse(json.dumps(retval), content_type="application/json")    
 
