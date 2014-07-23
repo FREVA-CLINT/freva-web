@@ -11,6 +11,7 @@
         <div class="modal-body" id="browsefield">
         	<div class="form-group">
         		<p class="help-block">Default caption: {{default_caption}}</p>
+                <button type="button" class="btn btn-info" name="defaultBtn" id="defaultBtn">Use</button>
 				<input id="caption_field" class="form-control" name="caption_field" value="{{current_caption}}" style="width: 90%;">
 				<input id="job_id" type="hidden" name="job_id">
 			</div>
@@ -24,6 +25,11 @@
   
 <script>
 	$(document).ready(function(){
+
+        $('#defaultBtn').on('click', function(){
+            $('#caption_field').val('{{default_caption}}');
+            });            
+        });
 		
 		$('#applyBtn').on('click', function(){
 			var data = {'caption':$('#caption_field').val(),
