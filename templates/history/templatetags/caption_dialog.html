@@ -10,11 +10,17 @@
         </div>
         <div class="modal-body" id="browsefield">
         	<div class="form-group">
-        		<p class="help-block">Default caption: {{default_caption}}</p>
-                <button type="button" class="btn btn-info" name="defaultBtn" id="defaultBtn">Use</button>
+        		<p class="help-block"><a id='defaultBtn' href='#'>Default caption:</a> <span  id='defaultCaption'>{{default_caption}}</span></p>
 				<input id="caption_field" class="form-control" name="caption_field" value="{{current_caption}}" style="width: 90%;">
 				<input id="job_id" type="hidden" name="job_id">
 			</div>
+{% ifequal user history_object.uid %}
+		<div class="checkbox">
+		    <label>
+		      <input type="checkbox" id='chkDefault'>Use as default caption</input>
+		    </label>
+		  </div>
+{% endifequal %}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" name="applyBtn" id="applyBtn">Set Caption</button>
@@ -26,18 +32,31 @@
 <script>
 	$(document).ready(function(){
 
-        $('#defaultBtn').on('click', function(){
-            $('#caption_field').val('{{default_caption}}');
-            });            
-        });
+		$('#defaultBtn').on('click', function(){
+        	    $('#caption_field').val($('#defaultCaption').text());
+           	 });            
 		
 		$('#applyBtn').on('click', function(){
+			var kind = 1;
+
 			var data = {'caption':$('#caption_field').val(),
 					'tool': '{{history_object.tool}}' };
-			var url = '{% url 'history:generate-caption' history_object.id 1%}';
+			var url = '{% url 'history:generate-caption' history_object.id '__KIND__'%}';
+
+{% ifequal user history_object.uid %}
+			if($('#chkDefault').is(':checked')) {
+				kind = 2;
+			}
+{% endifequal %}
+
+			url = url.replace(/__KIND__/g, kind)
+
 			$.post(url, data, function(resp){
 				$('#result_caption').text(resp);
 				document.title = resp;
+				if(kind == 2){
+					 $('#defaultCaption').text(resp);
+				}
 			});
 
 			$('#caption_modal').modal('hide');
