@@ -495,16 +495,17 @@ def generate_caption(request, id, type):
 
         if type == 2 and History.objects.get(id=id).uid == request.user:
             db.addHistoryTag(id, caption_type, retval)
-        elif type == 1:
+        if type in [1,2]:
             # try to find an existing caption
             tag_id = None
             try:
-                tag_id = ResultTag.objects.filter(result_id_id=id).order_by('-id')[0].id
+                tag_obj = HistoryTag.objects.filter(history_id_id=id)
+                tag_id = tag_obj.filter(uid=user).order_by('-id')[0].id
             except:
                 pass
             
             if tag_id:
-                db.editHistoryTag(tag_id, caption_type, retval, user)
+                db.updateHistoryTag(tag_id, caption_type, retval, user)
             else:
                 db.addHistoryTag(id, caption_type, retval, user)
         else:

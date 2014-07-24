@@ -18,12 +18,12 @@ def sendmail_dialog(url, is_guest):
 
 
 @register.inclusion_tag('history/templatetags/caption_dialog.html') #, takes_context = True)
-def caption_dialog(current, default, history_object, isguest):
+def caption_dialog(current, default, history_object, user):
     
     return {'current_caption' : current,
             'default_caption' : default,
             'history_object' : history_object,
-            'isguest' : isguest,}
+            'user' : user,}
 
 @register.inclusion_tag('history/templatetags/mailfield.html')
 def mailfield(is_guest):

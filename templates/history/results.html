@@ -13,7 +13,7 @@
       <!-- Example row of columns -->
       <div class="row">
 	      <div class="col-md-12">
-	      	<h1 id='result_caption'>{{ result_caption |capfirst }}</h1>
+	      	<h1 id='result_caption'>{{ result_caption |title }}</h1>
 	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' history_object.uid %}">{{history_object.uid}}</a></p>
 	      </div>
       </div>
@@ -37,7 +37,7 @@
 	 			{% endif %} 	 		
 	 			<a class="btn btn-info mybtn-caption" id="sendButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
-	 			{% caption_dialog result_caption default_caption history_object request.user.isGuest %}
+	 			{% caption_dialog result_caption default_caption history_object request.user %}
 		 	 	</div>
 	</div>
 	  
