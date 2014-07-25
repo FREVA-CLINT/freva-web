@@ -70,6 +70,12 @@ def setup(request, plugin_name, row_id = None):
             # read the configuration
             config_dict = dict(form.data)
 
+            # read the caption
+            caption = config_dict[form.caption_field_name].strip()
+            
+            if not caption:
+                caption = None
+            
             # empty values in the form will not be added to the dictionary.
             # as a consequence we can not submit intentionally blank fields.
             tmp_dict = dict()
@@ -80,10 +86,13 @@ def setup(request, plugin_name, row_id = None):
             config_dict = tmp_dict
                     
             config_dict = tmp_dict
+            
+            
             del config_dict['password_hidden'], config_dict['csrfmiddlewaretoken']
+            del config_dict[form.caption_field_name]
             logging.debug(config_dict)
 
-            # start the scheduler vie sbatch
+            # start the scheduler via sbatch
             username = request.user.username
             password = request.POST['password_hidden']
             hostnames = list(settings.SCHEDULER_HOSTS)
@@ -91,9 +100,11 @@ def setup(request, plugin_name, row_id = None):
             # compose the plugin command
             # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
             load_module = "source /client/etc/profile.miklip > /dev/null;module load evaluation_system > /dev/null;"
+            
             command = plugin.composeCommand(config_dict,
                                             batchmode='web',
-                                            email=user.getEmail())
+                                            email=user.getEmail(),
+                                            caption=caption)
 
             # create the directories when necessary
             stdout = ssh_call(username=username,

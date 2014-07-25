@@ -90,6 +90,28 @@ class PluginForm(forms.Form):
         # set the password field
         self.fields['password_hidden'] = PasswordField(uid=uid)
         
+        # the caption field should not have a fixed name
+        self.caption_field_name = None
+        
+        standard_names = ['caption', 'result_caption', 'web_caption', 'my_caption']
+        
+        criticalcaption = True
+        captionindex = 0
+        
+        # modify the caption name if necessary
+        while criticalcaption:
+            # go through the list of standard names
+            if captionindex < len(standard_names):
+                self.caption_field_name = standard_names[captionindex]
+                captionindex += 1
+                
+            else:
+                self.caption_field_name = '_' + self.caption_field_name    
+            
+            # check whether the caption name appear in the list of parameters    
+            criticalcaption = self.caption_field_name in tool.__parameters__
+             
+        
         for key in tool.__parameters__:
             
             param = tool.__parameters__.get_parameter(key)
@@ -107,8 +129,8 @@ class PluginForm(forms.Form):
             elif isinstance(param, parameters.Range):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str, widget=PluginRangeFieldWidget({}))
             elif isinstance(param, parameters.SelectField):
-		self.fields[key] = forms.CharField(required=required, help_text=help_str, widget=PluginSelectFieldWidget(options=param.options))
-	    elif isinstance(param, parameters.SolrField):
+                self.fields[key] = forms.CharField(required=required, help_text=help_str, widget=PluginSelectFieldWidget(options=param.options))
+            elif isinstance(param, parameters.SolrField):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str, 
                                                    widget=SolrFieldWidget(facet=param.facet,group=param.group, 
                                                                           multiple=param.multiple, predefined_facets=param.predefined_facets))
@@ -119,7 +141,12 @@ class PluginForm(forms.Form):
             else:
                 self.fields[key] = forms.CharField(required=required, help_text=help_str)
             #s.write(self.displayInput(key, config_dict[key], tool.__parameters__.get_parameter(key)))
-        
+       
+        # Add the caption field, now 
+        help_str = 'An additional caption to be displayed with the results.'
+        if self.caption_field_name != standard_names[0]:
+            help_str + " Other tools name this field " + standard_names[0] + ", this might be confusing."
+        self.fields[self.caption_field_name] = forms.CharField(required=False, help_text=help_str)
 
         
         
