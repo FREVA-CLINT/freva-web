@@ -428,6 +428,9 @@ def results(request, id, show_output_only = False):
     if defaultcaption_object:
         default_caption = defaultcaption_object.order_by('-id')[0].text
         
+        if not usercaption_object:
+            result_caption = default_caption
+        
         
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
@@ -466,24 +469,11 @@ def tailFile(request, id):
     
 @login_required()
 def generate_caption(request, id, type): 
-    import re
-
     caption = request.POST['caption'].strip().capitalize() 
     toolname = request.POST['tool'].strip().capitalize() 
  
-    retval = toolname 
- 
-    if caption != toolname: 
-        pattern = "^\*"
-        if re.search(pattern, caption, re.IGNORECASE):
-            caption = caption[1:]
-        
-        pattern = '\(' + toolname + '\)$' 
-        if re.search(pattern, caption, re.IGNORECASE) is None: 
-            retval = caption + ' (' + toolname + ')' 
-        else: 
-            retval = caption 
- 
+    retval = pm.generateCaption(caption, toolname)
+
     # change type to integer
     type = int(type)
 
