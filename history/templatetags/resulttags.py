@@ -104,3 +104,18 @@ def preview_tree(value, autoescape=None):
 
         return '\n'.join(output)
     return mark_safe(_helperDict(value))
+
+@register.inclusion_tag('history/templatetags/comment.html')
+def comment_field(user, history_id, historytag_entry=None):
+    htag = None
+    class_id = 'new'
+    
+    if historytag_entry:
+        htag = historytag_entry
+        class_id = str(htag.id)
+        
+    return {'user' : user,
+            'class_id' : class_id,
+            'history_id' : history_id,
+            'htag' : htag,}
+

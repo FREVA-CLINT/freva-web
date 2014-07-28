@@ -9,7 +9,7 @@
         {% else %}
             <h4>Comment by <alert>{{htag.uid}}</alert>:</h4>
         {% endif %}
-        <p class='class_{{class_id}}' id='text_{{class_id}}'></p>
+        <p class='class_{{class_id}}' id='text_{{class_id}}'>{{htag.text}}</p>
     {% endifequal %}
 </div>
     <div class='class_{{class_id}}' style='display:none'>
