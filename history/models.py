@@ -194,10 +194,13 @@ class HistoryTag(models.Model):
     """
 
     class tagType:
-        [caption,] = range(1)    
+        [caption,note_public,note_private,note_deleted] = range(4)    
     
     
-    TYPE_CHOICES = ((tagType.caption, 'Caption'),)
+    TYPE_CHOICES = ((tagType.caption, 'Caption'),
+                    (tagType.note_public, 'Public note'),
+                    (tagType.note_private, 'Private note'),
+                    (tagType.note_deleted, 'Deleted note'),)
     
     #: result id
     history_id      = models.ForeignKey(History)
