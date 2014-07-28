@@ -71,7 +71,7 @@ def setup(request, plugin_name, row_id = None):
             config_dict = dict(form.data)
 
             # read the caption
-            caption = config_dict[form.caption_field_name].strip()
+            caption = config_dict[form.caption_field_name][0].strip()
             
             if not caption:
                 caption = None
@@ -89,7 +89,11 @@ def setup(request, plugin_name, row_id = None):
             
             
             del config_dict['password_hidden'], config_dict['csrfmiddlewaretoken']
-            del config_dict[form.caption_field_name]
+            try:
+                del config_dict[form.caption_field_name]
+            except:
+                pass
+
             logging.debug(config_dict)
 
             # start the scheduler via sbatch
