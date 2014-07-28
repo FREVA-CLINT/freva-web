@@ -173,17 +173,17 @@
   </div><!-- panel panel-default-->
 
 <!-- Notes -->
-<div class="panel panel-notes" style="margin-top:10px;">
+<div class="panel panel-default" style="margin-top:10px;">
     <div class="panel-heading">
       <h4 class="panel-title">
-        <a data-toggle="collapse" href="#collapseConfig">
+        <a data-toggle="collapse" href="#collapseNotes">
           Notes
         </a>
       </h4>
     </div><!-- panel-heading -->
-    <div id="collapseConfig" class="panel-collapse collapse">
+    <div id="collapseNotes" class="panel-collapse collapse">
       <div class="panel-body">
-          <div class="col-md-3">
+          <div class="col-md-offset-11 col-md-1">
           <a class="btn btn-info new_note" onClick="$('.new_note').toggle()">New</a>
           </div>
           <div class="col-md-12">
@@ -192,9 +192,32 @@
           <div class='form-group'>
              <label for='enterNewNote'>Note:</label>
              <textarea class="form-control" id='enterNewNote' rows="5"></textarea>
+          </div> <!-- form-group -->
+          <div class='form-group'>
+             <label for='publish_note'>Display your comment to other users?</label>
+             <div class="radio">
+                <label>
+                <input type="radio" name="optionsPublish" id="optionPublish" value="publish" checked>
+                Yes, show comment to <strong>authorized users</strong>
+                </label>
+             </div> <!-- radio -->
+             <div class="radio">
+                <label>
+                <input type="radio" name="optionsPublish" id="optionPrivate" value="private" checked>
+                No, keep this comment <strong>private</strong>
+                </label>
+             </div> <!-- radio -->
+
+
+          </div> <!-- form-group -->
+          <div class="col-md-3">
+          <a class="btn btn-danger" onClick="$('.new_note').toggle();$('#enteNewNote').val('');">Cancel</a>
+          </div>
+          <div class="col-md-offset-8 col-md-1">
+          <a class="btn btn-success" onClick="$('.new_note').toggle()">Save</a>
           </div>
           </form>
-          <div>
+          </div> <!-- new_node -->
           </div> <!-- col-md-12 --> 
       </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
