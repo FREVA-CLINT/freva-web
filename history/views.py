@@ -401,6 +401,8 @@ def results(request, id, show_output_only = False):
     result_caption = history_object.tool
     default_caption = history_object.tool
 
+    historytag_objects = None
+
     try:
         historytag_objects = HistoryTag.objects.filter(history_id_id=id)
         caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
@@ -431,7 +433,18 @@ def results(request, id, show_output_only = False):
         if not usercaption_object:
             result_caption = default_caption
         
-        
+
+    htag_notes = None
+
+    try:
+	htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
+
+
+	# htag_notes = historytag_objects.filter(Q(type=HistoryTag.tagType.note_public)).order_by('id')
+  
+    except:
+        pass
+
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
                                                     'result_caption' : result_caption,
@@ -445,7 +458,8 @@ def results(request, id, show_output_only = False):
                                                     'api_repos' : api_repos,
                                                     'tool_repos' : tool_repos,
                                                     'api_version' : api_version,
-                                                    'tool_version' : tool_version,})
+                                                    'tool_version' : tool_version,
+                                                    'notes' : htag_notes,})
         
         
 @login_required()
