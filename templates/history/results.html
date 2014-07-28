@@ -184,7 +184,13 @@
     <div id="collapseNotes" class="panel-collapse collapse">
       <div class="panel-body">
       <!-- INSERT COMMENTS HERE -->
-      {% comment_field request.user history_object.id %}
+      {% comment_field request.user history_object.id None %}
+
+      {% for note in notes.all %}
+      {% comment_field request.user history_object.id note %}
+
+      {% endfor %}
+
        </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
   </div><!-- panel panel-default-->

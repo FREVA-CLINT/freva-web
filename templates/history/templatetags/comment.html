@@ -1,18 +1,19 @@
+<div class='container'>
 <div class="col-md-12">
-    <div class="col-md-offset-11 col-md-1">
     {% ifequal class_id 'new' %}
+    <div class="col-md-offset-11 col-md-1">
         <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">New</a>
+    </div>
     {% else %}
-        <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">Edit</a>
         {% ifequal htag.uid user %}
             <h4>Comment by <alert>you</alert>:</h4>
         {% else %}
             <h4>Comment by <alert>{{htag.uid}}</alert>:</h4>
-        {% endif %}
+        {% endifequal %}
         <p class='class_{{class_id}}' id='text_{{class_id}}'>{{htag.text}}</p>
+        <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">Edit</a>
     {% endifequal %}
-</div>
-    <div class='class_{{class_id}}' style='display:none'>
+    <div class='class_{{class_id}} col-md-12' style='display:none'>
         <form role='form'> <!-- class='form-inline'> -->
             <div class='form-group'>
                 <label for='enterNewNote'>Note:</label>
@@ -42,3 +43,4 @@
         </form>
     </div> <!-- new_node -->
 </div> <!-- col-md-12 --> 
+</div> <!-- container -->
