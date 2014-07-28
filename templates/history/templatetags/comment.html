@@ -1,0 +1,44 @@
+<div class="col-md-12">
+    <div class="col-md-offset-11 col-md-1">
+    {% ifequal class_id 'new' %}
+        <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">New</a>
+    {% else %}
+        <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">Edit</a>
+        {% ifequal htag.uid user %}
+            <h4>Comment by <alert>you</alert>:</h4>
+        {% else %}
+            <h4>Comment by <alert>{{htag.uid}}</alert>:</h4>
+        {% endif %}
+        <p class='class_{{class_id}}' id='text_{{class_id}}'></p>
+    {% endifequal %}
+</div>
+    <div class='class_{{class_id}}' style='display:none'>
+        <form role='form'> <!-- class='form-inline'> -->
+            <div class='form-group'>
+                <label for='enterNewNote'>Note:</label>
+                <textarea class="form-control" id='enterNewNote' rows="5"></textarea>
+            </div> <!-- form-group -->
+            <div class='form-group'>
+                <label for='publish_note'>Display your comment to other users?</label>
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsPublish" id="optionPublish_{{class_id}}" value="publish" checked>
+                        Yes, show comment to <strong>authorized users</strong>
+                    </label>
+                </div> <!-- radio -->
+                <div class="radio">
+                    <label>
+                        <input type="radio" name="optionsPublish" id="optionPrivate_{{class_id}}" value="private" checked>
+                        No, keep this comment <strong>private</strong>
+                    </label>
+                </div> <!-- radio -->
+            </div> <!-- form-group -->
+            <div class="col-md-3">
+            <a class="btn btn-danger" onClick="$('.class_{{class_id}}').toggle();$('#enteNewNote').val('');">Cancel</a>
+            </div>
+            <div class="col-md-offset-8 col-md-1">
+                <a class="btn btn-success" id='save_{{class_id}}' onClick="$('.class_{{class_id}}').toggle()">Save</a>
+            </div>
+        </form>
+    </div> <!-- new_node -->
+</div> <!-- col-md-12 --> 
