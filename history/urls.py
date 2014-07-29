@@ -16,5 +16,6 @@ urlpatterns = patterns('history.views',
     url(r'^change-flag/$', 'changeFlag', name='changeFlag'),
     url(r'^cancel-slurmjob/$', 'cancelSlurmjob', name='cancelSlurmjob'),
     url(r'^(?P<id>\w+)/(?P<type>\w+)/generate-caption/$', 'generate_caption', name='generate-caption'),
+    url(r'^(?P<history_id>\w+)/(?P<tag_id>\w+)/edit-historytag/$', 'edit_htag', name='edit-historytag'),
     url(r'^sendmail/$', 'sendMail', name='sendMail'),
 )

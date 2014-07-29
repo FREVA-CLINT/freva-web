@@ -439,9 +439,6 @@ def results(request, id, show_output_only = False):
     try:
 	htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
 
-
-	# htag_notes = historytag_objects.filter(Q(type=HistoryTag.tagType.note_public)).order_by('id')
-  
     except:
         pass
 
@@ -608,4 +605,31 @@ def sendMail(request):
 
         status = status + "</p>"
     return HttpResponse(status)
+
+@login_required()
+def edit_htag(request, history_id, tag_id): 
+    from django.template import defaultfilters as filters
+    text = request.POST['text'].strip()
+    type = int(request.POST['type'])
+
+    allowed_types = [HistoryTag.tagType.note_public,
+                     HistoryTag.tagType.note_private,
+                     HistoryTag.tagType.note_deleted,]
+
+    retval = ''
+
+    if not request.user.isGuest() and type in allowed_types:
+        user = request.user
+        db = UserDB(user)
+
+        if tag_id=='0':
+            db.addHistoryTag(history_id, type, text, user)
+
+        elif HistoryTag.objects.get(id=tag_id).uid == user:
+            db.updateHistoryTag(tag_id, type, text, user.username)
+            
+        retval = filters.linebreaks(filters.escape(text))
+ 
+ 
+    return HttpResponse(json.dumps(retval), content_type="application/json")    
 
