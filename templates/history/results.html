@@ -177,7 +177,7 @@
     <div class="panel-heading">
       <h4 class="panel-title">
         <a data-toggle="collapse" href="#collapseNotes">
-          Notes
+          Notes <span id='note_count'>(0)</span>
         </a>
       </h4>
     </div><!-- panel-heading -->
@@ -247,9 +247,26 @@
 
 </div>
 <script>
+
+      function doCount() {
+		  var url = '{% url 'history:count-notes' history_object.id 0 %}';
+		  $.ajax({type: "GET", url : url,
+		       		success: function (data) {
+                                   $('#note_count').text('(' + data + ')');
+				console.log(data);
+			  }
+		});
+	}
+
 	$(document).ready(function() {
-	    var url = '{% url 'history:result_comments' history_object.id %}';
-        $('#loadComment').load(url);
+
+		doCount();
+		inter_counter = setInterval(doCount, 4000);
+
+		$('#collapseNotes').on('show.bs.collapse', function() {
+			var url='{% url 'history:result-comments' history_object.id %}';
+			$('#loadComments').load(url);
+			});
 	
 		
 		$("img").lazyload({

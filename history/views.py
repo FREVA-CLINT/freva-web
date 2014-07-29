@@ -611,17 +611,18 @@ def result_comments(request, history_id):
     htag_notes = None
 
     try:
-        historytag_objects = HistoryTag.objects.filter(history_id_id=id)
+        historytag_objects = HistoryTag.objects.filter(history_id_id=history_id)
         htag_notes = historytag_objects.filter((Q(uid=request.user) &
                                                 Q(type=HistoryTag.tagType.note_private)) |
-                                               Q(type=HistoryTag.tagType.note_public)).order_by('id')
+                                               Q(type=HistoryTag.tagType.note_public)).order_by('-id')
     except HistoryTag.DoesNotExist:
         pass
 
     except:
         pass
 
-    return render(request, 'history/comments.html', {'notes' : htag_notes,})
+    return render(request, 'history/comments.html', {'history_id' : history_id,
+                                                     'notes' : htag_notes,})
 
 @login_required()
 def edit_htag(request, history_id, tag_id): 
@@ -650,3 +651,25 @@ def edit_htag(request, history_id, tag_id):
  
     return HttpResponse(json.dumps(retval), content_type="application/json")    
 
+
+@login_required()
+def count_notes(request, history_id, deleted): 
+    count = 0
+
+    history_tags = None
+
+    try:
+        history_tags = HistoryTag.objects.filter(history_id_id=history_id)
+
+        count += history_tags.filter(type=HistoryTag.tagType.note_public).count()
+        count += history_tags.filter(type=HistoryTag.tagType.note_private).filter(uid=request.user).count()
+    except Exception, e:
+        pass
+
+    if int(deleted):
+        try:
+            count += history_tags.filter(type=HistoryTag.tagType.note_deleted).filter(uid=request.user).count()
+        except:
+            pass
+
+    return HttpResponse(str(count), content_type="text/plain")    
