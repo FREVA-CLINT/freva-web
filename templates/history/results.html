@@ -182,13 +182,15 @@
       </h4>
     </div><!-- panel-heading -->
     <div id="collapseNotes" class="panel-collapse collapse">
-      <div class="panel-body">
+      <div class="panel-body" id='loadComments'>
       <!-- INSERT COMMENTS HERE -->
+      {% comment %}
       {% comment_field request.user history_object.id None %}
 
       {% for note in notes.all %}
       {% comment_field request.user history_object.id note %}
       {% endfor %}
+      {% endcomment %}
 
        </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
@@ -246,6 +248,9 @@
 </div>
 <script>
 	$(document).ready(function() {
+	    var url = '{% url 'history:result_comments' history_object.id %}';
+        $('#loadComment').load(url);
+	
 		
 		$("img").lazyload({
 		    effect : "fadeIn",

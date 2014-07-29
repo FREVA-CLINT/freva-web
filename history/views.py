@@ -437,7 +437,7 @@ def results(request, id, show_output_only = False):
     htag_notes = None
 
     try:
-	htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
+        htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
 
     except:
         pass
@@ -605,6 +605,23 @@ def sendMail(request):
 
         status = status + "</p>"
     return HttpResponse(status)
+
+@login_required
+def result_comments(request, history_id):
+    htag_notes = None
+
+    try:
+        historytag_objects = HistoryTag.objects.filter(history_id_id=id)
+        htag_notes = historytag_objects.filter((Q(uid=request.user) &
+                                                Q(type=HistoryTag.tagType.note_private)) |
+                                               Q(type=HistoryTag.tagType.note_public)).order_by('id')
+    except HistoryTag.DoesNotExist:
+        pass
+
+    except:
+        pass
+
+    return render(request, 'history/comments.html', {'notes' : htag_notes,})
 
 @login_required()
 def edit_htag(request, history_id, tag_id): 
