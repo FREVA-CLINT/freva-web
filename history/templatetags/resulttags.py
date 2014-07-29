@@ -7,6 +7,7 @@ from django.template.loader import render_to_string
 from django_evaluation import settings
 
 from history.utils import FileDict
+from history.models import HistoryTag
 
 import logging
 
@@ -117,5 +118,6 @@ def comment_field(user, history_id, historytag_entry=None):
     return {'user' : user,
             'class_id' : class_id,
             'history_id' : history_id,
-            'htag' : htag,}
+            'htag' : htag,
+            'tagType' : HistoryTag.tagType,}
 

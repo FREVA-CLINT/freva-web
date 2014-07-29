@@ -437,11 +437,8 @@ def results(request, id, show_output_only = False):
     htag_notes = None
 
     try:
-	htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
+        htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
 
-
-	# htag_notes = historytag_objects.filter(Q(type=HistoryTag.tagType.note_public)).order_by('id')
-  
     except:
         pass
 
@@ -609,3 +606,70 @@ def sendMail(request):
         status = status + "</p>"
     return HttpResponse(status)
 
+@login_required
+def result_comments(request, history_id):
+    htag_notes = None
+
+    try:
+        historytag_objects = HistoryTag.objects.filter(history_id_id=history_id)
+        htag_notes = historytag_objects.filter((Q(uid=request.user) &
+                                                Q(type=HistoryTag.tagType.note_private)) |
+                                               Q(type=HistoryTag.tagType.note_public)).order_by('-id')
+    except HistoryTag.DoesNotExist:
+        pass
+
+    except:
+        pass
+
+    return render(request, 'history/comments.html', {'history_id' : history_id,
+                                                     'notes' : htag_notes,})
+
+@login_required()
+def edit_htag(request, history_id, tag_id): 
+    from django.template import defaultfilters as filters
+    text = request.POST['text'].strip()
+    type = int(request.POST['type'])
+
+    allowed_types = [HistoryTag.tagType.note_public,
+                     HistoryTag.tagType.note_private,
+                     HistoryTag.tagType.note_deleted,]
+
+    retval = ''
+
+    if not request.user.isGuest() and type in allowed_types:
+        user = request.user
+        db = UserDB(user)
+
+        if tag_id=='0':
+            db.addHistoryTag(history_id, type, text, user)
+
+        elif HistoryTag.objects.get(id=tag_id).uid == user:
+            db.updateHistoryTag(tag_id, type, text, user.username)
+            
+        retval = filters.linebreaks(filters.escape(text))
+ 
+ 
+    return HttpResponse(json.dumps(retval), content_type="application/json")    
+
+
+@login_required()
+def count_notes(request, history_id, deleted): 
+    count = 0
+
+    history_tags = None
+
+    try:
+        history_tags = HistoryTag.objects.filter(history_id_id=history_id)
+
+        count += history_tags.filter(type=HistoryTag.tagType.note_public).count()
+        count += history_tags.filter(type=HistoryTag.tagType.note_private).filter(uid=request.user).count()
+    except Exception, e:
+        pass
+
+    if int(deleted):
+        try:
+            count += history_tags.filter(type=HistoryTag.tagType.note_deleted).filter(uid=request.user).count()
+        except:
+            pass
+
+    return HttpResponse(str(count), content_type="text/plain")    

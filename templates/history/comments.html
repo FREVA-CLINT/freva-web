@@ -1,0 +1,7 @@
+{% load resulttags %}
+
+{% comment_field request.user history_id None %}
+
+{% for note in notes.all %}
+	{% comment_field request.user history_id note %}
+{% endfor %}
