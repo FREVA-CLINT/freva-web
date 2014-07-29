@@ -1,46 +1,127 @@
-<div class='container'>
+<div class='container'  style="border: 2px solid #eee;padding: 5px; margin: 2px" id='cont_{{class_id}}'>
 <div class="col-md-12">
     {% ifequal class_id 'new' %}
     <div class="col-md-offset-11 col-md-1">
-        <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">New</a>
+        <a class="btn btn-info class_{{class_id}} mybtn-edit" id='btn_edit_{{class_id}}'>New</a>
     </div>
     {% else %}
-        {% ifequal htag.uid user %}
-            <h4>Comment by <alert>you</alert>:</h4>
+	{% ifequal htag.type|slugify tagType.note_public|slugify %}
+            <h4>#{{htag.id}} Comment by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}} ({{htag.uid}})</span></h4>
         {% else %}
-            <h4>Comment by <alert>{{htag.uid}}</alert>:</h4>
+            <h4>#{{htag.id}} Private comment</h4>
         {% endifequal %}
-        <p class='class_{{class_id}}' id='text_{{class_id}}'>{{htag.text}}</p>
-        <a class="btn btn-info class_{{class_id}}" onClick="$('.class_{{class_id}}').toggle()">Edit</a>
+        <div class="col-md-12">
+        <span class='class_{{class_id}}' id='text_{{class_id}}'>{{htag.text|linebreaks|escape}}</span>
+        </div>
+        {% ifequal htag.uid user %}
+        <div class="col-md-offset-10 col-md-1">
+        <a class="btn btn-danger class_{{class_id}} mybtn-edit"  id='btn_delete_{{class_id}}'>Delete</a>
+        </div>
+        <div class="col-md-1">
+        <a class="btn btn-info class_{{class_id}} mybtn-edit"  id='btn_edit_{{class_id}}'>Edit</a>
+        </div>
+        {% endifequal %}
     {% endifequal %}
+    {% if class_id == "new" or  htag.uid == user %}
     <div class='class_{{class_id}} col-md-12' style='display:none'>
         <form role='form'> <!-- class='form-inline'> -->
             <div class='form-group'>
                 <label for='enterNewNote'>Note:</label>
-                <textarea class="form-control" id='enterNewNote' rows="5"></textarea>
+                <textarea class="form-control" id='textarea_{{class_id}}' rows="5"></textarea>
             </div> <!-- form-group -->
             <div class='form-group'>
                 <label for='publish_note'>Display your comment to other users?</label>
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optionsPublish" id="optionPublish_{{class_id}}" value="publish" checked>
+                        <input type="radio" name="radiogrp_{{class_id}}" id="optionPublish_{{class_id}}" value="{{tagType.note_public}}" checked>
                         Yes, show comment to <strong>authorized users</strong>
                     </label>
                 </div> <!-- radio -->
                 <div class="radio">
                     <label>
-                        <input type="radio" name="optionsPublish" id="optionPrivate_{{class_id}}" value="private" checked>
+                        <input type="radio" name="radiogrp_{{class_id}}" id="optionPrivate_{{class_id}}" value="{{tagType.note_private}}">
                         No, keep this comment <strong>private</strong>
                     </label>
                 </div> <!-- radio -->
             </div> <!-- form-group -->
             <div class="col-md-3">
-            <a class="btn btn-danger" onClick="$('.class_{{class_id}}').toggle();$('#enteNewNote').val('');">Cancel</a>
+            <a class="btn btn-danger" id='btn_cancel_{{class_id}}'>Cancel</a>
             </div>
             <div class="col-md-offset-8 col-md-1">
-                <a class="btn btn-success" id='save_{{class_id}}' onClick="$('.class_{{class_id}}').toggle()">Save</a>
+                <a class="btn btn-success" id='btn_save_{{class_id}}'>Save</a>
             </div>
         </form>
     </div> <!-- new_node -->
+    {% endif %}
 </div> <!-- col-md-12 --> 
 </div> <!-- container -->
+
+<script>
+        $(document).ready(function(){
+                if('{{htag.uid}}'=='{{user}}') {
+			$('#user_{{class_id}}').text('you');
+		}
+
+		{% ifnotequal class_id 'new' %}
+		$("input[name='radiogrp_{{class_id}}'][value='{{htag.type}}']").attr("checked","checked");
+                $('#textarea_{{class_id}}').val('{{htag.text|escape|escapejs}}');
+		{% else %}
+		$("input[name='radiogrp_{{class_id}}'][value='{{htag.type}}']").attr("checked","checked");
+		$("input[name='radiogrp_{{class_id}}'][value='{{tagType.note_public}}']").attr("checked","checked");
+		{% endifnotequal %}
+
+		{% if class_id != "new" and  htag.uid == user %}
+                $('#btn_delete_{{class_id}}').on('click', function(){
+                        var data = {'text':$('#textarea_{{class_id}}').val(),
+                                    'type': {{tagType.note_deleted}} };
+                        var url = '{% url 'history:edit-historytag' history_id htag.id %}';
+
+                        $.post(url, data, function(resp){
+				$('#cont_{{class_id}}').hide()
+                        });
+
+                        $('#caption_modal').modal('hide');
+                });
+ 		{% endif %}
+                
+		{% if class_id == "new" or  htag.uid == user %}
+                $('#btn_cancel_{{class_id}}').on('click', function(){
+			$('.class_{{class_id}}').toggle();
+                        $('.mybtn-edit').removeAttr("disabled");
+                        {% ifequal class_id 'new' %}
+                        $('#textarea_{{class_id}}').val('');
+                        {% else %}
+                        $('#textarea_{{class_id}}').val('{{htag.text|escape|escapejs}}');
+                        {% endifequal %}
+		});
+
+                $('#btn_edit_{{class_id}}').on('click', function(){
+			$('.class_{{class_id}}').toggle();
+                        $('.mybtn-edit').attr("disabled", "disabled");
+		});
+
+                $('#btn_save_{{class_id}}').on('click', function(){
+                        $('.mybtn-edit').removeAttr("disabled");
+			$('.class_{{class_id}}').toggle();
+       			var kind = $( "input:radio[name='radiogrp_{{class_id}}']:checked" ).val();
+
+                        var data = {'text':$('#textarea_{{class_id}}').val(),
+                                    'type': kind };
+                        {% ifequal class_id 'new'  %}
+                        var url = '{% url 'history:edit-historytag' history_id '0' %}';
+                        {% else %}
+                        var url = '{% url 'history:edit-historytag' history_id htag.id %}';
+                        {% endifequal %}
+
+                        $.post(url, data, function(resp){
+				$('#text_{{class_id}}').html(resp);
+                        });
+
+                        $('#caption_modal').modal('hide');
+                });
+                {% endif %}        
+                                
+        });    
+
+</script>
+
