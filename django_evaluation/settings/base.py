@@ -31,12 +31,12 @@ def get_env_setting(setting):
 
 
 # The server for LDAP configuration
-AUTH_LDAP_SERVER_URI = "ldaps://dsp1.dkrz.de, ldaps://dsp2.dkrz.de"
+AUTH_LDAP_SERVER_URI = "ldaps://dsp.dkrz.de"
 
 FACETS = SolrFindFiles.facets(facets=None)
 
 # The directory with SSL certificates
-CA_CERT_DIR = '/etc/openldap/cacerts/'
+CA_CERT_DIR = '/etc/pki/tls/certs'
 
 
 # the only allowd group
@@ -97,7 +97,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # the host to start the scheduler
-SCHEDULER_HOSTS=['miklip02.dkrz.de','miklip03.dkrz.de','miklip04.dkrz.de']
+SCHEDULER_HOSTS=['miklip02.dkrz.de','miklip03.dkrz.de']
 
 LOGIN_URL = '/?login_required=1'
 
