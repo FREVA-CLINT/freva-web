@@ -1,5 +1,7 @@
-      {% comment_field request.user history_object.id None %}
+{% load resulttags %}
 
-      {% for note in notes.all %}
-      {% comment_field request.user history_object.id note %}
-      {% endfor %}
+{% comment_field request.user history_id None %}
+
+{% for note in notes.all %}
+	{% comment_field request.user history_id note %}
+{% endfor %}

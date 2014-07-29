@@ -6,7 +6,7 @@
     </div>
     {% else %}
 	{% ifequal htag.type|slugify tagType.note_public|slugify %}
-            <h4>#{{htag.id}} Comment by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}} ({{htag.uid}})</span></h4>
+            <h4>#{{htag.id}} Commentary by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}} ({{htag.uid}})</span></h4>
         {% else %}
             <h4>#{{htag.id}} Private comment</h4>
         {% endifequal %}
@@ -109,13 +109,18 @@
                                     'type': kind };
                         {% ifequal class_id 'new'  %}
                         var url = '{% url 'history:edit-historytag' history_id '0' %}';
+                        $.post(url, data, function(resp){
+                                var url = '{% url 'history:result-comments' history_id %}';
+				$('#loadComments').load(url)
+                        });
+
                         {% else %}
                         var url = '{% url 'history:edit-historytag' history_id htag.id %}';
-                        {% endifequal %}
-
-                        $.post(url, data, function(resp){
+                         $.post(url, data, function(resp){
 				$('#text_{{class_id}}').html(resp);
                         });
+
+                       {% endifequal %}
 
                         $('#caption_modal').modal('hide');
                 });
