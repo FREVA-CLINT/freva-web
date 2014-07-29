@@ -500,7 +500,7 @@ def generate_caption(request, id, type):
             # try to find an existing caption
             tag_id = None
             try:
-                tag_obj = HistoryTag.objects.filter(history_id_id=id)
+                tag_obj = HistoryTag.objects.filter(history_id_id=id).filter(type=HistoryTag.tagType.caption)
                 tag_id = tag_obj.filter(uid=user).order_by('-id')[0].id
             except:
                 pass
