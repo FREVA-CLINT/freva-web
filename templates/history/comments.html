@@ -1,0 +1,5 @@
+      {% comment_field request.user history_object.id None %}
+
+      {% for note in notes.all %}
+      {% comment_field request.user history_object.id note %}
+      {% endfor %}
