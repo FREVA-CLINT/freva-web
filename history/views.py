@@ -12,6 +12,7 @@ from datatableview import helpers
 from datatableview.views import DatatableView
 from datatableview.utils import get_datatable_structure
 from django.views.generic.base import TemplateView
+from django.template import defaultfilters as filters
 
 from django_evaluation.ldaptools import miklip_user_information
 
@@ -480,7 +481,7 @@ def tailFile(request, id):
     
 @login_required()
 def generate_caption(request, id, type): 
-    caption = request.POST['caption'].strip().capitalize() 
+    caption = filters.title(request.POST['caption'].strip()) 
     toolname = request.POST['tool'].strip().capitalize() 
  
     retval = pm.generateCaption(caption, toolname)
