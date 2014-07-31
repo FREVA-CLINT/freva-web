@@ -6,9 +6,9 @@
     </div>
     {% else %}
 	{% ifequal htag.type|slugify tagType.note_public|slugify %}
-            <h4>#{{htag.id}} Commentary by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}} ({{htag.uid}})</span></h4>
+            <h4>#{{htag.id}} <span id="h4_text_{{class_id}}">Commentary by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}} ({{htag.uid}})</span></span></h4>
         {% else %}
-            <h4>#{{htag.id}} Private comment</h4>
+            <h4>#{{htag.id}} <span id="h4_text_{{class_id}}">Private comment</span></h4>
         {% endifequal %}
         <div class="col-md-12">
         <span class='class_{{class_id}}' id='text_{{class_id}}'>{{htag.text|linebreaks|escape}}</span>
@@ -111,7 +111,7 @@
                         var url = '{% url 'history:edit-historytag' history_id '0' %}';
                         $.post(url, data, function(resp){
                                 var url = '{% url 'history:result-comments' history_id %}';
-				$('#loadComments').load(url)
+			                    $('#loadComments').load(url)
                         });
 
                         {% else %}
@@ -119,7 +119,13 @@
                          $.post(url, data, function(resp){
 				$('#text_{{class_id}}').html(resp);
                         });
-
+                        
+                        if(kind == {{tagType.note_public}}) {
+                            $('#h4_text_{{class_id}}').text('Commentary by you');
+                        }
+                        else {
+                            $('#h4_text_{{class_id}}').text('Private comment');
+                        }
                        {% endifequal %}
 
                         $('#caption_modal').modal('hide');
