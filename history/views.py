@@ -481,10 +481,11 @@ def tailFile(request, id):
     
 @login_required()
 def generate_caption(request, id, type): 
-    caption = filters.title(request.POST['caption'].strip()) 
+    caption = request.POST['caption'].strip() 
     toolname = request.POST['tool'].strip().capitalize() 
  
-    retval = pm.generateCaption(caption, toolname)
+    retval = filters.title(pm.generateCaption(caption, toolname))
+    
 
     # change type to integer
     type = int(type)
