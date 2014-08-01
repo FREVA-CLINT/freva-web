@@ -42,16 +42,18 @@
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
           <h4 class="modal-title">Select a file</h4>
         </div>
-        <div class="btn-group" data-toggle="buttons">
-            <label class="btn btn-primary">
-                <input type="radio" name="browse_options" id="home">Home
-            </label>
+        <div class="modal-body">
+        <div class="btn-group" data-toggle="buttons" style='margin-bottom:20px'>
             <label class="btn btn-primary active">
-                <input type="radio" name="browse_options" id="scratch">Scratch
+                <input type="radio" name="browse_options" id="browse_home" value="home" checked>Home
+            </label>
+            <label class="btn btn-primary">
+                <input type="radio" name="browse_options" id="browse_scratch" value="scratch">Scratch
             </label>
         </div>       
-        <div class="modal-body" id="browsefield">
+        <div id="browsefield">
           ...
+	</div>
         </div>
         <div class="modal-footer">
           <input type="hidden" name="senderField" id="senderField" value="">
@@ -222,11 +224,9 @@ $('#password_temp').keypress(function (e) {
   	}
 });
 
-$(document).ready(function(){
-	getActiveFacets();	
-
+function activate_browse(dir) {
 	$('#browsefield').fileTree({
-		root : '{{user_home}}',
+		root : dir,
         script: '{% url 'plugins:dirlist' %}',
         expandSpeed: 100,
         collapseSpeed: 100,
@@ -238,7 +238,27 @@ $(document).ready(function(){
         $('#myModal').modal('hide');
 
     });
-    
+ }
+
+$(document).ready(function(){
+	getActiveFacets();	
+
+	activate_browse('{{user_home}}');
+
+	$("input:radio[name='browse_options']").on('change', function () {
+		kind = $( "input:radio[name='browse_options']:checked" ).val();
+
+ 		if(this.value==kind)
+		{
+			if(kind=='scratch'){
+				 activate_browse('{{user_scratch}}');
+			}
+			else {
+				activate_browse('{{user_home}}');
+			}
+		}
+	});
+   
     {% if restricted_user %} 
     $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
 
