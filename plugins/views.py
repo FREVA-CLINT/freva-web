@@ -59,6 +59,7 @@ def setup(request, plugin_name, row_id = None):
         user = User()
 
     home_dir = user.getUserHome()
+    scratch_dir = user.getUserScratch()
     plugin = get_plugin_or_404(plugin_name, user=user)
     plugin_web = PluginWeb(plugin)
     
@@ -153,6 +154,7 @@ def setup(request, plugin_name, row_id = None):
     return render(request, 'plugins/setup.html', {'tool' : plugin_web,
                                                   'form': form,
                                                   'user_home': home_dir,
+                                                  'user_scratch': scratch_dir,
                                                   'error_message': errormsg,
                                                   'restricted_user':not user_can_submit})
   
