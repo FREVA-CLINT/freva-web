@@ -59,7 +59,13 @@ def setup(request, plugin_name, row_id = None):
         user = User()
 
     home_dir = user.getUserHome()
-    scratch_dir = user.getUserScratch()
+    scratch_dir = None
+
+    try:
+        scratch_dir = user.getUserScratch()
+    except:
+        pass
+
     plugin = get_plugin_or_404(plugin_name, user=user)
     plugin_web = PluginWeb(plugin)
     

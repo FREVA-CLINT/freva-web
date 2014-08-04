@@ -47,9 +47,11 @@
             <label class="btn btn-primary active">
                 <input type="radio" name="browse_options" id="browse_home" value="home" checked>Home
             </label>
+	    {% if user_scratch %}
             <label class="btn btn-primary">
                 <input type="radio" name="browse_options" id="browse_scratch" value="scratch">Scratch
             </label>
+	    {% endif %}
         </div>       
         <div id="browsefield">
           ...
@@ -244,6 +246,7 @@ $(document).ready(function(){
 	getActiveFacets();	
 
 	activate_browse('{{user_home}}');
+
 
 	$("input:radio[name='browse_options']").on('change', function () {
 		kind = $( "input:radio[name='browse_options']:checked" ).val();
