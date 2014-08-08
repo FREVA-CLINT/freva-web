@@ -399,7 +399,7 @@ def results(request, id, show_output_only = False):
     caption_objects = None
     defaultcaption_object = None
     usercaption_object = None
-    result_caption = history_object.tool
+    result_caption = history_object.tool.upper()
     default_caption = history_object.tool.upper()
 
     historytag_objects = None
