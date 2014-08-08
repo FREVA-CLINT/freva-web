@@ -226,7 +226,7 @@
                    <div class="col-md-12">
                    <h2><br>Files created:</h2>
                    <ul >
-	                   {{ file_list|unordered_list|mask_uid:request.user.isGuest }}
+	                   {{ file_list|unordered_list|mask_safe_uid:request.user.isGuest }}
 	               </ul>
 	               </div>
                {% endif %}
@@ -235,7 +235,7 @@
 	        <div class="col-md-12">
 
 	        <ul class="jqueryFileTree">
-	        {{ file_list|preview_tree|mask_uid:request.user.isGuest }}
+	        {{ file_list|preview_tree|mask_safe_uid:request.user.isGuest }}
 	        </ul>
 	        </div>
 			{%endif%}
