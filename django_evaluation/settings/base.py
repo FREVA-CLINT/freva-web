@@ -546,6 +546,12 @@ VENV_PYTHON_DIR = '/usr/local/ve_py/bin/python'
 SOLR_RESTRICTIONS = {'project':['cmip5', 'cordex', 'observations', 'reanalysis', 'baseline0', 'baseline1', 'prototype']}
 EMAIL_RESTRICTIONS = ['b324031', 'b324057','u290038']
 
+
+# filter for user numbers
+USERNAME_FILTER='[a-z]\d{6,6}'
+USERNAME_REPLACE='*****'
+
+
 # Path to miklip-logo
 MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
 

@@ -9,6 +9,7 @@ from django_evaluation import settings
 from history.utils import FileDict
 from history.models import HistoryTag
 
+import re
 import logging
 
 register = template.Library()
@@ -121,3 +122,14 @@ def comment_field(user, history_id, historytag_entry=None):
             'htag' : htag,
             'tagType' : HistoryTag.tagType,}
 
+
+@register.filter(text, isGuest)
+def mask_uid(text, options=None):    
+    rettext = text
+    
+    if isGuest:
+        rettext = re.sub(settings.USERNAME_FILTER,
+                         settings.USERNAME_REPLACE,
+                         text,)
+        
+    return rettext
