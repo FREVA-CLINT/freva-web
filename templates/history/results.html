@@ -1,6 +1,6 @@
 {% extends "_layouts/menu.html" %}
 
-{% block page_title %}{{ result_caption|title }} results - Evaluation System{% endblock %}
+{% block page_title %}{{ result_caption }} results - Evaluation System{% endblock %}
 {% block page_class %}home-page{% endblock %}
 {% block content %}
 <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
@@ -13,7 +13,7 @@
       <!-- Example row of columns -->
       <div class="row">
 	      <div class="col-md-12">
-	      	<h1 id='result_caption'>{{ result_caption |title }}</h1>
+	      	<h1 id='result_caption'>{{ result_caption }}</h1>
 	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' history_object.uid %}">{{history_object.uid}}</a></p>
 	      </div>
       </div>
