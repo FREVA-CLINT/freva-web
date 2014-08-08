@@ -123,13 +123,39 @@ def comment_field(user, history_id, historytag_entry=None):
             'tagType' : HistoryTag.tagType,}
 
 
+user_mask = {}
+
+def get_masked_uid(uid):
+    name = None
+
+    try:
+        name = user_mask[uid]
+    except:
+        number = len(user_mask) + 1
+        name = 'User%i' % number
+        user_mask[uid] = name
+
+    return name
+
 @register.filter('mask_uid')
-def mask_uid(text, isGuest)
+def mask_uid(text, isGuest):
     rettext = text
     
     if isGuest:
-        rettext = re.sub(settings.USERNAME_FILTER,
-                         settings.USERNAME_REPLACE,
-                         text,)
-        
+        try:
+            users = re.findall(settings.USERNAME_FILTER, text)
+            for u in users:
+                rettext = rettext.replace(u, get_masked_uid(u))
+
+        # rettext = re.sub(settings.USERNAME_FILTER,
+        #                 settings.USERNAME_REPLACE,
+        #                 text,)
+        except:
+            pass
     return rettext
+
+@register.filter('mask_safe_uid')
+def mask_safe_uid(text, isGuest):
+    from  django.utils.safestring import mark_safe
+ 
+    return mark_safe(mask_uid)

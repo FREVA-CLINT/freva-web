@@ -60,7 +60,7 @@
 		 	 	{% for key,value in history_object.config_dict.items %}
 		 	 		<tr>
 		 	 			<td>{{key}}:</td>
-		 	 			<td>{{value}}</td>
+		 	 			<td>{{value|mask_uid:request.user.isGuest}}</td>
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	<tr class='additional' style='display:none;'>
@@ -68,7 +68,7 @@
 		 	 	</tr>
                 <tr class='additional' style='display:none;'>
                 <td>Analyze command:</td>
-                <td>{{analyze_command}}</td>
+                <td>{{analyze_command|mask_uid:request.user.isGuest}}</td>
                 </tr>
                 <tr class='additional' style='display:none;'>
 	 	 	    <td>Tool repository:</td>
@@ -91,7 +91,7 @@
 	 	 	<a class="btn btn-info" onClick="$('.additional').toggle()">Additional information</a>
 	 	 	</div>
 		 	<div class="col-md-3">
-            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
+            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
             </div>
 	 	 	
       </div><!-- panel-body -->
@@ -226,7 +226,7 @@
                    <div class="col-md-12">
                    <h2><br>Files created:</h2>
                    <ul >
-	                   {{ file_list|unordered_list }}
+	                   {{ file_list|unordered_list|mask_uid:request.user.isGuest }}
 	               </ul>
 	               </div>
                {% endif %}
@@ -235,7 +235,7 @@
 	        <div class="col-md-12">
 
 	        <ul class="jqueryFileTree">
-	        {{ file_list|preview_tree }}
+	        {{ file_list|preview_tree|mask_uid:request.user.isGuest }}
 	        </ul>
 	        </div>
 			{%endif%}

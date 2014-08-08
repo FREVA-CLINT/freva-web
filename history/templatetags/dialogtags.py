@@ -45,4 +45,4 @@ def mailfield(is_guest):
         id = user[0]
         data.append({'id' : id, 'text' : "%s, %s (%s)" % (user[1], user[2], user[0])})
     
-    return {'user_data' : mark_safe(json.dumps(data))}
+    return {'user_data' : mark_safe(json.dumps(data)), 'is_guest' : is_guest}
