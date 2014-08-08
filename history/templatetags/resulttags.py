@@ -123,8 +123,8 @@ def comment_field(user, history_id, historytag_entry=None):
             'tagType' : HistoryTag.tagType,}
 
 
-@register.filter(text, isGuest)
-def mask_uid(text, options=None):    
+@register.filter('mask_uid')
+def mask_uid(text, isGuest)
     rettext = text
     
     if isGuest:
