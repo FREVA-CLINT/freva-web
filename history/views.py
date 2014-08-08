@@ -484,7 +484,7 @@ def generate_caption(request, id, type):
     caption = request.POST['caption'].strip() 
     toolname = request.POST['tool'].strip().capitalize() 
  
-    retval = filters.title(pm.generateCaption(caption, toolname))
+    retval = pm.generateCaption(caption, toolname)
     
 
     # change type to integer
