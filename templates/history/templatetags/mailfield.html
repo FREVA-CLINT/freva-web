@@ -3,7 +3,7 @@
 <script>
 $(document).ready(function() { 
 	$("#mail_to_field").select2({
-		data: {{user_data}},
+		data: {{user_data|mask_uid}},
 		placeholder: "Select recipients",
 		allowClear: true,
 		multiple:true,
