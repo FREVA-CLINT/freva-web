@@ -158,4 +158,4 @@ def mask_uid(text, isGuest):
 def mask_safe_uid(text, isGuest):
     from  django.utils.safestring import mark_safe
  
-    return mark_safe(mask_uid)
+    return mark_safe(mask_uid(text, isGuest))
