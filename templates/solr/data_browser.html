@@ -37,7 +37,7 @@ html.wait, html.wait * { cursor: wait !important; }
 			//wait_dialog.showPleaseWait();
 			//$('body').css('cursor','wait');
 			$('html').addClass('wait');
-			function rest(){
+			function rest_click(){
 			   var facet = $(el.target).attr('data-facet');
 			   var value = $(el.target).html();	
 			   $('.facet_click').tooltip('hide');
@@ -47,7 +47,7 @@ html.wait, html.wait * { cursor: wait !important; }
 			   $('#collapseFiles').collapse('show');
 			   $('html').removeClass('wait');
 			}
-			setTimeout(function(){rest()},50);
+			setTimeout(function(){rest_click()},50);
 			//wait_dialog.hidePleaseWait();
 			//$('body').css('cursor','auto');
 			return false;
@@ -55,7 +55,7 @@ html.wait, html.wait * { cursor: wait !important; }
 			//wait_dialog.showPleaseWait();
 			//$(el.target).css('cursor','wait');
 			$('html').addClass('wait');
-			function rest(){
+			function rest_remove(){
 			var facet = $(el.target).parent().attr('data-facet');
 			   $('.chosen_facet').tooltip('hide');
 			   data_browser.remove_facet(facet);
@@ -64,7 +64,7 @@ html.wait, html.wait * { cursor: wait !important; }
 			   $('#collapseFiles').collapse('show');
 			   $('html').removeClass('wait');
 			}
-			setTimeout(function(){rest()},50);
+			setTimeout(function(){rest_remove()},50);
 			//$('html').removeClass('wait');
 			//wait_dialog.hidePleaseWait();
 			return false;
@@ -72,13 +72,13 @@ html.wait, html.wait * { cursor: wait !important; }
 		}else if($(el.target).hasClass('facet_clear')){
 			//wait_dialog.showPleaseWait();
 			$('html').addClass('wait');
-			function rest(){
+			function rest_clear(){
 			   data_browser.clear_facets();
 			   data_browser.get_files();
                            $('#collapseFiles').collapse('show');
 			   $('html').removeClass('wait');
 			}
-			 setTimeout(function(){rest()},50);
+			 setTimeout(function(){rest_clear()},50);
 			//wait_dialog.hidePleaseWait();
                         return false;
 		}
