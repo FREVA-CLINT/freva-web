@@ -1,3 +1,5 @@
+{% load settingstags %}
+
 <script type="text/javascript">
 
 var tourTemplate = "<div class='popover tour ' ><div class='arrow'></div><button class='close' aria-hidden='true' data-dismiss='modal' type='button' data-role='end' style='margin-right:10px;margin-top:5px;'>X</button><h3 class='popover-title'></h3><div class='popover-content' ></div><div class='popover-navigation'><button class='btn btn-default tourbtn' data-role='prev'>< Back</button><button class='btn btn-default tourbtn' data-role='next'>Next ></button></div></div>";
@@ -51,7 +53,7 @@ var tour2 = new Tour({
     backdrop: false,
   },
   {
-    path: "/history/4841/results/",
+    path: "/history/{% settings_val 'GUEST_TOUR_RESULT'%}/results/",
     orphan: true,
     //element: "#history_menu",
     title: "MurCSS results",
@@ -61,7 +63,7 @@ var tour2 = new Tour({
     backdrop: true,
   },
   {
-    path: "/history/4841/results/",
+    path: "/history/{% settings_val 'GUEST_TOUR_RESULT'%}/results/",
     //orphan: true,
     element: "#sendButton_",
     title: "Share your results",
@@ -70,7 +72,7 @@ var tour2 = new Tour({
     backdrop: false,
   },
   {
-    path: "/history/4841/results/",
+    path: "/history/{% settings_val 'GUEST_TOUR_RESULT'%}/results/",
     orphan: true,
     //element: "",
     title: "MurCSS results",
