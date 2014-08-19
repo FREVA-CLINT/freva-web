@@ -1,3 +1,5 @@
+<script type="text/javascript">
+
 var tourTemplate = "<div class='popover tour ' ><div class='arrow'></div><button class='close' aria-hidden='true' data-dismiss='modal' type='button' data-role='end' style='margin-right:10px;margin-top:5px;'>X</button><h3 class='popover-title'></h3><div class='popover-content' ></div><div class='popover-navigation'><button class='btn btn-default tourbtn' data-role='prev'>< Back</button><button class='btn btn-default tourbtn' data-role='next'>Next ></button></div></div>";
 
 var endTemplate = "<div class='popover tour'><div class='arrow'></div><button class='close' aria-hidden='true' data-dismiss='modal' type='button' data-role='end' style='margin-right:10px;margin-top:5px;'>X</button><h3 class='popover-title'></h3><div class='popover-content'></div><div class='popover-navigation'><button class='btn btn-default' data-role='prev'>< Back</button><button class='btn btn-default' data-role='end'>End Tour </button></div></div>";
@@ -167,3 +169,4 @@ function restartTour(){
    //tour.start();}
 }
 
+</script>
