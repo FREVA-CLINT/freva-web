@@ -83,8 +83,9 @@
   <script src="{{ STATIC_URL }}js/bootstrap.min.js"></script>
 
   <script src="{{ STATIC_URL }}js/bootstrap-tour/build/js/bootstrap-tour.min.js"></script>
-  
-  <script src="{{ STATIC_URL }}js/guest_tour.js"></script>
+ 
+  {% include "_layouts/guest_tour.js" %}
+  <!--<script src="{{ STATIC_URL }}js/guest_tour.js"></script>-->
   
   
   {% endcompress %}
