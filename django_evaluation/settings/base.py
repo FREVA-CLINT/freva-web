@@ -557,3 +557,6 @@ MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
 
 # send an email to the admins whenever a guest logs-in
 SEND_MAIL_AT_GUEST_LOGIN = True
+
+# result to show at guest tour
+GUEST_TOUR_RESULT = 13114
