@@ -72,8 +72,12 @@ def solr_search(request):
 	for i,val in enumerate(d):
 		try:
 			if i%2 == 0:	
-				int(val[-4:])
-				tmp_val = val[:-4]
+				try:
+					int(val[-6:])
+					tmp_val = val[:-6]
+				except:
+					int(val[-4:])
+                                        tmp_val = val[:-4]
 				if tmp_val not in tmp:
 					tmp.append(tmp_val)
 					tmp.append(d[i+1])
