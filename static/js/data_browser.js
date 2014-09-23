@@ -78,7 +78,7 @@ data_browser = new function(){
 		$('#headingFiles .files_count').html('['+answer['metadata']['numFound']+']');	
 		var result_list = '<div style="max-height:500px; overflow:auto;"><ul class="jqueryFileTree">';
 		$.each(answer['data'],function(key,val){
-			result_list += '<li class="file ext_nc" style="margin-bottom:5px;">'+val+'</li>';
+			result_list += '<li class="file ext_nc" style="margin-bottom:5px;"><span title="Click to execute \'ncdump -h \' <br> and view metadata" class="ncdump glyphicon glyphicon-info-sign"></span> <span class="fn">'+val+'</span></li>';
 		});
 		result_list += '</ul></div>';
 		$('#collapseFiles').children().html(result_list);
@@ -153,7 +153,7 @@ data_browser = new function(){
 	    //Activate Bootstrap Tooltip
 	    $('.facet_click').tooltip({'placement':'right',
 				       'html':true,container: 'body'});
-
+	    $('.ncdump').tooltip({'placement':'top','html':true,container: 'body'});
 	};
 
 

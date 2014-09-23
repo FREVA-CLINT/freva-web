@@ -4,6 +4,7 @@
 {% block content %}
 
 {% load custom_filters %}
+{% load solr_dialogs %}
 
 <style>
 UL.jqueryFileTree LI {
@@ -15,16 +16,28 @@ html.wait, html.wait * { cursor: wait !important; }
 .tooltip-inner {max-width:750px; !important; }
 
 
-.modal-dialog {
-    margin-top: 15%;
+body .modal-dialog{
+   width: 80%;
+   max-width:1200px;
+}
+.ncdump {
+   cursor: pointer;
 }
 
 </style>
+
 <script src="{{ STATIC_URL }}js/data_browser.js?{% now "U" %}"></script>
 
 <script>
-
 	$(document).ready(function(){
+		$('#collapseFiles').on('click',function(e){
+		    var target = $(e.target);
+		    if(!target.hasClass('ncdump'))
+		        return false;
+		    ncdumpDialog.show();
+		    console.log($(e.target).next().html());
+		    $('#ncdump_file').val($(e.target).next().html());
+		});
 		//init files 
 		//data_browser.get_files();
 		//data_browser.clear_facets();
@@ -85,7 +98,6 @@ html.wait, html.wait * { cursor: wait !important; }
 	});	
 
 </script>
-
 
 <!-- Modal 
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -179,4 +191,10 @@ html.wait, html.wait * { cursor: wait !important; }
 
 
  </div>
+
+
+
+{% ncdump_dialog %}
+
+
 {% endblock %}
