@@ -8,12 +8,15 @@ views for the solr application
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-
+from django.utils.safestring import mark_safe
+from django.views.decorators.debug import sensitive_post_parameters
 
 from evaluation_system.model.solr import SolrFindFiles
 
 from django_evaluation import settings
+from paramiko import AuthenticationException
 
+from plugins.utils import ssh_call
 import json
 import logging
 
@@ -28,9 +31,25 @@ def data_browser(request):
         tmp.update(args)
         args = tmp
     facets = settings.FACETS
-    
+     
     return render(request, 'solr/data_browser.html', {'facets':facets})
 
+@sensitive_post_parameters('pass')
+
+@login_required()
+def ncdump(request):
+    fn = request.POST['file']
+    user_pw = request.POST['pass']
+    command = '/client/bin/ncdump -h %s' % (fn,)
+     
+    try:
+        result = ssh_call(request.user.username,user_pw,command,settings.SCHEDULER_HOSTS)
+        ncdump_out = result[1].readlines()
+        ncdump_err = result[2].readlines()
+        ncdump_out = '<pre>'+''.join(ncdump_out)+'</pre>'
+        return HttpResponse(json.dumps(dict(ncdump=mark_safe(ncdump_out),error_msg=''.join(ncdump_err))),status=200)
+    except AuthenticationException:
+        return HttpResponse('AuthenticationException', status=500, content_type="application/json")
 
 @login_required()
 def solr_search(request):
