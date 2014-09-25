@@ -34,9 +34,9 @@ body .modal-dialog{
 		    var target = $(e.target);
 		    if(!target.hasClass('ncdump'))
 		        return false;
-		    ncdumpDialog.show();
 		    console.log($(e.target).next().html());
 		    $('#ncdump_file').val($(e.target).next().html());
+		    ncdumpDialog.show();
 		});
 		//init files 
 		//data_browser.get_files();
