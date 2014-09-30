@@ -11,6 +11,7 @@ data_browser = new function(){
 	this.url = '/solr/solr-search/';
 	this.query = {};
 	this.metadata_facets = ['variable','institute','model'];	
+        this.searchable = ['variable','institute'];        
 
 	this.get_query = function(){
 		result = '';
@@ -95,6 +96,17 @@ data_browser = new function(){
 		   return '';
 	};
 
+	this.search_list = function(el,facet){
+		var search_val = $(el).val().trim().toLowerCase();
+	        meta_array = window[facet];
+		$.each(meta_array,function(k,v){
+       		   if (v.toLowerCase().search(search_val) != -1)
+        	   {
+           	     $('#'+facet+'_'+k).show();
+        	   }else $('#'+facet+'_'+k).hide();
+     		});
+	};	
+
 	this.update_container = function(answer){
 	    selected_html = 'solr_search ';
 	    $.each(answer['data'],function(facet,facet_list){
@@ -105,6 +117,10 @@ data_browser = new function(){
 		$('#heading'+facet).parent().parent().show();
 		$('#heading'+facet+' .facet_count').html('('+facet_list.length/2+')');
 		html = '<div class="row">';
+		if($.inArray(facet,data_browser.searchable) > -1 && !(facet in data_browser.query)){
+		   html += '<div class="col-md-12"><input name="'+facet+'_search" id="'+facet+'_search" val="" onKeyUp="data_browser.search_list(this,\''+facet+'\');" placeholder="Search '+facet+' name" class="form-control"/></div>';
+                }
+
 		$.each(facet_list,function(val)
 		{
 		   if(val%2==0){
@@ -112,7 +128,7 @@ data_browser = new function(){
 		      var title = data_browser.getAttributes(facet,facet_list[val]);	
 		      if(facet in data_browser.query){	
 			var del_link = '<a href="#" class="facet_remove" data-facet="'+facet+'"><span class="glyphicon glyphicon-remove-circle"></span></a>';
-		        html += '<div class="col-md-3">'+del_link+' <strong>'+facet_list[val]+'</strong> ['+facet_list[val+1]+']</div>';	
+		        html += '<div class="col-md-3 col-xs-6">'+del_link+' <strong>'+facet_list[val]+'</strong> ['+facet_list[val+1]+']</div>';	
 			$('#heading'+facet+' .chosen_facet').html(': <strong>'+ facet_list[val]+'</strong> '+del_link);
 			$('#heading'+facet+' .chosen_facet').attr('title',title).delay(500);
 			$('#heading'+facet+' .chosen_facet').tooltip('destroy');
@@ -121,7 +137,8 @@ data_browser = new function(){
 			//updated selected panel
 			selected_html += del_link + ' '+facet+ '=<strong>'+facet_list[val]+'</strong> ';
 		      }else{
-                        html += '<div class="col-md-3"><a title="'+title+'" class="facet_click" data-facet="'+facet+'" href="#">'+facet_list[val]+'</a> ['+facet_list[val+1]+']</div>';
+
+			html += '<div class="col-md-3 col-xs-6" id="'+facet+'_'+facet_list[val]+'"><a title="'+title+'" class="facet_click" data-facet="'+facet+'" href="#">'+facet_list[val]+'</a> ['+facet_list[val+1]+']</div>';
 			
 			if(facet in data_browser.no_options)
 			   $('#heading'+facet+' .chosen_facet').html('<strong>'+ facet_list[val]+'</strong>');
@@ -165,7 +182,7 @@ data_browser = new function(){
 //wait_dialog.showPleaseWait();
 $('html').addClass('wait');
 setTimeout(function(){
-   data_browser.get_files();
+   //data_browser.get_files();
    data_browser.clear_facets();
    $('html').removeClass('wait');
 },50);
