@@ -100,7 +100,7 @@ data_browser = new function(){
 		var search_val = $(el).val().trim().toLowerCase();
 	        meta_array = window[facet];
 		$.each(meta_array,function(k,v){
-       		   if (v.toLowerCase().search(search_val) != -1)
+       		   if ((v.toLowerCase().search(search_val) != -1) || (k.toLowerCase().search(search_val) != -1))
         	   {
            	     $('#'+facet+'_'+k).show();
         	   }else $('#'+facet+'_'+k).hide();
