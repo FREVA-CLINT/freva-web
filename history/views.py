@@ -274,10 +274,10 @@ def changeFlag(request):
 
 
 @login_required
-def followResult(request, id):
+def followResult(request, history_id):
     retstr = 'follow'
     
-    history_object = get_object_or_404(History, id=id)
+    history_object = get_object_or_404(History, id=history_id)
 
 
     # check if the user has the permission to access the result
@@ -285,30 +285,30 @@ def followResult(request, id):
     guest = request.user.isGuest()
     
     
-    if not guest and flag in [history.model.Flag.free,
-                              history.model.Flag.public,
-                              history.model.Flag.guest]
+    if not guest and flag in [History.Flag.free,
+                              History.Flag.public,
+                              History.Flag.guest]:
     
         
-        user = User(request.user.getName())
-        pm.followHistoryTag(id, user, 'Web page:w follow')
+        user = User(str(request.user))
+        pm.followHistoryTag(history_object.id, user, 'Web page: follow')
         
         retstr = 'unfollow'
 
     return HttpResponse(retstr, content_type="text/plain")
 
 @login_required
-def unfollowResult(request, id):
+def unfollowResult(request, history_id):
     retstr = 'unfollow'
     
-    history_object = get_object_or_404(History, id=id)
+    history_object = get_object_or_404(History, id=history_id)
 
 
-    try:
-        user = User(request.user.getName())
-        pm.unfollowHistoryTag(id, user)
-        
-        retstr = 'follow'
+    user = User(str(request.user))
+    pm.unfollowHistoryTag(history_object.id, user)
+      
+    retstr = 'follow'
+    
 
     return HttpResponse(retstr, content_type="text/plain")
 
@@ -701,7 +701,7 @@ def count_notes(request, history_id, deleted):
 
     history_tags = None
 
-    if request.user.is_authenticated()
+    if request.user.is_authenticated():
         try:
             history_tags = HistoryTag.objects.filter(history_id_id=history_id)
     
