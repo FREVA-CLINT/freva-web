@@ -35,9 +35,12 @@
 				{% if request.user == history_object.uid %}
 	 			{% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
 	 			{% endif %} 	 		
-	 			<a class="btn btn-info mybtn-caption" id="sendButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
+	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
+{%comment%}
+                                <!--<a class="btn btn-info" href="{% url 'plugins:follow' history_object.id%}" id="follow_button">Follow</a>-->
+{%endcomment%}
 		 	 	</div>
 	</div>
 	  
