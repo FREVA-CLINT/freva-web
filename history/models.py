@@ -35,8 +35,10 @@ class History(models.Model):
     class Flag:
         """
         The possible flags are:
-        public  - the data is accessible for everyone
-        shared  - the data is can be only accessed by certain users
+        free    - can be accessed by all
+        guest   - like public and permission for guest users
+        public  - the data is accessible for every registered user
+        shared  - the data is can be only accessed by certain users (to be implemented)
         private - the data is private
         deleted - the data set will be hidden
         """
@@ -194,13 +196,14 @@ class HistoryTag(models.Model):
     """
 
     class tagType:
-        [caption,note_public,note_private,note_deleted] = range(4)    
+        [caption,note_public,note_private,note_deleted, follow] = range(5)    
     
     
     TYPE_CHOICES = ((tagType.caption, 'Caption'),
                     (tagType.note_public, 'Public note'),
                     (tagType.note_private, 'Private note'),
-                    (tagType.note_deleted, 'Deleted note'),)
+                    (tagType.note_deleted, 'Deleted note'),
+                    (tagType.follow), 'Follow')
     
     #: result id
     history_id      = models.ForeignKey(History)

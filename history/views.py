@@ -20,7 +20,7 @@ import json
 import os
 
 import evaluation_system.api.plugin_manager as pm
-from evaluation_system.model.db import _result_preview, UserDB
+from evaluation_system.model.db import _result_preview, UserDB, HistoryEntry
 from evaluation_system.model.user import User
 from evaluation_system.misc import utils
 
@@ -37,6 +37,7 @@ from django.db.models import Q
 import logging
 from history.models import HistoryTag
 import evaluation_system
+from evaluation_system.model import user
 
 
 
@@ -270,6 +271,47 @@ def changeFlag(request):
         retstr = 'Changed %i of %i entries' % (changed, len(ids))
 
     return HttpResponse(retstr, content_type="text/plain")
+
+
+@login_required
+def followResult(request, id):
+    retstr = 'follow'
+    
+    history_object = get_object_or_404(History, id=id)
+
+
+    # check if the user has the permission to access the result
+    flag = history_object.flag
+    guest = request.user.isGuest()
+    
+    
+    if not guest and flag in [history.model.Flag.free,
+                              history.model.Flag.public,
+                              history.model.Flag.guest]
+    
+        
+        user = User(request.user.getName())
+        pm.followHistoryTag(id, user, 'Web page:w follow')
+        
+        retstr = 'unfollow'
+
+    return HttpResponse(retstr, content_type="text/plain")
+
+@login_required
+def unfollowResult(request, id):
+    retstr = 'unfollow'
+    
+    history_object = get_object_or_404(History, id=id)
+
+
+    try:
+        user = User(request.user.getName())
+        pm.unfollowHistoryTag(id, user)
+        
+        retstr = 'follow'
+
+    return HttpResponse(retstr, content_type="text/plain")
+
 
 
 @login_required
@@ -659,7 +701,7 @@ def count_notes(request, history_id, deleted):
 
     history_tags = None
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated()
         try:
             history_tags = HistoryTag.objects.filter(history_id_id=history_id)
     
@@ -667,11 +709,11 @@ def count_notes(request, history_id, deleted):
             count += history_tags.filter(type=HistoryTag.tagType.note_private).filter(uid=request.user).count()
         except Exception, e:
             pass
-    
-        if int(deleted):
-            try:
-                count += history_tags.filter(type=HistoryTag.tagType.note_deleted).filter(uid=request.user).count()
-            except:
-                pass
+
+    if int(deleted):
+        try:
+            count += history_tags.filter(type=HistoryTag.tagType.note_deleted).filter(uid=request.user).count()
+        except:
+            pass
 
     return HttpResponse(str(count), content_type="text/plain")    
