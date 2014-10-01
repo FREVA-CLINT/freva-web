@@ -275,7 +275,7 @@ def changeFlag(request):
 
 @login_required
 def followResult(request, history_id):
-    retstr = 'follow'
+    retstr = 'Follow'
     
     history_object = get_object_or_404(History, id=history_id)
 
@@ -293,13 +293,13 @@ def followResult(request, history_id):
         user = User(str(request.user))
         pm.followHistoryTag(history_object.id, user, 'Web page: follow')
         
-        retstr = 'unfollow'
+        retstr = 'Unfollow'
 
     return HttpResponse(retstr, content_type="text/plain")
 
 @login_required
 def unfollowResult(request, history_id):
-    retstr = 'unfollow'
+    retstr = 'Unfollow'
     
     history_object = get_object_or_404(History, id=history_id)
 
@@ -307,7 +307,7 @@ def unfollowResult(request, history_id):
     user = User(str(request.user))
     pm.unfollowHistoryTag(history_object.id, user)
       
-    retstr = 'follow'
+    retstr = 'Follow'
     
 
     return HttpResponse(retstr, content_type="text/plain")
