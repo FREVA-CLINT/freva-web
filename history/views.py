@@ -28,7 +28,7 @@ from models import History, Result, ResultTag, HistoryTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
-from history.utils import FileDict
+from history.utils import FileDict, utf8SaveEncode
 
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
@@ -518,6 +518,9 @@ def tailFile(request, id):
         
     if history_object.status < 2:
         new_lines = False
+    
+    # encode to utf8
+    new_lines = utf8SaveEncode(new_lines)
     
     return HttpResponse(json.dumps(new_lines), content_type="application/json")
     

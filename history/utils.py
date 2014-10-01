@@ -119,3 +119,29 @@ class FileDict(dict):
         
         return ret
         
+def utf8SaveEncode(str_or_list):
+    """
+    Encodes a string or a list of strings in UTF8
+    :type str_or_list: string or list
+    :param str_or_list: variable to encode
+    """
+    
+    def strEncode(ascii):
+        """
+        Encodes a string in UTF8 and standadizes error handling
+        :type str: string
+        :param str: variable to encode
+        """
+        return unicode(ascii, errors='replace')
+    
+    retval = None
+    if isinstance(str, basestring):
+        retval = strEncode(str_or_list)
+        
+    else:
+        retval = [ strEncode(ascii) for ascii in str_or_list ]
+        
+    return retval
+        
+        
+    
