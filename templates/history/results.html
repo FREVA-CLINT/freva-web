@@ -38,7 +38,7 @@
 	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
-                <a class="btn btn-info" href="{% url 'history:follow' history_object.id%}" id="follow_button">Follow</a>
+                <a class="btn btn-info" id="followButton" onClick="follow_function()">Follow</a>
 		 	 	</div>
 	</div>
 	  
@@ -259,6 +259,11 @@
 		});
 	}
 
+    function follow_function() {
+        text = $('#followButton').text();
+        consoloe.log(text);
+    }
+    
 	$(document).ready(function() {
 
 		doCount();
@@ -276,6 +281,8 @@
 		    placeholder: "{{STATIC_URL}}img/loading.gif",
 		    //event : "click",
 		});
+		
+		$(''
 
 		$('.jqueryFileTree a').on('click', function(target){
 			var list_el = $(target.target).parent();
