@@ -38,7 +38,7 @@
 	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
-                <a class="btn btn-info" id="followButton" onClick="follow_function()">Follow</a>
+		                <a class="btn btn-info" id="followButton"><span id='followText'>Follow</span></a>
 		 	 	</div>
 	</div>
 	  
@@ -259,11 +259,11 @@
 		});
 	}
 
-    function follow_function() {
-        text = $('#followButton').text();
-        consoloe.log(text);
-    }
-    
+	function capitalizeFirst(string) {
+		return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+
+
 	$(document).ready(function() {
 
 		doCount();
@@ -281,8 +281,22 @@
 		    placeholder: "{{STATIC_URL}}img/loading.gif",
 		    //event : "click",
 		});
+
 		
-		$(''
+		$('#followButton').on('click', function() {
+        		text = $('#followText').text().toLowerCase();
+
+			console.log(text);
+
+			if(text == "follow"){
+				$('#followText').load('{% url 'history:follow' history_object.id%}');
+			}
+			else
+			{
+				$('#followText').load('{% url 'history:unfollow' history_object.id%}');
+			}	
+
+		});
 
 		$('.jqueryFileTree a').on('click', function(target){
 			var list_el = $(target.target).parent();
