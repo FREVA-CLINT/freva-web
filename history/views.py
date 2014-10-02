@@ -28,7 +28,7 @@ from models import History, Result, ResultTag, HistoryTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
-from history.utils import FileDict, utf8SaveEncode
+from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower
 
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
@@ -689,12 +689,19 @@ def edit_htag(request, history_id, tag_id):
 
         if tag_id=='0':
             db.addHistoryTag(history_id, type, text, user)
-
+            
         elif HistoryTag.objects.get(id=tag_id).uid == user:
             db.updateHistoryTag(tag_id, type, text, user.username)
             
         retval = filters.linebreaks(filters.escape(text))
  
+        # notify followers
+        if type==HistoryTag.tagType.note_public:
+            subject = 'New comment'
+            message = 'A new comment'
+            sendmail_to_follower(history_id, request.user, subject, message)
+            
+
  
     return HttpResponse(json.dumps(retval), content_type="application/json")    
 
