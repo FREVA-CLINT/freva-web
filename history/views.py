@@ -699,7 +699,7 @@ def edit_htag(request, history_id, tag_id):
         if type==HistoryTag.tagType.note_public:
             subject = 'New comment'
             message = 'A new comment'
-            sendmail_to_follower(history_id, request.user, subject, message)
+            sendmail_to_follower(request, history_id, subject, message)
             
 
  
