@@ -705,12 +705,12 @@ def edit_htag(request, history_id, tag_id):
         if type==HistoryTag.tagType.note_public:
             if not tag_id:
                 subject = 'New comment'
-                message = '%s added new comment to the results of the evaluation %i\n' % (name, history_id)
+                message = '%s added new comment to the results of the evaluation %s\n' % (name, history_id)
                 message += url
                 
             else:
                 subject = 'Edited comment'
-                message = '%s edited comment %i beloning to the results of the evaluation %i\n' % (name, tag_id, history_id)
+                message = '%s edited comment %s beloning to the results of the evaluation %s\n' % (name, tag_id, history_id)
                 message += url
             
             sendmail_to_follower(request, history_id, subject, message)
