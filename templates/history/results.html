@@ -293,7 +293,7 @@
 			}
 			else
 			{
-				$('#followText').load('{% url 'history:unfollow' history_object.id%}');
+				$('#followText').load('{% url 'history:unfollow' history_object.id%}?button=1');
 			}	
 
 		});
