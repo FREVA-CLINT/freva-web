@@ -262,23 +262,22 @@ def changeFlag(request):
             changed += 1
             try:
                 db.changeFlag(id, user, flag)
-                
-                if flag == History.Flag.deleted:
   
             except:
                 changed -= 1
-                    
+                
             # notify followers
-            try:
-                name = '%s %s' % (request.user.first_name, request.user.last_name)
-         
-                subject = 'Deleted evaluation'
-                message = 'The evaluation %s you are following has been deleted by %s.\n' % (history_id, name)
-                message += url
-            
-                sendmail_to_follower(request, history_id, subject, message)
-            except:
-                pass
+            if flag == History.Flag.deleted:
+                try:
+                    name = '%s %s' % (request.user.first_name, request.user.last_name)
+             
+                    subject = 'Deleted evaluation'
+                    message = 'The evaluation %s you are following has been deleted by %s.\n' % (history_id, name)
+                    message += url
+                
+                    sendmail_to_follower(request, history_id, subject, message)
+                except Exception, e:
+                    logging.error(e)
 
     retstr = ''
 
@@ -508,12 +507,22 @@ def results(request, id, show_output_only = False):
         
 
     htag_notes = None
+    follow_string = 'Follow'
 
     try:
         htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
 
-    except:
-        pass
+    except Exception, e:
+	logging.error(e)
+
+    try:
+        follow = historytag_objects.filter(Q(uid=request.user) & Q(type=HistoryTag.tagType.follow))
+
+        if len(follow) > 0:
+            follow_string = 'Unfollow'
+
+    except Exception, e:
+	logging.error(e)
 
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
@@ -529,7 +538,8 @@ def results(request, id, show_output_only = False):
                                                     'tool_repos' : tool_repos,
                                                     'api_version' : api_version,
                                                     'tool_version' : tool_version,
-                                                    'notes' : htag_notes,})
+                                                    'notes' : htag_notes,
+                                                    'follow' : follow_string,})
         
         
 @login_required()
