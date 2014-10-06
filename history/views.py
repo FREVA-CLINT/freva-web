@@ -267,15 +267,14 @@ def changeFlag(request):
                 changed -= 1
                 
             # notify followers
-            if flag == History.Flag.deleted:
+            if int(flag) == int(History.Flag.deleted):
                 try:
                     name = '%s %s' % (request.user.first_name, request.user.last_name)
              
                     subject = 'Deleted evaluation'
-                    message = 'The evaluation %s you are following has been deleted by %s.\n' % (history_id, name)
-                    message += url
+                    message = 'The evaluation %s you are following has been deleted by %s.\n' % (str(id), name)
                 
-                    sendmail_to_follower(request, history_id, subject, message)
+                    sendmail_to_follower(request, id, subject, message)
                 except Exception, e:
                     logging.error(e)
 
