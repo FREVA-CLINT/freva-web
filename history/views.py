@@ -262,8 +262,23 @@ def changeFlag(request):
             changed += 1
             try:
                 db.changeFlag(id, user, flag)
+                
+                if flag == History.Flag.deleted:
+  
             except:
                 changed -= 1
+                    
+            # notify followers
+            try:
+                name = '%s %s' % (request.user.first_name, request.user.last_name)
+         
+                subject = 'Deleted evaluation'
+                message = 'The evaluation %s you are following has been deleted by %s.\n' % (history_id, name)
+                message += url
+            
+                sendmail_to_follower(request, history_id, subject, message)
+            except:
+                pass
 
     retstr = ''
 
@@ -299,6 +314,12 @@ def followResult(request, history_id):
 
 @login_required
 def unfollowResult(request, history_id):
+    '''
+    This routine renders the unfolle view.
+    When the get paramater "button" is given, only
+    the strings "Follow" and "Unfollow" will be returned.
+    This is used for the button in the result view.
+    '''
     retstr = 'Unfollow'
     success = False
     
@@ -317,8 +338,6 @@ def unfollowResult(request, history_id):
         return HttpResponse(retstr, content_type="text/plain")
 
     else:
-        retstr = 'Wrong'
-    
         return render(request, 'history/unfollow.html', {'success' : success,
                                                          'history_id' : history_id})
 
