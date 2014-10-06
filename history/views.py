@@ -300,6 +300,7 @@ def followResult(request, history_id):
 @login_required
 def unfollowResult(request, history_id):
     retstr = 'Unfollow'
+    success = False
     
     history_object = get_object_or_404(History, id=history_id)
 
@@ -310,15 +311,16 @@ def unfollowResult(request, history_id):
         retstr = 'Follow'
         success = True
     except:
-        retstr = 'Unfollow'
-        success = False
+        pass
       
     if request.GET.get('button', None):
-           
         return HttpResponse(retstr, content_type="text/plain")
+
     else:
         retstr = 'Wrong'
     
+        return render(request, 'history/unfollow.html', {'success' : success,
+                                                         'history_id' : history_id})
 
 
 
