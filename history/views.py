@@ -305,15 +305,21 @@ def unfollowResult(request, history_id):
 
 
     user = User(str(request.user))
-    pm.unfollowHistoryTag(history_object.id, user)
+    try:
+        pm.unfollowHistoryTag(history_object.id, user)
+        retstr = 'Follow'
+        success = True
+    except:
+        retstr = 'Unfollow'
+        success = False
       
     if request.GET.get('button', None):
-        retstr = 'Follow'
+           
+        return HttpResponse(retstr, content_type="text/plain")
     else:
         retstr = 'Wrong'
     
 
-    return HttpResponse(retstr, content_type="text/plain")
 
 
 
