@@ -557,9 +557,9 @@ def tailFile(request, id):
         
     if history_object.status < 2:
         new_lines = False
-    
-    # encode to utf8
-    new_lines = utf8SaveEncode(new_lines)
+    else:
+         # encode to utf8
+         new_lines = utf8SaveEncode(new_lines)
     
     return HttpResponse(json.dumps(new_lines), content_type="application/json")
     
