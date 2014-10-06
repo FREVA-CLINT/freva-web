@@ -194,7 +194,6 @@ def sendmail_to_follower(request, history_id, subject, message):
 
         if uid != prev_uid and user.uid != request.user:
             info= user_info.get_user_info(uid)
-            print 'uid, info', uid, info
             addresses.append(info[3])
         prev_uid = uid
 
@@ -203,7 +202,6 @@ def sendmail_to_follower(request, history_id, subject, message):
         for addr in addresses:
 
             to_email.append(addr)
-
 
     email = EmailMessage(subject,
                          text,
