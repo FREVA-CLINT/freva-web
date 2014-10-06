@@ -17,7 +17,17 @@
 	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' history_object.uid %}">{{history_object.uid}}</a></p>
 	      </div>
       </div>
-      <div class="row">
+       <div class="row">
+		<div class="alert alert-success alert-dismissible" role="alert" id='alert_follow' style='display:none'>
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <strong>Following!</strong> You get notified by email, when somebody generated content for this result.
+                </div> <!-- alert follow -->
+		<div class="alert alert-warning alert-dismissible" role="alert" id='alert_unfollow' style='display:none'>
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <strong>Unfollowing!</strong> You will not get further email notifications for this result.
+                </div> <!-- alert unfollow -->
+	</div> <!-- row -->
+       <div class="row">
 	 	 	<div class="col-md-12">
 	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>
 	 	 		{% if documentation %}
@@ -40,16 +50,7 @@
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
 		                <a class="btn btn-info" id="followButton"><span id='followText'>{{follow}}</span></a>
 		 	 	</div>
-		 	 	<div class="alert alert-success alert-dismissible" role="alert" id='alert_follow' style='display:none'>
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <strong>Following!</strong> You get notified by email, when somebody generated content for this result.
-                </div> <!-- alert follow -->
-		 	 	<div class="alert alert-warning alert-dismissible" role="alert" id='alert_unfollow' style='display:none'>
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <strong>Unfollowing!</strong> You will not get any email notifications belonging this result.
-                </div> <!-- alert unfollow -->
-           </div>
-	</div>
+          </div>
 	  
 <!-- Configuration -->
 <div class="panel panel-default" style="margin-top:10px;">
@@ -297,27 +298,45 @@
 
 
 			if(text == "follow"){
-				$('#followText').load('{% url 'history:follow' history_object.id%}');
+				$.ajax({
+					type: "GET",
+					url: "{% url 'history:follow' history_object.id%}",
+					async: false,
+					data: "button=1",
+					success: function(text) {
+             					if(text.toLowerCase() == "unfollow") {
+							$('#followText').text(text);
 				
-				// show only info, when following worked
-          		if($('#followText').text().toLowerCase() == 'unfollow') {
-          		    $('#alert_follow').show();
-          		    $('#alert_unfollow').hide();
+	          		    			$('#alert_follow').show();
+	        	  		 		$('#alert_unfollow').hide();
+						}
+						// show only info, when following worked
+
+				     	}
+				   });
+				
           		}
           		
-          		
-				
-			}
 			else
 			{
-				$('#followText').load('{% url 'history:unfollow' history_object.id%}?button=1');
+				$.ajax({
+					type: "GET",
+					url: "{% url 'history:unfollow' history_object.id%}",
+					async: false,
+					data: "button=1",
+					success: function(text) {
+             					if(text.toLowerCase() == "follow") {
+							$('#followText').text(text);
 				
-				// show only info, when following worked
-          		if($('#followText').text().toLowerCase() == 'follow') {
-          		    $('#alert_unfollow').show();
-          		    $('#alert_follow').hide();
+	          		    			$('#alert_unfollow').show();
+	        	  		 		$('#alert_follow').hide();
+						}
+						// show only info, when following worked
+
+				     	}
+				   });
+				
           		}
-    		}	
 
 		});
 
