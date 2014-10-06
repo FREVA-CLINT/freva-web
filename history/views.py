@@ -307,7 +307,10 @@ def unfollowResult(request, history_id):
     user = User(str(request.user))
     pm.unfollowHistoryTag(history_object.id, user)
       
-    retstr = 'Follow'
+    if request.GET.get('button', None):
+        retstr = 'Follow'
+    else:
+        retstr = 'Wrong'
     
 
     return HttpResponse(retstr, content_type="text/plain")
@@ -696,9 +699,20 @@ def edit_htag(request, history_id, tag_id):
         retval = filters.linebreaks(filters.escape(text))
  
         # notify followers
+        name = '%s %s' % (request.user.first_name, request.user.last_name)
+        url =request.build_absolute_uri(reverse('history:results', kwargs={'id': history_id}))
+         
         if type==HistoryTag.tagType.note_public:
-            subject = 'New comment'
-            message = 'A new comment'
+            if not tag_id:
+                subject = 'New comment'
+                message = '%s added new comment to the results of the evaluation %i\n' % (name, history_id)
+                message += url
+                
+            else:
+                subject = 'Edited comment'
+                message = '%s edited comment %i beloning to the results of the evaluation %i\n' % (name, tag_id, history_id)
+                message += url
+            
             sendmail_to_follower(request, history_id, subject, message)
             
 

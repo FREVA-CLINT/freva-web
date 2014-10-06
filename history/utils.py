@@ -190,7 +190,7 @@ def sendmail_to_follower(request, history_id, subject, message):
     replyto = {'Reply-To' : 'do_not_reply@www-miklip.de'}
 
     for user in follower:
-	uid = str(user.uid)
+        uid = str(user.uid)
 
         if uid != prev_uid and user.uid != request.user:
             info= user_info.get_user_info(uid)
