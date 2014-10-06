@@ -404,7 +404,7 @@ def results(request, id, show_output_only = False):
         # for a read-protected directory this will fail
         try:
             for line in pygtailwrapper(id, restart=True):
-                file_content.append(line)
+                file_content.append(utf8SaveEncode(line))
         except IOError:
             file_content =  [ 'WARNING:',
                                'This is not the content of the file \'' + history_object.slurm_output + '\'.',
