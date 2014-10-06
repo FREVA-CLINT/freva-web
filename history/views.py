@@ -739,7 +739,7 @@ def edit_htag(request, history_id, tag_id):
         url =request.build_absolute_uri(reverse('history:results', kwargs={'id': history_id}))
          
         if type==HistoryTag.tagType.note_public:
-            if not tag_id:
+            if not int(tag_id):
                 subject = 'New comment'
                 message = '%s added new comment to the results of the evaluation %s\n' % (name, history_id)
                 message += url
