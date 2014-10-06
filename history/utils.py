@@ -172,7 +172,7 @@ def sendmail_to_follower(request, history_id, subject, message):
 
     prev_uid = None
 
-    url = request.build_absolute_uri(reverse('history:unfollow', kwargs={'id': history_id}))
+    url = request.build_absolute_uri(reverse('history:unfollow', kwargs={'history_id': history_id}))
 
     text = message
 
