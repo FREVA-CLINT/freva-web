@@ -260,24 +260,25 @@ def changeFlag(request):
     if not (flag is None or request.user.isGuest()):
         for id in ids:
             changed += 1
+
             try:
                 db.changeFlag(id, user, flag)
   
+                # notify followers
+                if int(flag) == int(History.Flag.deleted):
+                    try:
+                        name = '%s %s' % (request.user.first_name, request.user.last_name)
+                 
+                        subject = 'Deleted evaluation'
+                        message = 'The evaluation %s you are following has been deleted by %s.\n' % (str(id), name)
+                    
+                        sendmail_to_follower(request, id, subject, message)
+                    except Exception, e:
+                        logging.error(e)
+    
             except:
                 changed -= 1
                 
-            # notify followers
-            if int(flag) == int(History.Flag.deleted):
-                try:
-                    name = '%s %s' % (request.user.first_name, request.user.last_name)
-             
-                    subject = 'Deleted evaluation'
-                    message = 'The evaluation %s you are following has been deleted by %s.\n' % (str(id), name)
-                
-                    sendmail_to_follower(request, id, subject, message)
-                except Exception, e:
-                    logging.error(e)
-
     retstr = ''
 
     if changed != len(ids):
