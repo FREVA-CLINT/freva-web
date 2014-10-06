@@ -11,6 +11,10 @@
 {# Load CSS and JavaScript #}
 {% bootstrap_javascript %}  
 
+<div class="container">
+<!-- Example row of columns -->
+<div class="row">
+<div class="col-md-12">
 <div class="jumbotron">
  {% if success %}
   <h1>Unfollow succeeded</h1>
@@ -24,7 +28,9 @@
   <p><a class="btn btn-primary btn-lg" role="button" href={% url 'history:results' history_id %}>Results</a></p>
   {% endif %}
 </div>
-
+</div> <!-- col-md-12 -->
+</div> <!-- row -->
+</div> <!-- container -->
 {% endblock %}
 
  
