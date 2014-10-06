@@ -40,6 +40,15 @@
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
 		                <a class="btn btn-info" id="followButton"><span id='followText'>{{follow}}</span></a>
 		 	 	</div>
+		 	 	<div class="alert alert-success alert-dismissible" role="alert" id='alert_follow' style='display:none'>
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <strong>Following!</strong> You get notified by email, when somebody generated content for this result.
+                </div> <!-- alert follow -->
+		 	 	<div class="alert alert-warning alert-dismissible" role="alert" id='alert_unfollow' style='display:none'>
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <strong>Unfollowing!</strong> You will not get any email notifications belonging this result.
+                </div> <!-- alert unfollow -->
+           </div>
 	</div>
 	  
 <!-- Configuration -->
@@ -284,17 +293,31 @@
 
 		
 		$('#followButton').on('click', function() {
-        		text = $('#followText').text().toLowerCase();
+     		text = $('#followText').text().toLowerCase();
 
-			console.log(text);
 
 			if(text == "follow"){
 				$('#followText').load('{% url 'history:follow' history_object.id%}');
+				
+				// show only info, when following worked
+          		if($('#followText').text().toLowerCase() == 'unfollow') {
+          		    $('#alert_follow').show();
+          		    $('#alert_unfollow').hide();
+          		}
+          		
+          		
+				
 			}
 			else
 			{
 				$('#followText').load('{% url 'history:unfollow' history_object.id%}?button=1');
-			}	
+				
+				// show only info, when following worked
+          		if($('#followText').text().toLowerCase() == 'follow') {
+          		    $('#alert_unfollow').show();
+          		    $('#alert_follow').hide();
+          		}
+    		}	
 
 		});
 
