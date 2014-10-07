@@ -23,6 +23,7 @@
         <span class='class_{{class_id}}' id='text_{{class_id}}'>{{htag.text|linebreaks|escape}}</span>
         </div>
         {% ifequal htag.uid user %}
+
         <div class="col-md-offset-10 col-md-1">
         <a class="btn btn-danger class_{{class_id}} mybtn-edit"  id='btn_delete_{{class_id}}'>Delete</a>
         </div>
@@ -38,7 +39,8 @@
                 <label for='enterNewNote'>Note:</label>
                 <textarea class="form-control" id='textarea_{{class_id}}' rows="5"></textarea>
             </div> <!-- form-group -->
-            <div class='form-group'>
+		<div class="row">
+            <div class='col-md-6 form-group'>
                 <label for='publish_note'>Display your comment to other users?</label>
                 <div class="radio">
                     <label>
@@ -53,10 +55,17 @@
                     </label>
                 </div> <!-- radio -->
             </div> <!-- form-group -->
-            <div class="col-md-3">
+	    <div class="col-md-6">
+	  	<div class="alert alert-danger alert-dismissible" role="alert" id='alert_empty_{{class_id}}'>
+        	<button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        	<strong>Empty comment!<br></strong> To delete a comment use cancel and delete instead.
+        	</div> <!-- alert -->
+	    </div>
+		</div> <!-- row -->
+            <div class="col-md-2">
             <a class="btn btn-danger" id='btn_cancel_{{class_id}}'>Cancel</a>
             </div>
-            <div class="col-md-offset-8 col-md-1">
+            <div class="col-md-offset-9 col-md-1">
                 <a class="btn btn-success" id='btn_save_{{class_id}}'>Save</a>
             </div>
         </form>
@@ -99,6 +108,8 @@
 				$('.class_{{class_id}}').toggle();
         	        	$('.mybtn-edit').attr("disabled", "disabled");
 
+				$('#alert_empty_{{class_id}}').hide();
+
 				// This is a workaround to set the focus at the end
 				// of the textarea
                 		$('#textarea_{{class_id}}').focus().val('').val(text);
@@ -125,40 +136,49 @@
 		{% endifequal %}
 
                 $('#btn_save_{{class_id}}').on('click', function(){
-                        $('.mybtn-edit').removeAttr("disabled");
-			$('.class_{{class_id}}').toggle();
-       			var kind = $( "input:radio[name='radiogrp_{{class_id}}']:checked" ).val();
+			var text=$('#textarea_{{class_id}}').val();
+			console.log(text);
+			if( text.trim() == '' ) {
+				$('#alert_empty_{{class_id}}').show();
+				$('#textarea_{{class_id}}').focus();
+			}
+			else {
 
-                        var data = {'text':$('#textarea_{{class_id}}').val(),
-                                    'type': kind };
-
-                        {% ifequal class_id 'new'  %}
-                        var url = '{% url 'history:edit-historytag' history_id '0' %}';
-                        $.post(url, data, function(resp){
-                                var url = '{% url 'history:result-comments' history_id %}';
-			                    $('#loadComments').load(url)
-                        });
-   
-                	//$('#cont_new').on('click', click_cont_new);
-			reactivate_cont_new();
-                        {% else %}
-                        var url = '{% url 'history:edit-historytag' history_id htag.id %}';
-                         $.post(url, data, function(resp){
-				$('#text_{{class_id}}').html(resp);
-                        });
-                        
-                        if(kind == {{tagType.note_public}}) {
-                            $('#h4_text_{{class_id}}').text('Commentary by you');
-                        }
-                        else {
-                            $('#h4_text_{{class_id}}').text('Private comment');
-                        }
-                       {% endifequal %}
-
-                        $('#caption_modal').modal('hide');
-                });
-                {% endif %}        
-                                
+	                        $('.mybtn-edit').removeAttr("disabled");
+				$('.class_{{class_id}}').toggle();
+	       			var kind = $( "input:radio[name='radiogrp_{{class_id}}']:checked" ).val();
+	
+	                        var data = {'text':$('#textarea_{{class_id}}').val(),
+	                                    'type': kind };
+	
+	                        {% ifequal class_id 'new'  %}
+	                        var url = '{% url 'history:edit-historytag' history_id '0' %}';
+	                        $.post(url, data, function(resp){
+	                                var url = '{% url 'history:result-comments' history_id %}';
+				                    $('#loadComments').load(url)
+	                        });
+	   
+	                	//$('#cont_new').on('click', click_cont_new);
+				reactivate_cont_new();
+	                        {% else %}
+	                        var url = '{% url 'history:edit-historytag' history_id htag.id %}';
+	                         $.post(url, data, function(resp){
+					$('#text_{{class_id}}').html(resp);
+	                        });
+	                        
+	                        if(kind == {{tagType.note_public}}) {
+	                            $('#h4_text_{{class_id}}').text('Commentary by you');
+	                        }
+	                        else {
+	                            $('#h4_text_{{class_id}}').text('Private comment');
+	                        }
+	                       {% endifequal %}
+	
+	                        $('#caption_modal').modal('hide');
+			}
+		});
+		{% endif %}        
+	                                
         });    
 
 </script>
