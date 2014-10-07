@@ -118,7 +118,6 @@
                 
 		{% if class_id == "new" or  htag.uid == user %}
                 $('#btn_cancel_{{class_id}}').on('click', function(){
-                        console.log('Cancel')
 			$('.class_{{class_id}}').toggle();
                         $('.mybtn-edit').removeAttr("disabled");
 
@@ -137,7 +136,6 @@
 
                 $('#btn_save_{{class_id}}').on('click', function(){
 			var text=$('#textarea_{{class_id}}').val();
-			console.log(text);
 			if( text.trim() == '' ) {
 				$('#alert_empty_{{class_id}}').show();
 				$('#textarea_{{class_id}}').focus();

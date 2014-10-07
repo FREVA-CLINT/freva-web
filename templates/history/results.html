@@ -131,13 +131,11 @@
 		          success: function (data) {
 		             if (!data)
 		             {
-		                console.log(data)
                         window.location.reload(true)
                      }
 		             if (data.length > 0)
 		             {
 		                var output = '';
-		                console.log(data)
 		                $.each(data, function(index,value){
 		                	output += value;
 		                });
@@ -264,7 +262,6 @@
 		  $.ajax({type: "GET", url : url,
 		       		success: function (data) {
                                    $('#note_count').text('(' + data + ')');
-				console.log(data);
 			  }
 		});
 	}
