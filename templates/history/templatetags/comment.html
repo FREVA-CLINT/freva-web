@@ -2,8 +2,11 @@
 
 <div class='container'  style="border: 2px solid #eee;padding: 5px; margin: 2px" id='cont_{{class_id}}'>
 <div class="col-md-12">
-    {% ifequal class_id 'new' %}
-    <div class="col-md-offset-11 col-md-1">
+{% ifequal class_id 'new' %}
+    <div class="col-md-11">
+        <input class="form-control class_{{class_id}} mybtn-edit" id='dummyinput' tabindex=-1></input>
+    </div>
+    <div class="col-md-1">
         <a class="btn btn-info class_{{class_id}} mybtn-edit" id='btn_edit_{{class_id}}'>New</a>
     </div>
     {% else %}
@@ -89,11 +92,25 @@
                         $('#caption_modal').modal('hide');
                 });
  		{% endif %}
+
+
+		function click_edit_{{class_id}}() {
+				var text = $('#textarea_{{class_id}}').val();
+				$('.class_{{class_id}}').toggle();
+        	        	$('.mybtn-edit').attr("disabled", "disabled");
+
+				// This is a workaround to set the focus at the end
+				// of the textarea
+                		$('#textarea_{{class_id}}').focus().val('').val(text);
+			}
+
                 
 		{% if class_id == "new" or  htag.uid == user %}
                 $('#btn_cancel_{{class_id}}').on('click', function(){
+                        console.log('Cancel')
 			$('.class_{{class_id}}').toggle();
                         $('.mybtn-edit').removeAttr("disabled");
+
                         {% ifequal class_id 'new' %}
                         $('#textarea_{{class_id}}').val('');
                         {% else %}
@@ -101,10 +118,11 @@
                         {% endifequal %}
 		});
 
-                $('#btn_edit_{{class_id}}').on('click', function(){
-			$('.class_{{class_id}}').toggle();
-                        $('.mybtn-edit').attr("disabled", "disabled");
-		});
+                $('#btn_edit_{{class_id}}').on('click', click_edit_{{class_id}});
+
+		{% ifequal class_id 'new' %}
+                $('#dummyinput').on('focus', click_edit_{{class_id}});
+		{% endifequal %}
 
                 $('#btn_save_{{class_id}}').on('click', function(){
                         $('.mybtn-edit').removeAttr("disabled");
@@ -113,13 +131,16 @@
 
                         var data = {'text':$('#textarea_{{class_id}}').val(),
                                     'type': kind };
+
                         {% ifequal class_id 'new'  %}
                         var url = '{% url 'history:edit-historytag' history_id '0' %}';
                         $.post(url, data, function(resp){
                                 var url = '{% url 'history:result-comments' history_id %}';
 			                    $('#loadComments').load(url)
                         });
-
+   
+                	//$('#cont_new').on('click', click_cont_new);
+			reactivate_cont_new();
                         {% else %}
                         var url = '{% url 'history:edit-historytag' history_id htag.id %}';
                          $.post(url, data, function(resp){
