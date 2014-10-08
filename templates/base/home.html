@@ -13,7 +13,7 @@
 
 
 <!-- Show an error message after accessing a protected page -->
-{% if login_failed %}
+{% if login_failed and not request.GET.login_required%}
 <div class="container">
 	<div class="row">
 		<div class="col-md-12">
@@ -23,24 +23,25 @@
 		</div>
 	</div>
 </div>
-{% elif next %}
+
+{% if next %}
 <script type="text/javascript">
 $('document').ready(function() {
-{% if guest_login %}
-$('#guestModal').modal('show');
-{% endif %}
 // assig next parameter
 $("#next_page").val("{{next}}");
 });
-</script>
+{% endif %}
+
 {% else %}
 <script type="text/javascript">
-{% if guest_login %}
 $('document').ready(function() {
-//$('#guestModal').modal('show');
+// assig next parameter
+{% if next %}
+$("#next_page").val("{{next}}");
+{% elif guest_login %}
 restartTour();
-});
 {% endif %}
+});
 {% endif %}
 </script>
 {% if request.GET.login_required %}
