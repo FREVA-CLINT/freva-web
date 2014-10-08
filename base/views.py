@@ -17,7 +17,7 @@ from subprocess import Popen, STDOUT, PIPE
 def home(request):
     """ Default view for the root """    
         
-    login_failed = False
+    login_failed = True
 
     guest_login = None
 
