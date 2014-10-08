@@ -17,32 +17,42 @@ from subprocess import Popen, STDOUT, PIPE
 def home(request):
     """ Default view for the root """    
         
-    login_failed = True
+    login_failed = False
 
     guest_login = None
 
     next_page = request.GET.get('next', None)
+    forward = request.POST.get("next", None)
 
     if not request.user.is_authenticated():
         try:
-            user = request.POST["user"]
-            passwd = request.POST["password"]
-            forward = request.POST["next"]
+            user = request.POST.get("user", "")
+            passwd = request.POST.get("password", "")
+            
+            if user:
+                u = auth.authenticate(username=user, password=passwd)
+    
+                if u:
+                    auth.login(request, u)
+    
+                    guest_login = u.groups.filter(name='Guest')
+    
+                    if(forward):
+                        return HttpResponseRedirect(forward)
 
-            u = auth.authenticate(username=user, password=passwd)
-
-            if u:
-                auth.login(request, u)
-                login_failed = False
-
-                guest_login = u.groups.filter(name='Guest')
-
-                if(forward):
-                    return HttpResponseRedirect(forward)
+                else:
+                    raise Exception('Login failed')
 
         except Exception, e:
+
+            # do not forget the forward after failed login
+            if forward:
+                next_page = forward
+
+            login_failed = True
             logging.debug(str(e))
-        
+
+
     return render(request, 'base/home.html',
                   {'login_failed':login_failed,
                    'guest_login' : guest_login,
