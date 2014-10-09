@@ -123,7 +123,7 @@ class PluginForm(forms.Form):
                 required=False
             
             help_str = param.help
-            
+            help_str = "<br />".join(help_str.split("\n")) 
             if isinstance(param, parameters.Bool):
                 self.fields[key] = forms.BooleanField(required=required, help_text=help_str, widget=forms.RadioSelect(choices=(('False', 'False'), ('True', 'True'))))
             elif isinstance(param, parameters.Range):
