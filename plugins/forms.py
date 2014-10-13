@@ -39,10 +39,12 @@ class PluginFileFieldWidget(Input):
 class PluginSelectFieldWidget(Input):
     def __init__(self,*args,**kwargs):
 	self.options=kwargs.pop('options')
+	import operator
+	self.sorted_options = sorted(self.options.items(), key=operator.itemgetter(1))
 	super(PluginSelectFieldWidget,self).__init__(*args,**kwargs)
 
     def render(self, name, value, attrs=None):
-	return loader.render_to_string('plugins/selectfield.html', {'name':name, 'value':value, 'attrs':attrs, 'options':self.options})
+	return loader.render_to_string('plugins/selectfield.html', {'name':name, 'value':value, 'attrs':attrs, 'options':self.sorted_options})
 
 class SolrFieldWidget(Input):
     def __init__(self, *args, **kwargs):
