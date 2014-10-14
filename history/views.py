@@ -69,6 +69,7 @@ class history(DatatableView):
 
         status = int(self.request.GET.get('status', -1))
         flag = int(self.request.GET.get('flag', -1))
+        plugin = self.request.GET.get('plugin', None)
 
         if status >= 0:
             objects = objects.filter(status=status)
@@ -77,6 +78,9 @@ class history(DatatableView):
             objects = objects.filter(flag=flag)
         else:
             objects = objects.filter(~Q(flag=History.Flag.deleted))
+
+        if plugin:
+            objects = objects.filter(tool=plugin)
 
         return objects
 
@@ -215,9 +219,19 @@ class history(DatatableView):
 
         flag = int(self.request.GET.get('flag', -1))
  
-        ajax_url = (self.request.path +
-                    "?status={status}".format(status=status) +
-                    "&flag={flag}".format(flag=flag))
+        plugin = self.request.GET.get('plugin', None)
+
+        ajax_url = ''
+
+        if plugin:
+            ajax_url = (self.request.path +
+                        "?status={status}".format(status=status) +
+                        "&flag={flag}".format(flag=flag) +
+                        "&plugin={plugin}".format(plugin=plugin))
+        else:
+            ajax_url = (self.request.path +
+                        "?status={status}".format(status=status) +
+                        "&flag={flag}".format(flag=flag))
  
         datatable = get_datatable_structure(ajax_url, datatable_options)
  
