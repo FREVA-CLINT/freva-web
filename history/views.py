@@ -637,7 +637,7 @@ def sendMail(request):
         text = ''
         
         if isinstance(names, list):
-            text = 'Dear %s\n\n' % ',\nDear '.join(names)
+            text = 'Dear %s,\n\n' % ',\nDear '.join(names)
         else:
             text = 'Dear %s\n\n' % names
 
@@ -655,7 +655,7 @@ def sendMail(request):
         
         return text
     
-    def sendIt(myemail, toemail, subject, text):
+    def sendIt(myemail, name, toemail, subject, text):
         replyto = {'Reply-To' : myemail}
         from_email = myemail
     
@@ -668,11 +668,11 @@ def sendMail(request):
     
             email.send()
     
-            status = '%sSent to %s<br>' % (status, names[index])
+            status = 'Sent to %s<br>' % (name,)
         except Exception, e:
-            print e
-            status = '%s<font color="red">WARNING: Not sent to %s</font><br>' % (status, names[index])
-            
+            logging.error('EMAIL ERROR: ' + str(e))
+            status = '<font color="red">WARNING: Not sent to %s</font><br>' % name
+            raise
         return status
 
     action = request.POST['action']
@@ -691,7 +691,7 @@ def sendMail(request):
 
     user_info = miklip_user_information() 
 
-    myemail = user_info.get_user_info(str(request.user))
+    myemail = user_info.get_user_info(str(request.user))[2]
     
     for uid in rec:
         info= user_info.get_user_info(uid)
@@ -710,15 +710,18 @@ def sendMail(request):
 
         if one4all:
             text = createText(names, user_text)
-            status += sendIt(myemail, addresses, subject, text)
+            toname = ', '.join(names)
+            status += sendIt(myemail, toname, addresses, subject, text)
         else:
             for index in range(len(addresses)):
                 toemail = [addresses[index]]
-                text = createText(names[index], user_text)
-                status += sendIt(myemail, toemail, subject, text)
+                toname = names[index]
+                text = createText(toname, user_text)
+                status += sendIt(myemail, toname, toemail, subject, text)
    
 
             if copy4me:
+                toname = 'You'
                 text = 'This is a copy of the email, which has been sent to:\n%s\n\n' % (', '.join(names),)
                 status += sendIt(myemail, myemail, subject, text)
 
