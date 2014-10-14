@@ -177,11 +177,17 @@ class history(DatatableView):
             second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel" style="width:90px;"'
 
             second_button_href = 'onclick="cancelDialog.show(%i);"' % instance.id
+
             # disable button for manually started jobs
             if instance.slurm_output == '0':
+                second_button_text = 'n/a'
                 second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:90px;"'
                 second_button_href = ''
 
+            # disable button when its not the user's job
+            if instance.uid != self.request.user:
+                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:90px;"'
+                second_button_href = ''
 
         result_button = "<a  %s %s>%s</a>" % (style, href, result_text)
 
