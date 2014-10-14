@@ -668,10 +668,10 @@ def sendMail(request):
     
             email.send()
     
-            status = 'Sent to %s<br>' % (name,)
+            status = 'Sent to %s\n' % (name,)
         except Exception, e:
             logging.error('EMAIL ERROR: ' + str(e))
-            status = '<font color="red">WARNING: Not sent to %s</font><br>' % name
+            status = 'WARNING: Sent to %s failed!\n' % name
             raise
         return status
 
@@ -685,7 +685,7 @@ def sendMail(request):
     if len(rec) == 1:
         one4all = 1
 
-    status = '<h4>Status:</h4><p>'
+    status = ""
     addresses = []
     names = []
 
@@ -725,7 +725,6 @@ def sendMail(request):
                 text = 'This is a copy of the email, which has been sent to:\n%s\n\n' % (', '.join(names),)
                 status += sendIt(myemail, myemail, subject, text)
 
-        status = status + "</p>"
     return HttpResponse(status)
 
 @login_required

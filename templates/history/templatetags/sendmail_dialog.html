@@ -1,6 +1,20 @@
 {% load static %} 
 {% load dialogtags %}
  
+ <!-- Beware that this is not part of the dialog! -->   
+ <div class="alert alert-success" role="alert" id='alert_send_success' style='display:none'>
+    <button type="button" class="close" onclick="$('alert_send_success').hide();">
+        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <span id="span_send_success"></span>
+ </div> <!-- alert success -->       
+
+<!-- Beware that this is not part of the dialog! -->   
+ <div class="alert alert-danger" role="alert" id='alert_send_failed' style='display:none'>
+    <button type="button" class="close" onclick="$('alert_send_failed').hide();">
+        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <span id="span_send_fail"></span>
+ </div> <!-- alert success -->       
+  
   <!-- Modal Sendmail Dialog-->
   <div class="modal fade" id="sendmail_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -17,8 +31,6 @@
 			<p class="help-block">Message:</p>
 			<textarea class='form-control' id="user_text" name="user_text" rows=3></textarea>
 		</div>
-        </div>
-        <div class="modal-body" id='status_div'>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" name="sendBtn" id="sendBtn">Send</button>
@@ -50,10 +62,31 @@
                             'action' : 'results'};
 		var url = '{% url 'history:sendMail' %}';
 		var self = this;
+		var success = ""
+		var failed = ""
+		
 		$.post(url, data, function(resp){
-                                                         $('#status_div').html(resp)
-					});
-		$('#mail_to_field').select2("val", "")
+		  var lines = resp.split("\n");
+		  
+		  for (line in lines) {
+		      if (line.indexOf("failed!") != -1) {
+		          failed += line + "<br>";
+		      }
+		      else {
+		          success += line + "<br>";
+		      }
+		  }
+		  $('#span_send_success').html(success);
+		  $('#span_send_failed').html(failed);
+		  
+		  if(success != "") {
+		      $('#alert_send_success').show();
+		  }
+		  if(failed != "") {
+		      $('#alert_send_failed').show();
+		  }
+		});
+		$('#mail_to_field').select2("val", "");
 		$('#sendmail_modal').modal('toggle');	
         }
 {% endif %}
