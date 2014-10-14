@@ -668,11 +668,11 @@ def sendMail(request):
     
             email.send()
     
-            status = 'Sent to %s\n' % (name,)
+            status = 'Shared with %s\n' % (name,)
         except Exception, e:
             logging.error('EMAIL ERROR: ' + str(e))
-            status = 'WARNING: Sent to %s failed!\n' % name
-            raise
+            status = 'WARNING: Sharing with %s failed!\n' % name
+
         return status
 
     action = request.POST['action']

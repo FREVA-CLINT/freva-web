@@ -3,17 +3,17 @@
  
  <!-- Beware that this is not part of the dialog! -->   
  <div class="alert alert-success" role="alert" id='alert_send_success' style='display:none'>
-    <button type="button" class="close" onclick="$('alert_send_success').hide();">
+    <button type="button" class="close" onclick="$('#alert_send_success').hide();">
         <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
     <span id="span_send_success"></span>
  </div> <!-- alert success -->       
 
 <!-- Beware that this is not part of the dialog! -->   
  <div class="alert alert-danger" role="alert" id='alert_send_failed' style='display:none'>
-    <button type="button" class="close" onclick="$('alert_send_failed').hide();">
+    <button type="button" class="close" onclick="$('#alert_send_failed').hide();">
         <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-    <span id="span_send_fail"></span>
- </div> <!-- alert success -->       
+    <span id="span_send_failed"></span>
+ </div> <!-- alert failed -->       
   
   <!-- Modal Sendmail Dialog-->
   <div class="modal fade" id="sendmail_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -68,12 +68,18 @@
 		$.post(url, data, function(resp){
 		  var lines = resp.split("\n");
 		  
-		  for (line in lines) {
-		      if (line.indexOf("failed!") != -1) {
-		          failed += line + "<br>";
+		  for (var i = 0; i < lines.length; ++i) {
+		      if (lines[i].indexOf("failed!") != -1) {
+                          if(failed != "") {
+                              failed += "<br>";
+                          }
+		          failed += lines[i];
 		      }
 		      else {
-		          success += line + "<br>";
+                          if(success != "") {
+                              success += "<br>";
+                          }
+		          success += lines[i];
 		      }
 		  }
 		  $('#span_send_success').html(success);
@@ -82,9 +88,15 @@
 		  if(success != "") {
 		      $('#alert_send_success').show();
 		  }
+                  else {
+		      $('#alert_send_success').hide();
+                  }
 		  if(failed != "") {
 		      $('#alert_send_failed').show();
 		  }
+                  else {
+		      $('#alert_send_failed').hide();
+                  }
 		});
 		$('#mail_to_field').select2("val", "");
 		$('#sendmail_modal').modal('toggle');	
