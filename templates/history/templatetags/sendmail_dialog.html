@@ -33,15 +33,19 @@
 		</div>
         </div>
         <div class="modal-footer">
-            <div class="checkbox">
+            <div class='col-md-5'>
             <label>
               <input type="checkbox" id='copy4me' name='copy4me' data-toggle='tooltip' title='Receive a copy via email' checked>Send me a copy</input>
             </label>
-            <div class="checkbox">
+            </div> <!-- col-md-4 -->
+            <div class='col-md-5'>
             <label>
-              <input type="checkbox" id='one4all' name='one4all' data-toggle='tooltip' title='When checked one single mail will addressed to all recepients. Otherwise each recepient will receive her own mail.' checked>Address to all</input>
+              <input type="checkbox" id='one4all' name='one4all' data-toggle='tooltip' title='When checked one single mail will addressed to all recepients. Otherwise each recepient will receive her own mail.' checked>One mail to all</input>
             </label>
+            </div> <!-- col-md-4 -->
+          <div class='col-md-2'>
           <button type="button" class="btn btn-primary" name="sendBtn" id="sendBtn">Send</button>
+          </div> <!-- col-md-2 -->
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -49,7 +53,8 @@
 
 <script>
 	$(document).ready(function(){
-		
+		$('#copy4me').tooltip();
+		$('#one4all').tooltip();
 		$('#sendBtn').on('click', function(){
 			sendmail();
 		});
@@ -64,9 +69,21 @@
         }
 {% else %}
         function sendmail() {
+		var one4all = 'off';
+		var copy4me = 'off';
+
+		if($('#one4all').is(':checked')) {
+ 			one4all = 'on';
+		}
+		if($('#copy4me').is(':checked')) {
+ 			copy4me = 'on';
+		}
+
 		var data = {'url': $('#myurl').val(),
                             'rec' : $('#mail_to_field').val(),
                             'text' : $('#user_text').val(),
+                            'one4all' : one4all,
+                            'copy4me' : copy4me,
                             'action' : 'results'};
 		var url = '{% url 'history:sendMail' %}';
 		var self = this;

@@ -678,12 +678,12 @@ def sendMail(request):
     action = request.POST['action']
     rec = request.POST['rec'].split(',')
     user_text = request.POST['text']
-    one4all = request.POST.get('one4all', 0)
-    copy4me = request.POST.get('copy4me', 0)
+    one4all = request.POST.get('one4all', 'off')
+    copy4me = request.POST.get('copy4me', 'off')
     
     # the one4all option will be automatically set, when only one recipient is in the list.
     if len(rec) == 1:
-        one4all = 1
+        one4all = "on"
 
     status = ""
     addresses = []
@@ -691,7 +691,10 @@ def sendMail(request):
 
     user_info = miklip_user_information() 
 
-    myemail = user_info.get_user_info(str(request.user))[2]
+
+    myinfo = user_info.get_user_info(str(request.user))
+    myemail = myinfo[3]
+    myname = "%s %s" % (myinfo[2], myinfo[1])
     
     for uid in rec:
         info= user_info.get_user_info(uid)
@@ -700,7 +703,7 @@ def sendMail(request):
         
     
     # only append the address, when the mail goes to multiple users
-    if copy4me and one4all:
+    if copy4me == 'on' and one4all == 'on':
         addresses.append(myemail)
 
 
@@ -708,7 +711,7 @@ def sendMail(request):
         url = request.POST['url']
         subject = '%s %s shares results with you' % (request.user.first_name, request.user.last_name)
 
-        if one4all:
+        if one4all == 'on':
             text = createText(names, user_text)
             toname = ', '.join(names)
             status += sendIt(myemail, toname, addresses, subject, text)
@@ -720,10 +723,11 @@ def sendMail(request):
                 status += sendIt(myemail, toname, toemail, subject, text)
    
 
-            if copy4me:
-                toname = 'You'
+            if copy4me == 'on':
+                toemail = [myemail,]
                 text = 'This is a copy of the email, which has been sent to:\n%s\n\n' % (', '.join(names),)
-                status += sendIt(myemail, myemail, subject, text)
+                text += createText(myname, user_text)
+                status += sendIt(myemail, myname, toemail, subject, text)
 
     return HttpResponse(status)
 
