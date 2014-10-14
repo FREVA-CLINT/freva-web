@@ -28,6 +28,12 @@
                 </div> <!-- alert unfollow -->
 	</div> <!-- row -->
        <div class="row">
+       {# Render a Bootstrap sendmail dialog #}
+       {% if request.user == history_object.uid %}
+       {% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
+       {% endif %} 	 		
+       </div> <!-- row -->
+       <div class="row">
 	 	 	<div class="col-md-12">
 	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>
 	 	 		{% if documentation %}
@@ -41,10 +47,6 @@
 	 	 		{%endif%}
 	 	 		
 	 			<a class="btn btn-info mybtn-sendmail" id="sendButton_{{h_item.id}}" onClick="$('#sendmail_modal').modal('show')">Share Results</a>
-				{# Render a Bootstrap sendmail dialog #}
-				{% if request.user == history_object.uid %}
-	 			{% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
-	 			{% endif %} 	 		
 	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
