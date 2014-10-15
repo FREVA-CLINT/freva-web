@@ -28,12 +28,18 @@
                 </div> <!-- alert unfollow -->
 	</div> <!-- row -->
        <div class="row">
+       {# Render a Bootstrap sendmail dialog #}
+       {% if request.user == history_object.uid %}
+       {% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
+       {% endif %} 	 		
+       </div> <!-- row -->
+       <div class="row">
 	 	 	<div class="col-md-12">
 	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>
 	 	 		{% if documentation %}
 	 	 			<a class="btn btn-success" href="{{documentation.url}}">Documentation</a>
 	 	 		{%endif%}
-		 		{% if history_object.status > 2 and history_object.slurm_output != '0'%}
+		 		{% if history_object.status > 2 and history_object.slurm_output != '0' and history_object.uid == request.user %}
 	 	 			
 	 			<a class="btn btn-danger mybtn-cancel" id="cancelButton_{{h_item.id}}" onClick="cancelDialog.show({{history_object.id}})">Cancel job</a>
 				{# Render a Bootstrap password/cancel dialog #}
@@ -41,10 +47,6 @@
 	 	 		{%endif%}
 	 	 		
 	 			<a class="btn btn-info mybtn-sendmail" id="sendButton_{{h_item.id}}" onClick="$('#sendmail_modal').modal('show')">Share Results</a>
-				{# Render a Bootstrap sendmail dialog #}
-				{% if request.user == history_object.uid %}
-	 			{% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
-	 			{% endif %} 	 		
 	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
