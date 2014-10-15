@@ -1,6 +1,20 @@
 {% load static %} 
 {% load dialogtags %}
  
+ <!-- Beware that this is not part of the dialog! -->   
+ <div class="alert alert-success" role="alert" id='alert_send_success' style='display:none'>
+    <button type="button" class="close" onclick="$('#alert_send_success').hide();">
+        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <span id="span_send_success"></span>
+ </div> <!-- alert success -->       
+
+<!-- Beware that this is not part of the dialog! -->   
+ <div class="alert alert-danger" role="alert" id='alert_send_failed' style='display:none'>
+    <button type="button" class="close" onclick="$('#alert_send_failed').hide();">
+        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+    <span id="span_send_failed"></span>
+ </div> <!-- alert failed -->       
+  
   <!-- Modal Sendmail Dialog-->
   <div class="modal fade" id="sendmail_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -18,10 +32,20 @@
 			<textarea class='form-control' id="user_text" name="user_text" rows=3></textarea>
 		</div>
         </div>
-        <div class="modal-body" id='status_div'>
-        </div>
         <div class="modal-footer">
+            <div class='col-md-5'>
+            <label>
+              <input type="checkbox" id='copy4me' name='copy4me' data-toggle='tooltip' title='Receive a copy via email' checked>Send me a copy</input>
+            </label>
+            </div> <!-- col-md-4 -->
+            <div class='col-md-5'>
+            <label>
+              <input type="checkbox" id='one4all' name='one4all' data-toggle='tooltip' title='When checked one single mail will addressed to all recepients. Otherwise each recepient will receive her own mail.' checked>One mail to all</input>
+            </label>
+            </div> <!-- col-md-4 -->
+          <div class='col-md-2'>
           <button type="button" class="btn btn-primary" name="sendBtn" id="sendBtn">Send</button>
+          </div> <!-- col-md-2 -->
         </div>
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
@@ -29,7 +53,8 @@
 
 <script>
 	$(document).ready(function(){
-		
+		$('#copy4me').tooltip();
+		$('#one4all').tooltip();
 		$('#sendBtn').on('click', function(){
 			sendmail();
 		});
@@ -44,16 +69,61 @@
         }
 {% else %}
         function sendmail() {
+		var one4all = 'off';
+		var copy4me = 'off';
+
+		if($('#one4all').is(':checked')) {
+ 			one4all = 'on';
+		}
+		if($('#copy4me').is(':checked')) {
+ 			copy4me = 'on';
+		}
+
 		var data = {'url': $('#myurl').val(),
                             'rec' : $('#mail_to_field').val(),
                             'text' : $('#user_text').val(),
+                            'one4all' : one4all,
+                            'copy4me' : copy4me,
                             'action' : 'results'};
 		var url = '{% url 'history:sendMail' %}';
 		var self = this;
+		var success = ""
+		var failed = ""
+		
 		$.post(url, data, function(resp){
-                                                         $('#status_div').html(resp)
-					});
-		$('#mail_to_field').select2("val", "")
+		  var lines = resp.split("\n");
+		  
+		  for (var i = 0; i < lines.length; ++i) {
+		      if (lines[i].indexOf("failed!") != -1) {
+                          if(failed != "") {
+                              failed += "<br>";
+                          }
+		          failed += lines[i];
+		      }
+		      else {
+                          if(success != "") {
+                              success += "<br>";
+                          }
+		          success += lines[i];
+		      }
+		  }
+		  $('#span_send_success').html(success);
+		  $('#span_send_failed').html(failed);
+		  
+		  if(success != "") {
+		      $('#alert_send_success').show();
+		  }
+                  else {
+		      $('#alert_send_success').hide();
+                  }
+		  if(failed != "") {
+		      $('#alert_send_failed').show();
+		  }
+                  else {
+		      $('#alert_send_failed').hide();
+                  }
+		});
+		$('#mail_to_field').select2("val", "");
 		$('#sendmail_modal').modal('toggle');	
         }
 {% endif %}
