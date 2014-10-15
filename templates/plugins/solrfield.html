@@ -5,6 +5,9 @@
 <script>
 $(document).ready(function() { 
 	$("#{{ attrs.id }}").select2({
+		{% if not editable %}
+		   minimumResultsForSearch: -1,
+		{% endif %}
 		placeholder: "Select a {{ facet }}",
 		allowClear: true,
 		initSelection : function (element, callback) {
@@ -31,7 +34,9 @@ $(document).ready(function() {
 					term=term.replace('/','');
 					tmp_data = {
 						facet : '{{facet}}',
+						{%if editable %}
 						{{facet}}: term+'*', // search term
+						{%endif%}
 						page_limit: 10,
 						
 					};
