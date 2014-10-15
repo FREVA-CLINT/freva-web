@@ -182,7 +182,7 @@ data_browser = new function(){
 //wait_dialog.showPleaseWait();
 $('html').addClass('wait');
 setTimeout(function(){
-   //data_browser.get_files();
+   data_browser.get_files();
    data_browser.clear_facets();
    $('html').removeClass('wait');
 },50);
