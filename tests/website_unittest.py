@@ -8,7 +8,7 @@ from selenium.webdriver.support.select import Select
 
 class EvaluationSystemWeb(unittest.TestCase):
     
-    id_to_test = '15651'
+    id_to_test = '13056'
     
     def logout_user(self):
         #if user is logge, log him out
@@ -101,7 +101,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         elem = self.driver.find_element_by_id('password_temp')
         elem.send_keys(self.pw+Keys.RETURN)
         elem = self.driver.find_element_by_css_selector('pre')
-        self.assert_('netcdf sftof_fx_MPI-ESM-LR_dffs4e1984_r0i0p0 {' in elem.text)
+        #self.assert_('netcdf sftof_fx_MPI-ESM-LR_dffs4e1984_r0i0p0 {' in elem.text)
         elem = self.driver.find_element_by_class_name('close')
         elem.click()
 
@@ -175,7 +175,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         self.driver.get('https://www-miklip.dkrz.de/history/'+self.id_to_test+'/results/')
         self.assertEqual('MOVIEPLOTTER results - Evaluation System', self.driver.title, 'Cant find result (title changed?)')
         
-        #test sshare results
+        #test share results
         self.click_link('Share Results')
         time.sleep(2)
         elem = self.driver.find_element_by_class_name('select2-choices')
@@ -202,8 +202,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         self.click_link('Default caption:')
         self.driver.find_element_by_id('applyBtn').click() 
         time.sleep(1)
-        #TODO: BUG in default caption 
-        #self.assertEqual('test caption (MOVIEPLOTTER)', self.driver.title, 'Cant set caption')
+        self.assertEqual('test caption (MOVIEPLOTTER)', self.driver.title, 'Cant set caption')
         
         #test notes
         self.driver.find_element_by_partial_link_text('Notes').click()
