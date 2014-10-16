@@ -4,13 +4,16 @@ from django.contrib.auth.models import User
 import logging
 class HistoryAmdin(admin.ModelAdmin):
     
-    list_display = ('id', 'timestamp', 'tool', 'uid_or_str','uid_email','status_name')
+    list_display = ('id', 'timestamp', 'tool', 'uid_or_str','uid_email','user_name','status_name')
     search_fields = ['tool', 'uid']
     date_hierarchy = 'timestamp'
     search_fields=['uid__username','tool','id']
 
     def uid_email(self, instance):
 	return instance.uid.email
+
+    def user_name(self,instance):
+        return instance.uid.first_name + ' ' + instance.uid.last_name
 
     def uid_or_str(self,instance):
 	try:
