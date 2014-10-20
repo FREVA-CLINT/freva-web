@@ -62,12 +62,6 @@
 	});    
 
 
-{% if is_guest %}
-	function sendmail() {
-		$('#status_div').html("<font color='red'>No email has been sent, because you are a guest user</font>")
-		$('#mail_to_field').select2("val", "")
-        }
-{% else %}
         function sendmail() {
 		var one4all = 'off';
 		var copy4me = 'off';
@@ -126,7 +120,6 @@
 		$('#mail_to_field').select2("val", "");
 		$('#sendmail_modal').modal('toggle');	
         }
-{% endif %}
 </script>
   
 <!--
