@@ -559,4 +559,4 @@ MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
 SEND_MAIL_AT_GUEST_LOGIN = True
 
 # result to show at guest tour
-GUEST_TOUR_RESULT = 13114
+GUEST_TOUR_RESULT = 17508
