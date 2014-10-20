@@ -104,8 +104,17 @@ var tour2 = new Tour({
     {
     path: "/solr/data-browser/",
     orphan: true,
+    onShow: function(tour){$('#collapsevariable').collapse();$('#variable_search').val('temperature');$('#variable_search').keyup();},
+    title: "Data-Browser",
+    content: "Still having trouble to understand the variable names in CMOR? Head your mouse over a variable and view the CF-longname for clarification. You can also search for the longname. In this example we are looking for variables containing 'temperature'.",
+    placement: "center",
+    backdrop: false,
+  },
+    {
+    path: "/solr/data-browser/",
+    orphan: true,
     //element: "",
-    title: "MurCSS results",
+    title: "Data-Browser",
     content: "Feel free to browse the data.",
     placement: "center",
     backdrop: false,
