@@ -695,6 +695,12 @@ def sendMail(request):
 
         return status
 
+    # return special response for guest users
+    if request.user.isGuest():
+        status = 'Normally, the selected recipients would get an email containing a link to this result,'
+        status += 'but this feature is turned off for guest users.'
+        return HttpResponse(status)
+
     action = request.POST['action']
     rec = request.POST['rec'].split(',')
     user_text = request.POST['text']
