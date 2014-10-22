@@ -28,7 +28,7 @@ from models import History, Result, ResultTag, HistoryTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
-from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower
+from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower, getCaption
 
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
@@ -489,45 +489,15 @@ def results(request, id, show_output_only = False):
     api_version = history_object.version_details.internal_version_api
     
     
-    # do caption related things
-    caption_objects = None
-    defaultcaption_object = None
-    usercaption_object = None
-    result_caption = history_object.tool.upper()
-    default_caption = history_object.tool.upper()
+    (default_caption, user_caption) = getCaption(id, request.user)
+    
+    if default_caption is None:
+        default_caption = history_object.tool.upper()
 
-    historytag_objects = None
-
-    try:
-        historytag_objects = HistoryTag.objects.filter(history_id_id=id)
-        caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
-    except HistoryTag.DoesNotExist:
-        pass
-    
-    
-    # check for a user defined caption
-    if caption_objects:
-        try:
-            usercaption_object = caption_objects.filter(uid=request.user)
-            result_caption = history_object.tool
-        except:
-            pass
-        try:
-            defaultcaption_object = caption_objects.filter(uid=None)
-            default_caption = history_object.tool
-        except:
-            pass
-    
-    
-    if usercaption_object:
-        result_caption = usercaption_object.order_by('-id')[0].text
-
-    if defaultcaption_object:
-        default_caption = defaultcaption_object.order_by('-id')[0].text
+    result_caption = default_caption
         
-        if not usercaption_object:
-            result_caption = default_caption
-        
+    if not user_caption is None:
+        result_caption = user_caption
 
     htag_notes = None
     follow_string = 'Follow'
