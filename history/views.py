@@ -126,6 +126,23 @@ class history(DatatableView):
 
         tooltip_style = "data-toggle='tooltip' data-placement='left'"
 
+        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
+
+        caption = ''
+
+        if not user_caption is None:
+            if default_caption is None:
+                caption = escape(user_caption)
+            elif user_caption != default_caption:
+                caption = '%s<br>[%s]' % (escape(user_caption),
+                                          escape(default_caption))
+            else:
+                caption = escape(user_caption)
+
+        elif default_caption is not None:
+            caption = escape(default_caption)
+
+
         config = '%s<br><br><table class="table-condensed">' % information
         
         # fill configuration
@@ -138,7 +155,10 @@ class history(DatatableView):
  
         config = config + "</table>"
 
-        title = "title='%s'" % config
+        if caption:
+            title = "title='%s<br><br>%s'" % (caption, config)
+        else:
+            title = "title='%s'" % (config,)
 
         info_button = "<a %s %s %s %s>%s</a>" % (css_class,
                                                  href,
