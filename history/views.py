@@ -131,7 +131,7 @@ class history(DatatableView):
         # fill configuration
         try:
             for key, value in instance.config_dict().items():
-                text = mask_uid(str(value), self.request.user.isGuest())
+                text = escape(mask_uid(str(value), self.request.user.isGuest()))
                 config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, text)
         except Exception, e:
             print "Tooltip error:", e
