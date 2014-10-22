@@ -203,7 +203,7 @@ class HistoryTag(models.Model):
                     (tagType.note_public, 'Public note'),
                     (tagType.note_private, 'Private note'),
                     (tagType.note_deleted, 'Deleted note'),
-                    (tagType.follow), 'Follow')
+                    (tagType.follow, 'Follow'))
     
     #: result id
     history_id      = models.ForeignKey(History)
