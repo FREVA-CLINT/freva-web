@@ -39,7 +39,7 @@ from history.models import HistoryTag
 import evaluation_system
 from evaluation_system.model import user
 
-
+from templatetags.resulttags import mask_uid
 
 
 class history(DatatableView):
@@ -131,7 +131,8 @@ class history(DatatableView):
         # fill configuration
         try:
             for key, value in instance.config_dict().items():
-                config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, escape(str(value)))
+                text = mask_uid(str(value), self.request.user.isGuest())
+                config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, text)
         except Exception, e:
             print "Tooltip error:", e
  
