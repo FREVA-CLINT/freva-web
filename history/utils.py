@@ -25,7 +25,7 @@ def getCaption(history_id, user):
     historytag_objects = None
 
     try:
-        historytag_objects = HistoryTag.objects.filter(history_id_id=id)
+        historytag_objects = HistoryTag.objects.filter(history_id_id=history_id)
         caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
     except HistoryTag.DoesNotExist:
         pass
@@ -34,7 +34,7 @@ def getCaption(history_id, user):
     # check for a user defined caption
     if caption_objects:
         try:
-            usercaption_object = caption_objects.filter(uid=request.user)
+            usercaption_object = caption_objects.filter(uid=user)
         except:
             pass
         try:
