@@ -35,9 +35,9 @@ var solr_data =  {"data": {"project": ["b324031", 773556], "domain": [], "realm"
 var second = {"data": {"project": ["b309096", 147], "domain": [], "realm": ["atmos", 147], "data_type": ["projectdata", 147], "modulec_project": [], "institute": ["dlr", 147], "cmor_table": ["amon", 147], "rcm_version": [], "product": ["ldai", 147], "miklip_project": [], "variable": ["ldai", 147], "time_frequency": ["mon", 147], "experiment": ["decadal1977", 10, "decadal1978", 10, "decadal1979", 10, "decadal1980", 10, "decadal1981", 10, "decadal1982", 10, "decadal1983", 10, "decadal1984", 10, "decadal1985", 10, "decadal1986", 10, "decadal1987", 10, "decadal1988", 10, "decadal1989", 10, "decadal1990", 17], "driving_model": [], "rcm_ensemble": [], "model": ["mpi-esm-lr", 147], "data_structure": [], "ensemble": ["r10i1p1", 13, "r1i1p1", 22, "r2i1p1", 21, "r3i1p1", 13, "r4i1p1", 13, "r5i1p1", 13, "r6i1p1", 13, "r7i1p1", 13, "r8i1p1", 13, "r9i1p1", 13]}, "metadata": null};
 </script>
 
-<script src="http://fb.me/react-with-addons-0.11.2.js"></script>
-<script src="http://fb.me/JSXTransformer-0.11.2.js"></script>
-<script src="http://code.jquery.com/jquery-1.10.0.min.js"></script>
+<script src="https://fb.me/react-with-addons-0.11.2.js"></script>
+<script src="https://fb.me/JSXTransformer-0.11.2.js"></script>
+<script src="https://code.jquery.com/jquery-1.10.0.min.js"></script>
 
 
 <div class="container" id="main_content"></div>
@@ -84,8 +84,8 @@ var AccordionItem = React.createClass({
 			item_title.push(<span className="chosen_facet">: <strong>{this.props.facet_list[0]}</strong></span>);
 			if(this.props.selected_facets[this.props.facet_name])
 				item_title.push(<span className="chosen_facet"> 
-									<a href="#" onClick={this.props.updateFacets.bind(null,this.props.facet_name,'','del')}>
-										<span className="glyphicon glyphicon-remove-circle" />
+									<a href="#" onClick={this.props.updateFacets.bind(null,this.props.facet_name,'','del')}> 
+										 <span className="glyphicon glyphicon-remove-circle" />
 									</a>
 								</span>); 
 		}else{
@@ -128,7 +128,7 @@ var AccordionItemList = React.createClass({
 						key={key}/>);
 		});
 		return (
-			<div className="AccordionItemList">
+			<div className="AccordionItemList" id="accordion">
 				{items}
 			</div>
 		);
@@ -176,7 +176,8 @@ var DataBrowser = React.createClass({
 	},
 	
 	clearFacets: function(){
-		this.setState({selected_facets: {}});
+		this.replaceState({selected_facets: {}},this.getFacets);
+		//this.getFacets();
 		return false;
 	},
 	
@@ -186,8 +187,34 @@ var DataBrowser = React.createClass({
 			selected_facets[facet_name] = facet_value;
 		else
 			delete selected_facets[facet_name];
-		this.setState({selected_facets:selected_facets});
+		this.replaceState({selected_facets:selected_facets},this.getFacets);
 		return false;
+	},
+	
+	getFacets: function(){
+		var url = this.props.url + '?facet=*' + this.getQuery();
+		var self=this;
+		$('html').addClass('wait');
+		setTimeout(function(){
+		$.ajax(url,{
+			async: false,
+			dataType: 'json',
+			success: function(response){
+				self.setState({facets:response['data']});
+				$('html').removeClass('wait');
+			}
+		}); 
+		},50);
+	},
+
+	shouldComponentUpdate: function(nextProps, nextState) {
+	    if(nextState['facets']){	
+	    	console.log('update');
+		return true
+	    }else{
+		console.log('no update');
+		return false
+	    }
 	},
 	
 	render: function(){
@@ -203,7 +230,7 @@ var DataBrowser = React.createClass({
 				
 				<div className="row">
 					<div className="col-md-12">
-						<div className="panel-group" id="accordion">	 
+						<div className="panel-group" id="1accordion">	 
 							<AccordionItemList updateFacets={this.updateFacets} facets={this.state.facets} selected_facets={this.state.selected_facets}/>
 						</div>
 					</div>
