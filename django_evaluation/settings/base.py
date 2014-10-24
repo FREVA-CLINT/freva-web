@@ -543,7 +543,7 @@ INTERNAL_IPS = ('127.0.0.1')
 VENV_PYTHON_DIR = '/usr/local/ve_py/bin/python'
 
 # Restrictions for the data browser
-SOLR_RESTRICTIONS = {'project':['cmip5', 'cordex', 'observations', 'reanalysis', 'baseline0', 'baseline1', 'prototype']}
+SOLR_RESTRICTIONS = {'project':['cmip5', 'cordex', 'observations', 'reanalysis', 'baseline0', 'baseline1', 'prototype', 'example-user']}
 EMAIL_RESTRICTIONS = ['b324031', 'b324057','u290038']
 
 

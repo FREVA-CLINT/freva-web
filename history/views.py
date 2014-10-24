@@ -28,7 +28,7 @@ from models import History, Result, ResultTag, HistoryTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
-from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower
+from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower, getCaption
 
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
@@ -39,7 +39,7 @@ from history.models import HistoryTag
 import evaluation_system
 from evaluation_system.model import user
 
-
+from templatetags.resulttags import mask_uid
 
 
 class history(DatatableView):
@@ -126,18 +126,39 @@ class history(DatatableView):
 
         tooltip_style = "data-toggle='tooltip' data-placement='left'"
 
+        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
+
+        caption = ''
+
+        if not user_caption is None:
+            if default_caption is None:
+                caption = escape(user_caption)
+            elif user_caption != default_caption:
+                caption = '%s<br>[%s]' % (escape(user_caption),
+                                          escape(default_caption))
+            else:
+                caption = escape(user_caption)
+
+        elif default_caption is not None:
+            caption = escape(default_caption)
+
+
         config = '%s<br><br><table class="table-condensed">' % information
         
         # fill configuration
         try:
             for key, value in instance.config_dict().items():
-                config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, escape(str(value)))
+                text = escape(mask_uid(str(value), self.request.user.isGuest()))
+                config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, text)
         except Exception, e:
             print "Tooltip error:", e
  
         config = config + "</table>"
 
-        title = "title='%s'" % config
+        if caption:
+            title = "title='%s<br><br>%s'" % (caption, config)
+        else:
+            title = "title='%s'" % (config,)
 
         info_button = "<a %s %s %s %s>%s</a>" % (css_class,
                                                  href,
@@ -488,45 +509,15 @@ def results(request, id, show_output_only = False):
     api_version = history_object.version_details.internal_version_api
     
     
-    # do caption related things
-    caption_objects = None
-    defaultcaption_object = None
-    usercaption_object = None
-    result_caption = history_object.tool.upper()
-    default_caption = history_object.tool.upper()
+    (default_caption, user_caption) = getCaption(id, request.user)
+    
+    if default_caption is None:
+        default_caption = history_object.tool.upper()
 
-    historytag_objects = None
-
-    try:
-        historytag_objects = HistoryTag.objects.filter(history_id_id=id)
-        caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
-    except HistoryTag.DoesNotExist:
-        pass
-    
-    
-    # check for a user defined caption
-    if caption_objects:
-        try:
-            usercaption_object = caption_objects.filter(uid=request.user)
-            result_caption = history_object.tool
-        except:
-            pass
-        try:
-            defaultcaption_object = caption_objects.filter(uid=None)
-            default_caption = history_object.tool
-        except:
-            pass
-    
-    
-    if usercaption_object:
-        result_caption = usercaption_object.order_by('-id')[0].text
-
-    if defaultcaption_object:
-        default_caption = defaultcaption_object.order_by('-id')[0].text
+    result_caption = default_caption
         
-        if not usercaption_object:
-            result_caption = default_caption
-        
+    if not user_caption is None:
+        result_caption = user_caption
 
     htag_notes = None
     follow_string = 'Follow'
