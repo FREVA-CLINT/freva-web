@@ -6,6 +6,52 @@ from django_evaluation import settings
 # from contrib.comments.views.moderation import delete
 
 
+def getCaption(history_id, user):
+    """    
+    This function returns a tuple with default and user caption
+    :type history_id: int
+    :param history_id: the id of the history record
+    :type user: user object
+    :param user: the user to get individual captions
+
+    """
+    
+    default_caption = None
+    user_caption = None
+    
+    caption_objects = None
+    defaultcaption_object = None
+    usercaption_object = None
+    historytag_objects = None
+
+    try:
+        historytag_objects = HistoryTag.objects.filter(history_id_id=history_id)
+        caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
+    except HistoryTag.DoesNotExist:
+        pass
+    
+    
+    # check for a user defined caption
+    if caption_objects:
+        try:
+            usercaption_object = caption_objects.filter(uid=user)
+        except:
+            pass
+        try:
+            defaultcaption_object = caption_objects.filter(uid=None)
+        except:
+            pass
+    
+    
+    if usercaption_object:
+        user_caption = usercaption_object.order_by('-id')[0].text
+
+    if defaultcaption_object:
+        default_caption = defaultcaption_object.order_by('-id')[0].text
+        
+    return (default_caption, user_caption)
+  
+
 def pygtailwrapper(id, restart = False):
     """
     This function return the pygtail result for the slurm file
