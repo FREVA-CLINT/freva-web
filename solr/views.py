@@ -30,12 +30,13 @@ def data_browser(request):
         tmp = settings.SOLR_RESTRICTIONS.copy()
         tmp.update(args)
         args = tmp
-    facets = settings.FACETS
-     
-    return render(request, 'solr/data_browser.html', {'facets':facets})
+    try:
+        facets = settings.FACETS
+    except:
+        facets = {'project':[],'domain':[],'realm':[],'data_type':[],'variable':[]} 
+    return render(request, 'solr/data_browser_new.html', {'facets':json.dumps(facets)})
 
 @sensitive_post_parameters('pass')
-
 @login_required()
 def ncdump(request):
     fn = request.POST['file']
