@@ -309,12 +309,25 @@ var DataBrowser = React.createClass({
 				async: false,
 				dataType: 'json',
 				success: function(response){
-					self.setState({facets:response['data']});
+					files = self.getFiles();
+					self.setState({facets:response['data'],files:files});
 					$('html').removeClass('wait');
 				}
 			}); 
 		},50);
 	},
+
+	getFiles: function(){
+		var url = this.props.url + '?start=0&rows=100'+this.getQuery();
+		var self=this;
+		$.ajax(url,{
+			async: false,
+			dataType: 'json',
+			success: function(response){
+				return response['data']
+			}
+		}
+	}
 
 	shouldComponentUpdate: function(nextProps, nextState) {
 	    if(nextState['facets']){	
