@@ -181,15 +181,10 @@ var AccordionFiles = React.createClass({
 
 	componentDidMount: function(){
 		$('.ncdump').tooltip({'placement':'top','html':true,container: 'body'});
-		$('.facet_tooltip').tooltip({'placement':'right','html':true,container: 'body'});
 	},
 
 	componentDidUpdate: function(){
 		$('.ncdump').tooltip({'placement':'top','html':true,container: 'body'});
-		$('.facet_tooltip').tooltip({'placement':'right','html':true,container: 'body'});
-		
-		$('.collapse').collapse('hide');
-		
 	},
 
 	render: function(){	
@@ -297,11 +292,15 @@ var SolrSearchPanel = React.createClass({
 var DataBrowser = React.createClass({
 	getInitialState: function() {
     	return {
-      		facets: solr_data['data'],
-      		files: files_data,
-      		selected_facets: {'project':'b324031'},
+      		facets: {},
+      		files: {'data':[]},
+      		selected_facets: {},
     	};
   	},
+
+	componentDidMount: function(){
+		this.updateFacets();
+	},
 	
 	getQuery: function(){
 		result = '';
@@ -318,6 +317,7 @@ var DataBrowser = React.createClass({
 	
 	updateFacets: function(facet_name,facet_value,clicktype){
 		selected_facets = this.state.selected_facets;
+		$('#collapse'+facet_name).collapse('hide');
 		if(clicktype == 'add')
 			selected_facets[facet_name] = facet_value;
 		else
@@ -338,6 +338,7 @@ var DataBrowser = React.createClass({
 					files = self.getFiles();
 					self.setState({facets:response['data'],files:files});
 					$('html').removeClass('wait');
+					$('#collapseFiles').collapse('show');
 				}
 			}); 
 		},50);
