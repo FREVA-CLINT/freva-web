@@ -70,6 +70,10 @@ var AccordionItem = React.createClass({
 		$('.facet_tooltip').tooltip({'placement':'right','html':true,container: 'body'});
 	},
 
+	componentDidMount: function(){
+		$('.facet_tooltip').tooltip({'placement':'right','html':true,container: 'body'});
+	},
+
 	render: function(){
 		
 		var facet_items = [];
