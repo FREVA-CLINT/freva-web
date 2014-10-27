@@ -116,6 +116,7 @@ var AccordionItem = React.createClass({
 		var facet_count = this.props.facet_list.length / 2;
 		
 		var item_title = [];
+		var search_input = [];
 		if(facet_count == 1){
 			item_title.push(<span className="chosen_facet">: <strong>{this.props.facet_list[0]}</strong></span>);
 			if(this.props.selected_facets[this.props.facet_name])
@@ -126,6 +127,10 @@ var AccordionItem = React.createClass({
 								</span>); 
 		}else{
 			item_title.push(<span className="facet_count">({facet_count}) </span>);
+			search_input.push(<div className="col-md-12">
+								<input id={this.props.facet_name+"_search"} name={this.props.facet_name+"_search"} className="form-control"
+							 	placeholder={"Search " + this.props.facet_name + " name"} onChange={this.search_list} value={this.state.search_value}/>
+							  </div>);
 		}
 		
 		return (
@@ -141,10 +146,7 @@ var AccordionItem = React.createClass({
 			  	<div id={"collapse" + this.props.facet_name} className="panel-collapse collapse">
 			      <div className="panel-body">
 					<div className="row">
-						<div className="col-md-12">
-							<input id={this.props.facet_name+"_search"} name={this.props.facet_name+"_search"} className="form-control"
-							 	placeholder={"Search " + this.props.facet_name + " name"} onChange={this.search_list} value={this.state.search_value}/>
-						</div>
+						{search_input}
 						{facet_items}
 				
 					</div>
@@ -185,6 +187,9 @@ var AccordionFiles = React.createClass({
 	componentDidUpdate: function(){
 		$('.ncdump').tooltip({'placement':'top','html':true,container: 'body'});
 		$('.facet_tooltip').tooltip({'placement':'right','html':true,container: 'body'});
+		
+		$('.collapse').collapse('hide');
+		
 	},
 
 	render: function(){	
