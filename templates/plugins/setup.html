@@ -52,6 +52,9 @@
                 <input type="radio" name="browse_options" id="browse_scratch" value="scratch">Scratch
             </label>
 	    {% endif %}
+            <label class="btn btn-primary">
+                <input type="radio" name="browse_options" id="browse_data4miklip" value="data4miklip">Data4MiKlip
+            </label>
         </div>       
         <div id="browsefield">
           ...
@@ -256,6 +259,10 @@ $(document).ready(function(){
 			if(kind=='scratch'){
 				 activate_browse('{{user_scratch}}');
 			}
+			else if(kind=='data4miklip'){
+				 activate_browse('/miklip/integration/data4miklip');
+			}
+
 			else {
 				activate_browse('{{user_home}}');
 			}
