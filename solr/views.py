@@ -23,18 +23,7 @@ import logging
 
 @login_required()
 def data_browser(request):
-    args = {}#{'facet.limit':-1}
-
-    # Restrict search data for test users
-    if not request.user.has_perm('history.browse_full_data'):
-        tmp = settings.SOLR_RESTRICTIONS.copy()
-        tmp.update(args)
-        args = tmp
-    try:
-        facets = settings.FACETS
-    except:
-        facets = {'project':[],'domain':[],'realm':[],'data_type':[],'variable':[]} 
-    return render(request, 'solr/data_browser_new.html', {'facets':json.dumps(facets)})
+    return render(request, 'solr/data_browser_new.html')
 
 @sensitive_post_parameters('pass')
 @login_required()
