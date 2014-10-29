@@ -157,7 +157,7 @@ var AccordionFiles = React.createClass({
 			    <div className="panel-heading">
 			      <h4 className="panel-title">
 			        <a data-toggle="collapse" href="#collapseFiles">
-			        	 Files
+			        	 Files [{this.props.files['metadata']['numFound']}]
 					</a>  
 			      </h4>
 			    </div>
@@ -250,7 +250,7 @@ var DataBrowser = React.createClass({
 	getInitialState: function() {
     	return {
       		facets: {},
-      		files: {'data':[]},
+      		files: {'data':[],'metadata':{'numFound':0}},
       		selected_facets: {},
     	};
   	},
