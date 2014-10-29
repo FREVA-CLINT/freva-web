@@ -349,7 +349,3 @@ var DataBrowser = React.createClass({
 });
 
 
-React.renderComponent(
-  <DataBrowser url="/solr/solr-search/"/>,
-  document.getElementById('main_content')
-);
