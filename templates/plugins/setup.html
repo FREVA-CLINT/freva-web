@@ -9,6 +9,19 @@
 
 {% load bootstrap3 %}
 
+<style>
+.files{
+	max-height: 500px;
+	overflow-y: scroll;
+}
+
+body .solr-modal{
+   width: 70%;
+   max-width:1000px;
+}
+
+</style>
+
 {# Load CSS and JavaScript #}
 
 
@@ -69,7 +82,7 @@
   
   <!-- Modal Solr_search-->
   <div class="modal fade" id="myModal_solr" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog solr-modal">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>

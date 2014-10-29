@@ -156,7 +156,7 @@ $(document).ready(function() {
       query     : '',
       callbacks : {
         search       : function(query, searchCollection) {
-            solr.get_files(0, 10);
+            solr.get_files(0, 100);
         },
         facetMatches : function(callback) {
             callback(solr.get_all_facets());
