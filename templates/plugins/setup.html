@@ -20,6 +20,8 @@ body .solr-modal{
    max-width:1000px;
 }
 
+html.wait, html.wait * { cursor: wait !important; }
+
 </style>
 
 {# Load CSS and JavaScript #}
@@ -294,9 +296,9 @@ $(document).ready(function(){
  
     
     $('#submit_analysis').on('click', function(e){
-    	
+        $('#submit_analysis').button('loading');	
     	var pw = $('#password_temp').val();
-    	
+    	$('html').addClass('wait');
     	$('#id_password_hidden').val(pw);
     	
     	$('#plugin_form').submit();
