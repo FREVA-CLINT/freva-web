@@ -20,11 +20,11 @@ import json
 import os
 
 import evaluation_system.api.plugin_manager as pm
-from evaluation_system.model.db import _result_preview, UserDB, HistoryEntry
+from evaluation_system.model.db import UserDB
 from evaluation_system.model.user import User
 from evaluation_system.misc import utils
 
-from models import History, Result, ResultTag, HistoryTag
+from evaluation_system.model.history.models import History, Result, ResultTag, HistoryTag
 from django_evaluation import settings
 from plugins.utils import ssh_call
 
