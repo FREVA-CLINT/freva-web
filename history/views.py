@@ -522,6 +522,9 @@ def results(request, id, show_output_only = False):
     htag_notes = None
     follow_string = 'Follow'
 
+
+    historytag_objects = HistoryTag.objects.filter(history_id_id=id)
+
     try:
         htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
 
