@@ -345,7 +345,7 @@ def followResult(request, history_id):
                               History.Flag.guest]:
     
         
-        user = User(str(request.user))
+        user = str(request.user)
         pm.followHistoryTag(history_object.id, user, 'Web page: follow')
         
         retstr = 'Unfollow'
@@ -366,7 +366,7 @@ def unfollowResult(request, history_id):
     history_object = get_object_or_404(History, id=history_id)
 
 
-    user = User(str(request.user))
+    user = str(request.user)
     try:
         pm.unfollowHistoryTag(history_object.id, user)
         retstr = 'Follow'
