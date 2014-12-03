@@ -63,10 +63,19 @@
 			  <form class="navbar-form navbar-right  navbar-nav" method="post" action="{% url 'base:home' %}">
  				{% csrf_token %}
 	            <div class="form-group col-md-5">
-	              <input name="user" type="text" placeholder="Username" class="form-control">
+	                <div class="input-group">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id='guest_credentials'>
+                            <span class="glyphicon glyphicon-user" aria-hidden="true">
+                            </span> 
+                        </button>
+                    </span>
+                    <input name="user" type="text" placeholder="Username" class="form-control" id='in_user'>
+                </div><!-- /input-group -->
+
 	            </div>
 	            <div class="form-group col-md-5">
-	              <input name="password" type="password" placeholder="Password" class="form-control">
+	              <input name="password" type="password" placeholder="Password" class="form-control" id='in_pwd'>
 	            </div>
 	             <input name="next" type="hidden" id="next_page">
 	            <button type="submit" class="col-md-2 btn btn-primary">Sign in</button>
@@ -81,6 +90,17 @@
           </nav>
         </div>
       </div>
+   
+   <script>
+   
+   $(document).ready(function() {
+    $('#guest_credentials').on('click', function(){
+        $('#in_user').val('guest');
+        $('#in_pwd').val('miklip');
+    });
+    });
+    </script>
+
    
     
 <!-- Navigation Ends --> 
