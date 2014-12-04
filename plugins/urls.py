@@ -11,4 +11,5 @@ urlpatterns = patterns('plugins.views',
     url(r'^(?P<plugin_name>\w+)/detail/$', 'detail', name='detail'),
     url(r'^(?P<plugin_name>\w+)/setup/$', 'setup', name='setup'),
     url(r'^(?P<plugin_name>\w+)/(?P<row_id>\d+)/setup/$', 'setup', name='setup'),   
+    url(r'^(?P<plugin_name>\w+)/similar-results/$','search_similar_results', name='similar')
 )
