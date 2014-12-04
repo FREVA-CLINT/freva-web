@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django.contrib.flatpages.models import FlatPage
+from django.core import serializers
 
 import evaluation_system.api.plugin_manager as pm
 from evaluation_system.model.user import User
@@ -43,6 +44,23 @@ def detail(request, plugin_name):
         docu_flatpage = None
     
     return render(request, 'plugins/detail.html', {'plugin':plugin_web, 'docu': docu_flatpage})
+
+@login_required()
+def search_similar_results(request,plugin_name):
+    save_params = ['csrfmiddlewaretoken','password_hidden']
+    data = {}
+    #don't search for empty form fields
+    for key,val in request.GET.iteritems():
+        if val != '':
+            if key not in save_params:
+	        data[key]=val
+    
+    #get dummy result
+    #TODO: Replace with actual search method
+    hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name).order_by('-id')[:10]
+
+    data = serializers.serialize('json',hist_objects)
+    return HttpResponse(data)
   
 @sensitive_post_parameters('password_hidden')
 @sensitive_variables('password')
