@@ -97,7 +97,7 @@ def solr_search(request):
 		
     def reorderResults(res):
         import collections
-        cmor = ['data_type','project','product','institute','model','experiment','time_frequency','realm','variable','ensemble']
+        cmor = ['project','product','institute','model','experiment','time_frequency','realm','variable','ensemble','data_type']
         results = collections.OrderedDict()
         for cm in cmor:
 	    try:
