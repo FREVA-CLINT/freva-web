@@ -95,6 +95,18 @@ def solr_search(request):
 			tmp.append(d[i+1])
 	return tmp
 		
+    def reorderResults(res):
+        import collections
+        cmor = ['data_type','project','product','institute','model','experiment','time_frequency','realm','variable','ensemble']
+        results = collections.OrderedDict()
+        for cm in cmor:
+	    try:
+                results[cm] = res.pop(cm)
+            except KeyError:
+                pass
+        for k,v in res.iteritems():
+            results[k] = v
+        return results
  
     #return HttpResponse(json.dumps({"data": {"product": ["baseline0", 10, "baseline1", 10, "output", 1129, "output1", 1834]}, "metadata": None}))
     if facets:
@@ -114,6 +126,7 @@ def solr_search(request):
 	else:
 		if 'experiment_prefix' in args: args['experiment'] = args.pop('experiment_prefix')[0]+'*'
 		results = SolrFindFiles.facets(facets=facets, **args)
+		results = reorderResults(results)
     else:
         #return HttpResponse(json.dumps(dict(hallo='was')))
         results = SolrFindFiles.search( _retrieve_metadata = True, **args)
