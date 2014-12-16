@@ -416,6 +416,7 @@ DATABASES = {
 ADMINS = (
     ('Sebastian Illing', 'sebastian.illing@met.fu-berlin.de'),
     ('Oliver Kunst','oliver.kunst@met.fu-berlin.de'),
+    ('Christopher Kadow','christopher.kadow@met.fu-berlin.de'),
     # ('Your Name', 'your_email@domain.com'),
 )
 MANAGERS = ADMINS
