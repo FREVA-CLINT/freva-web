@@ -152,6 +152,7 @@ def mask_uid(text, isGuest):
         #                 text,)
         except:
             pass
+
     return rettext
 
 @register.filter('mask_safe_uid')
