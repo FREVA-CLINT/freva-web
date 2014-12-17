@@ -58,7 +58,7 @@ def search_similar_results(request,plugin_name=None, history_id=None):
     else:    
         if not history_id is None:
             o = Configuration.objects.filter(history_id_id=history_id)
-            hist_objects = History.find_similar_entries(o)
+            hist_objects = History.find_similar_entries(o, max_entries = 5)
 
         else:
             # create the tool
@@ -74,10 +74,7 @@ def search_similar_results(request,plugin_name=None, history_id=None):
                         data[key]=val
 
             o = pm.dict2conf(plugin_name, data)
-            hist_objects = History.find_similar_entries(o)
-
-            for row in o:
-                print row.parameter_id_id, row.value
+            hist_objects = History.find_similar_entries(o, max_entries = 5)
 
 
     data = serializers.serialize('json',hist_objects)
