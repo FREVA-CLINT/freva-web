@@ -284,7 +284,7 @@ function searchResults(container){
 	var form_vals = $('#plugin_form').serialize();
 	$('#'+container).html('<p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" style="margin-left:50px;"/>');
 	$.ajax({
-	   url: '/plugins/9091/similar-results-by-id/',
+	   url: '/plugins/{{tool.name}}/similar-results/',
 	   data: form_vals,
 	   type: 'GET',
 	   dataType: 'json',
