@@ -22,7 +22,7 @@ body .solr-modal{
 
 #similarDiv.affix {
     position: fixed;
-    top: 100px;
+    top: 10px;
     width:300px;
   }
 
@@ -39,7 +39,7 @@ html.wait, html.wait * { cursor: wait !important; }
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-9">
         	<h1>{{tool.name}}</h1>
           <p>{{tool.short_description}}</p>
           <form action="" method="post" name="plugin_form" id="plugin_form">
@@ -52,8 +52,8 @@ html.wait, html.wait * { cursor: wait !important; }
 	                </a>
 		  </form>
         </div>
-	<div class="col-md-2 pull-right"  id="similarD22iv">
-          <div id="similarDiv">      lalalalalal</div>
+	<div class="col-md-3 pull-right"  id="similarD22iv">
+          <div id="similarDiv"></div>
         </div>
 
 
@@ -276,20 +276,25 @@ function activate_browse(dir) {
  }
 
 function searchResults(container){
-	console.log('jojo');
 	var form_vals = $('#plugin_form').serialize();
-	console.log(form_vals);
-	$('#'+container).html('<p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" />');
+	$('#'+container).html('<p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" style="margin-left:50px;"/>');
 	$.ajax({
-	   url: '/plugins/{{tool.name}}/similar-results/',
+	   url: '/plugins/9091/similar-results-by-id/',
 	   data: form_vals,
 	   type: 'GET',
 	   dataType: 'json',
 	   success: function(data){
-	      result = '';
+	      result = '<table width="100%" style="text-align:center;" cellpadding="10"><tr>';
+	      var i = 0;
 	      data.forEach(function(val){
-		result += similarHtml(val)+'<br/>';
+		i+=1;
+		if(container=='similarResults'){
+		  result+=similarDialog(val,i);
+		  if(i==3)result+='</tr><tr>';
+		}else
+		  result += similarHtml(val,i);
 	      });
+	      result += '</tr></table>';
 	      if(result.length > 0){
 	          if(container == 'similarResults')
 		    result = 'This analysis has already be done by other users. Here you can view their results. <br>' +result;
@@ -303,9 +308,14 @@ function searchResults(container){
 
 }
 
-function similarHtml(res){
-	html = '<a href="/history/'+res['pk']+'/results/" target="_blank">'+res.fields['tool']+' result #'+res['pk']+'</a> by <a href="#">'+res.fields['uid']+'</a>';
+function similarHtml(res,i){
+	html = '<a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{STATIC_URL}}/images/m'+i+'.png" width="200"/></a><br/><a href="/history/'+res['pk']+'/results/" target="_blank">'+res.fields['tool']+' result #'+res['pk']+'</a> by '+res.fields['uid']+'<br/><br/>';
 	return html;
+}
+
+function similarDialog(res,i){
+	html = '<td><a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{STATIC_URL}}/images/m'+i+'.png" width="130"/></a><br/><a href="/history/'+res['pk']+'/results/" target="_blank">Result #'+res['pk']+'</a> by '+res.fields['uid']+'</td>';
+        return html;
 }
 
 $(document).ready(function(){
@@ -337,10 +347,16 @@ $(document).ready(function(){
     $('#runButton').on('click', function(e){
     	$('#guestModal').modal({show : true, backdrop : 'static'});
     }); 
+    //Dummy Anzeige für Similar Results
+    $('#similarDiv').html('<p>Similar Results:<br/>As a full user you would see similar results here. The suggestions update in real-time while you fill out the from.</p>');
+
+
     {% elif error_message %}
     $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
     $('#okBtn').removeAttr('disabled');
+    
     {% else %}
+    
     $('#runButton').on('click', function(e){
 	searchResults('similarResults'); //This triggers the search for similar results
     	$('#myModalPw').modal('show');
@@ -367,7 +383,7 @@ $(document).ready(function(){
 
 $('#similarDiv').affix({
   offset: {
-    top: 0,
+    top: 200,
     bottom: function () {
       return (this.bottom = $('.footer').outerHeight(true))
     }
