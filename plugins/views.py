@@ -10,6 +10,8 @@ from django.contrib.flatpages.models import FlatPage
 from django.core import serializers
 
 import evaluation_system.api.plugin_manager as pm
+import evaluation_system.api.parameters as param
+
 from evaluation_system.model.user import User
 from evaluation_system.model.solr import SolrFindFiles
 from evaluation_system.model.slurm import slurm_file
@@ -47,8 +49,9 @@ def detail(request, plugin_name):
 
 @login_required()
 def search_similar_results(request,plugin_name=None, history_id=None):
-    save_params = ['csrfmiddlewaretoken','password_hidden']
     data = {}
+    
+    hist_objects = []
     
     if request.user.isGuest():
         hist_objects = History.objects.filter(uid=request.user)#.filter(tool=plugin_name)
@@ -58,15 +61,18 @@ def search_similar_results(request,plugin_name=None, history_id=None):
             hist_objects = History.find_similar_entries(o)
 
         else:
+            # create the tool
+            tool = pm.getPluginInstance(plugin_name, user)
+            plugin_fields = pm.getPluginDict(tool).keys()
+            
             #don't search for empty form fields
             for key,val in request.GET.iteritems():
                 if val != '':
-                    if key not in save_params:
+                    if key in plugin_fields:
                         data[key]=val
-        
-            #get dummy result
-            #TODO: Replace with actual search method
-            hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name).order_by('-id')[:5]
+
+            o = param.ParameterDictionary.dict2conf(plugin_name, data)
+            hist_objects = History.find_similar_entries(o)
 
     data = serializers.serialize('json',hist_objects)
     return HttpResponse(data)
