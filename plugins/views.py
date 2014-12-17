@@ -62,8 +62,10 @@ def search_similar_results(request,plugin_name=None, history_id=None):
 
         else:
             # create the tool
-            tool = pm.getPluginInstance(plugin_name, user)
-            plugin_fields = pm.getPluginDict(tool).keys()
+            tool = pm.getPluginInstance(plugin_name)
+            param_dict = tool.__parameters__
+            param_dict.synchronize(plugin_name)
+            plugin_fields = param_dict.keys()
             
             #don't search for empty form fields
             for key,val in request.GET.iteritems():
@@ -71,8 +73,12 @@ def search_similar_results(request,plugin_name=None, history_id=None):
                     if key in plugin_fields:
                         data[key]=val
 
-            o = param.ParameterDictionary.dict2conf(plugin_name, data)
+            o = pm.dict2conf(plugin_name, data)
             hist_objects = History.find_similar_entries(o)
+
+            for row in o:
+                print row.parameter_id_id, row.value
+
 
     data = serializers.serialize('json',hist_objects)
     return HttpResponse(data)
