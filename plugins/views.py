@@ -17,7 +17,7 @@ from evaluation_system.misc import config
 
 from plugins.utils import get_plugin_or_404, ssh_call
 from plugins.forms import PluginForm, PluginWeb
-from history.models import History
+from history.models import History, Configuration
 from django_evaluation import settings
 
 import logging
@@ -46,18 +46,27 @@ def detail(request, plugin_name):
     return render(request, 'plugins/detail.html', {'plugin':plugin_web, 'docu': docu_flatpage})
 
 @login_required()
-def search_similar_results(request,plugin_name):
+def search_similar_results(request,plugin_name=None, history_id=None):
     save_params = ['csrfmiddlewaretoken','password_hidden']
     data = {}
-    #don't search for empty form fields
-    for key,val in request.GET.iteritems():
-        if val != '':
-            if key not in save_params:
-	        data[key]=val
     
-    #get dummy result
-    #TODO: Replace with actual search method
-    hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name).order_by('-id')[:10]
+    if request.user.isGuest():
+        hist_objects = History.objects.filter(uid=request.user)#.filter(tool=plugin_name)
+    else:    
+        if not history_id is None:
+            o = Configuration.objects.filter(history_id_id=history_id)
+            hist_objects = History.find_similar_entries(o)
+
+        else:
+            #don't search for empty form fields
+            for key,val in request.GET.iteritems():
+                if val != '':
+                    if key not in save_params:
+                        data[key]=val
+        
+            #get dummy result
+            #TODO: Replace with actual search method
+            hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name).order_by('-id')[:5]
 
     data = serializers.serialize('json',hist_objects)
     return HttpResponse(data)

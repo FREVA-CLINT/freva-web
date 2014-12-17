@@ -20,10 +20,10 @@ body .solr-modal{
    max-width:1000px;
 }
 
-#similarDiv.affix {
+#simAffix.affix {
     position: fixed;
     top: 10px;
-    width:300px;
+    width:250px;
   }
 
 html.wait, html.wait * { cursor: wait !important; }
@@ -53,7 +53,12 @@ html.wait, html.wait * { cursor: wait !important; }
 		  </form>
         </div>
 	<div class="col-md-3 pull-right"  id="similarD22iv">
+          <div id="simAffix">
+	  {% if restricted_user %}
+             <p>As a full user you would see similar results here. The suggestions update in real-time while you fill out the from.</p>
+          {% endif %}
           <div id="similarDiv"></div>
+	  </div>
         </div>
 
 
@@ -347,8 +352,6 @@ $(document).ready(function(){
     $('#runButton').on('click', function(e){
     	$('#guestModal').modal({show : true, backdrop : 'static'});
     }); 
-    //Dummy Anzeige für Similar Results
-    $('#similarDiv').html('<p>Similar Results:<br/>As a full user you would see similar results here. The suggestions update in real-time while you fill out the from.</p>');
 
 
     {% elif error_message %}
@@ -374,14 +377,18 @@ $(document).ready(function(){
     
     });
 
-    $('form :input').change(function(){
-	console.log('chnage');
-	searchResults('similarDiv');
-    });
+//    $('form :input').change(function(){
+//	console.log('chnage');
+//	searchResults('similarDiv');
+//    });
 
    {% endif %}
 
-$('#similarDiv').affix({
+    $('form :input').change(function(){
+        searchResults('similarDiv');
+    });
+
+$('#simAffix').affix({
   offset: {
     top: 200,
     bottom: function () {
