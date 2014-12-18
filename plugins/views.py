@@ -49,12 +49,23 @@ def detail(request, plugin_name):
 
 @login_required()
 def search_similar_results(request,plugin_name=None, history_id=None):
-    data = {}
     
+    def hist_to_dict(h_obj):
+        hist_dict = dict()
+        results = h_obj.result_set.filter(file_type=1)  
+        hist_dict['preview'] = ''
+        if len(results) > 0:
+            hist_dict['preview'] = results[0].preview_file
+        hist_dict['pk'] = h_obj.pk
+        hist_dict['tool'] = h_obj.tool
+        hist_dict['uid'] = str(h_obj.uid)
+        return hist_dict
+
+    data = {}    
     hist_objects = []
     
     if request.user.isGuest():
-        hist_objects = History.objects.filter(uid=request.user)#.filter(tool=plugin_name)
+        hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name)
     else:    
         if not history_id is None:
             o = Configuration.objects.filter(history_id_id=history_id)
@@ -75,10 +86,11 @@ def search_similar_results(request,plugin_name=None, history_id=None):
 
             o = pm.dict2conf(plugin_name, data)
             hist_objects = History.find_similar_entries(o, max_entries = 5)
-
-
-    data = serializers.serialize('json',hist_objects)
-    return HttpResponse(data)
+    res = list()
+    for obj in hist_objects:
+        res.append(hist_to_dict(obj))
+#    data = serializers.serialize('json',hist_objects,fields=('preview'))
+    return HttpResponse(json.dumps(res))
   
 @sensitive_post_parameters('password_hidden')
 @sensitive_variables('password')
@@ -198,7 +210,8 @@ def setup(request, plugin_name, row_id = None):
                                                   'user_home': home_dir,
                                                   'user_scratch': scratch_dir,
                                                   'error_message': errormsg,
-                                                  'restricted_user':not user_can_submit})
+                                                  'restricted_user':not user_can_submit,
+						  'PREVIEW_URL' : settings.PREVIEW_URL,})
   
 @login_required()  
 def dirlist(request):
