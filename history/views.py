@@ -147,7 +147,9 @@ class history(DatatableView):
         
         # fill configuration
         try:
-            for key, value in instance.config_dict().items():
+            # this is much faster than the routine config_dict.
+            config_dict = json.loads(instance.configuration)
+            for key, value in config_dict.items():
                 text = escape(mask_uid(str(value), self.request.user.isGuest()))
                 config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, text)
         except Exception, e:
