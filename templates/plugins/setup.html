@@ -361,7 +361,7 @@ $(document).ready(function(){
     	$('#guestModal').modal({show : true, backdrop : 'static'});
     }); 
 
-
+    searchResults('similarDiv');
     {% elif error_message %}
     $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
     $('#okBtn').removeAttr('disabled');
