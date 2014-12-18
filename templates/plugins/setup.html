@@ -8,7 +8,7 @@
 <script src="{{ STATIC_URL }}js/solr_search.js?{% now "U" %}"></script>
 
 {% load bootstrap3 %}
-
+{% load static %}
 <style>
 .files{
 	max-height: 500px;
@@ -23,7 +23,7 @@ body .solr-modal{
 #simAffix.affix {
     position: fixed;
     top: 10px;
-    width:250px;
+    width:220px;
   }
 
 html.wait, html.wait * { cursor: wait !important; }
@@ -314,12 +314,20 @@ function searchResults(container){
 }
 
 function similarHtml(res,i){
-	html = '<a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{STATIC_URL}}/images/m'+i+'.png" width="200"/></a><br/><a href="/history/'+res['pk']+'/results/" target="_blank">'+res.fields['tool']+' result #'+res['pk']+'</a> by '+res.fields['uid']+'<br/><br/>';
+	if(res['preview'] != '')
+	   img = '<a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{PREVIEW_URL}}'+res['preview']+'" width="200"/></a><br/>';
+	else
+	   img = '';
+	html = img+'<a href="/history/'+res['pk']+'/results/" target="_blank">'+res['tool']+' result #'+res['pk']+'</a> by '+res['uid']+'<br/><br/>';
 	return html;
 }
 
 function similarDialog(res,i){
-	html = '<td><a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{STATIC_URL}}/images/m'+i+'.png" width="130"/></a><br/><a href="/history/'+res['pk']+'/results/" target="_blank">Result #'+res['pk']+'</a> by '+res.fields['uid']+'</td>';
+	if(res['preview'] != '')
+           img = '<a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{PREVIEW_URL}}'+res['preview']+'" width="130"/></a><br/>';
+        else
+           img = '';
+	html = '<td>'+img+'<a href="/history/'+res['pk']+'/results/" target="_blank">Result #'+res['pk']+'</a> by '+res['uid']+'</td>';
         return html;
 }
 
