@@ -85,7 +85,8 @@ def search_similar_results(request,plugin_name=None, history_id=None):
                         data[key]=val
 
             o = pm.dict2conf(plugin_name, data)
-            hist_objects = History.find_similar_entries(o, max_entries = 5)
+            hist_objects = History.find_similar_entries(o, uid=request.user.username, max_entries = 5)
+
     res = list()
     for obj in hist_objects:
         res.append(hist_to_dict(obj))
