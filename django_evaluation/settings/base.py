@@ -30,42 +30,36 @@ def get_env_setting(setting):
         raise ImproperlyConfigured(error_msg)
 
 
+##################################################
+##################################################
+#SETTING FOR LDAP
+#http://pythonhosted.org//django-auth-ldap/
+##################################################
+##################################################
 # The server for LDAP configuration
 AUTH_LDAP_SERVER_URI = "ldaps://dsp.dkrz.de"
-
-#FACETS = SolrFindFiles.facets(facets=None)
-
 # The directory with SSL certificates
 CA_CERT_DIR = '/etc/pki/tls/certs'
-
-
 # the only allowd group
 ALLOWED_GROUP = 'miklip'
-
 # Require a ca certificate
 AUTH_LDAP_GLOBAL_OPTIONS = {
-    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_DEMAND,
-    ldap.OPT_X_TLS_CACERTDIR: CA_CERT_DIR,
+    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_DEMAND, #TPYE OF CERTIFICATION
+    ldap.OPT_X_TLS_CACERTDIR: CA_CERT_DIR, #PATH OF CERTIFICATION
 }
-
 # this is not used by django directly, but we use it for
 # python-ldap access, as well.
 LDAP_USER_BASE = "ou=People,o=ldap,o=root"
-
 # Verify the user by bind to LDAP
 AUTH_LDAP_USER_DN_TEMPLATE = "uid=%%(user)s, %s" % LDAP_USER_BASE
-
 # keep the authenticated user for group search
 AUTH_LDAP_BIND_AS_AUTHENTICATING_USER=True
-
 # MiKlip user only
 AUTH_LDAP_REQUIRE_GROUP = ALLOWED_GROUP
-
 # find only users from group miklip
 # AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=netgroup,o=ldap,o=root"
 #     ldap.SCOPE_SUBTREE,
 #     '&((cn=%s)(nisNetgroupTriple=\(,%%(user)s,\)))' % ALLOWED_GROUP )
-
 # Populate the Django user from the LDAP directory.
 AUTH_LDAP_USER_ATTR_MAP = {
     "email": "mail",
@@ -73,9 +67,8 @@ AUTH_LDAP_USER_ATTR_MAP = {
     "first_name" : "givenname",
 }
 
-
 AUTH_LDAP_GROUP_SEARCH = LDAPSearch('ou=netgroup,o=ldap,o=root',
-                                     ldap.SCOPE_SUBTREE,
+                                     ldap.SCOPE_SUBTREE, #USE SUB
                                      '(nisNetgroupTriple=\(,%(user)s,\))')
 
 #AUTH_LDAP_GROUP_TYPE = ldap_cfg.ActiveDirectoryGroupType()
@@ -89,6 +82,12 @@ LDAP_USER_DN = 'cn=dkrzagent, ou=Special Users, dc=adm'
 LDAP_USER_PW = 'dkrzprox'
 LDAP_GROUP_BASE = 'ou=netgroup, o=ldap, o=root'
 LDAP_MIKLIP_GROUP_FILTER = '(cn=miklip)'
+##################################################
+##################################################
+#END SETTING FOR LDAP
+##################################################
+##################################################
+
 
 # register the LDAP authentication backend 
 AUTHENTICATION_BACKENDS = (
