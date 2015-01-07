@@ -289,22 +289,26 @@ function searchResults(container){
 	   type: 'GET',
 	   dataType: 'json',
 	   success: function(data){
-	      result = '<table width="100%" style="text-align:center;" cellpadding="10"><tr>';
-	      var i = 0;
-	      data.forEach(function(val){
-		i+=1;
-		if(container=='similarResults'){
-		  result+=similarDialog(val,i);
-		  if(i==3)result+='</tr><tr>';
-		}else
-		  result += similarHtml(val,i);
-	      });
-	      result += '</tr></table>';
-	      if(result.length > 0){
-	          if(container == 'similarResults')
-		    result = 'This analysis has already be done by other users. Here you can view their results. <br>' +result;
-	          else
-		    result = 'Similar results: <br>' + result;
+	      if(data.length == 0)
+		result = 'No similar results found';
+	      else{
+    	        result = '<table width="100%" style="text-align:center;" cellpadding="10"><tr>';
+	        var i = 0;
+	        data.forEach(function(val){
+		  i+=1;
+		  if(container=='similarResults'){
+		    result+=similarDialog(val,i);
+		    if(i==3)result+='</tr><tr>';
+		  }else
+		    result += similarHtml(val,i);
+	        });
+	        result += '</tr></table>';
+	        if(result.length > 0){
+	            if(container == 'similarResults')
+		      result = 'This analysis has already be done by other users. Here you can view their results. <br>' +result;
+	            else
+		      result = 'Similar results: <br>' + result;
+	        }
 	      }
 	      $('#'+container).html(result);
 	   },
