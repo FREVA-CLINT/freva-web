@@ -87,9 +87,11 @@ def preview_tree(value, autoescape=None):
                     caption = '<br>'.join([key, caption])
                 else:
                     caption = key
-
- 
-                output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
+		fn=value['preview_file']
+ 		if fn.split('.')[-1] == 'pdf':
+			output.append('<ul class="jqueryFileTree" style="'+visible+'"><li class="file ext_pdf"><a class="pdf_download" target="_blank" href="'+settings.PREVIEW_URL+fn+'">'+fn+'</a></li></ul>')
+                else:
+                	output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
                                                                                          'PREVIEW_URL':settings.PREVIEW_URL,
                                                                                          'visible':visible}))
             else:

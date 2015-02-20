@@ -340,6 +340,8 @@
 		});
 
 		$('.jqueryFileTree a').on('click', function(target){
+			if($(target.target).hasClass('pdf_download')) 
+				return
 			var list_el = $(target.target).parent();
 			list_el.toggleClass("expanded");
 			list_el.toggleClass("collapsed");
