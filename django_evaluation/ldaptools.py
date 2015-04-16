@@ -4,7 +4,20 @@ import settings
 from exceptions import ValueError
 from django.core.cache import cache, get_cache
 import re
+from django.core.exceptions import ImproperlyConfigured
    
+def get_ladap_object():
+    '''
+    Returns an instance of the ldap class specified in django settings
+    '''
+    try:
+        model_name = settings.LDAP_MODEL.split('.')
+    except (ValueError, AttributeError):
+        raise ImproperlyConfigured('LDAP_MODEL must be of the form '
+                                   '"model_name" (i.e. MiKlipUserInformation')    
+        
+    return getattr('ldaptools','miklip_user_information')
+    
 
 class miklip_user_information:
     """
