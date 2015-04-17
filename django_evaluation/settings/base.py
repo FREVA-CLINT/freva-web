@@ -29,66 +29,6 @@ def get_env_setting(setting):
         error_msg = "Set the %s env variable" % setting
         raise ImproperlyConfigured(error_msg)
 
-
-##################################################
-##################################################
-#SETTING FOR LDAP
-#http://pythonhosted.org//django-auth-ldap/
-##################################################
-##################################################
-# The server for LDAP configuration
-AUTH_LDAP_SERVER_URI = "ldaps://dsp.dkrz.de"
-# The directory with SSL certificates
-CA_CERT_DIR = '/etc/pki/tls/certs'
-# the only allowd group
-ALLOWED_GROUP = 'miklip'
-# Require a ca certificate
-AUTH_LDAP_GLOBAL_OPTIONS = {
-    ldap.OPT_X_TLS_REQUIRE_CERT: ldap.OPT_X_TLS_DEMAND, #TPYE OF CERTIFICATION
-    ldap.OPT_X_TLS_CACERTDIR: CA_CERT_DIR, #PATH OF CERTIFICATION
-}
-# this is not used by django directly, but we use it for
-# python-ldap access, as well.
-LDAP_USER_BASE = "ou=People,o=ldap,o=root"
-# Verify the user by bind to LDAP
-AUTH_LDAP_USER_DN_TEMPLATE = "uid=%%(user)s, %s" % LDAP_USER_BASE
-# keep the authenticated user for group search
-AUTH_LDAP_BIND_AS_AUTHENTICATING_USER=True
-# MiKlip user only
-AUTH_LDAP_REQUIRE_GROUP = ALLOWED_GROUP
-# find only users from group miklip
-# AUTH_LDAP_USER_SEARCH = LDAPSearch("ou=netgroup,o=ldap,o=root"
-#     ldap.SCOPE_SUBTREE,
-#     '&((cn=%s)(nisNetgroupTriple=\(,%%(user)s,\)))' % ALLOWED_GROUP )
-# Populate the Django user from the LDAP directory.
-AUTH_LDAP_USER_ATTR_MAP = {
-    "email": "mail",
-    "last_name" : "sn",
-    "first_name" : "givenname",
-}
-
-AUTH_LDAP_GROUP_SEARCH = LDAPSearch('ou=netgroup,o=ldap,o=root',
-                                     ldap.SCOPE_SUBTREE, #USE SUB
-                                     '(nisNetgroupTriple=\(,%(user)s,\))')
-
-#AUTH_LDAP_GROUP_TYPE = ldap_cfg.ActiveDirectoryGroupType()
-AUTH_LDAP_GROUP_TYPE = LDAPNisGroupType()
-
-# AUTH_LDAP_FIND_GROUP_PERMS = True
-AUTH_LDAP_MIRROR_GROUPS = True
-
-# agent user for LDAP
-LDAP_USER_DN = 'cn=dkrzagent, ou=Special Users, dc=adm'
-LDAP_USER_PW = 'dkrzprox'
-LDAP_GROUP_BASE = 'ou=netgroup, o=ldap, o=root'
-LDAP_MIKLIP_GROUP_FILTER = '(cn=miklip)'
-##################################################
-##################################################
-#END SETTING FOR LDAP
-##################################################
-##################################################
-
-
 # register the LDAP authentication backend 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -144,13 +84,10 @@ INSTALLED_APPS = (
     # Database migrations
     'south',
 
-    # Application base, containing global templates.
     'base',
     'plugins',
     'history',
     'solr',
-
-    # Local apps, referenced via appname
 )
 
 # Place bcrypt first in the list, so it will be the default password hashing
@@ -303,53 +240,11 @@ FILE_UPLOAD_PERMISSIONS = 0664
 # The WSGI Application to use for runserver
 WSGI_APPLICATION = 'django_evaluation.wsgi.application'
 
-
-# Uncomment this and set to all slave DBs in use on the site.
-# SLAVE_DATABASES = ['slave']
-
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = []
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# Hardcoded values can leak through source control.
-# This is an example method of getting the value from an environment setting.
-# Uncomment to use, and then make sure you set the SECRET_KEY environment variable.
-# This is good to use in production, and on services that support it such as Heroku.
-#SECRET_KEY = get_env_setting('SECRET_KEY')
-
-# Uncomment these to activate and customize Celery:
-# CELERY_ALWAYS_EAGER = False  # required to activate celeryd
-# BROKER_HOST = 'localhost'
-# BROKER_PORT = 5672
-# BROKER_USER = 'django'
-# BROKER_PASSWORD = 'django'
-# BROKER_VHOST = 'django'
-# CELERY_RESULT_BACKEND = 'amqp'
-
 INTERNAL_IPS = ('127.0.0.1')
 
-# Enable these options for memcached
-#CACHE_BACKEND= "memcached://127.0.0.1:11211/"
-#CACHE_MIDDLEWARE_ANONYMOUS_ONLY=True
-
-# Set this to true if you use a proxy that sets X-Forwarded-Host
-#USE_X_FORWARDED_HOST = False
-
-#SERVER_EMAIL = "miklip@wgcast.de"
-#DEFAULT_FROM_EMAIL = "miklip@wgcast.de"
 SERVER_EMAIL = "miklip@met.fu-berlin.de"
 DEFAULT_FROM_EMAIL = "miklip@met.fu-berlin.de"
 SYSTEM_EMAIL_PREFIX = "[django_evaluation]"
-
-# EMAIL_HOST='smtp-mail.outlook.com'
-# EMAIL_HOST_USER='www-miklip@outlook.de'
-# EMAIL_HOST_PASSWORD='2e73d7ee68d0f8f'
-# EMAIL_HOST='wgcast.de'
-# EMAIL_HOST_USER='miklip@wgcast.de'
-# EMAIL_HOST_PASSWORD='django'
-# EMAIL_USE_TLS=True
-# EMAIL_PORT=587
 
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_HOST_USER='miklip.integration@gmail.com'
@@ -362,26 +257,8 @@ EMAIL_PORT=587
 LOG_LEVEL = logging.INFO
 HAS_SYSLOG = True
 SYSLOG_TAG = "http_app_django_evaluation"  # Make this unique to your project.
-# Remove this configuration variable to use your custom logging configuration
-# LOGGING_CONFIG = None
-# LOGGING = {
-#     'version': 1,
-#     'loggers': {
-#         'django_evaluation': {
-#             'level': "DEBUG"
-#         }
-#     }
-# }
 
 SECRET_KEY = 'hj1bkzobng0ck@0&%t509*1ki$#)i5y+i0)&=7zv@amu8pm5*t'
-# Common Event Format logging parameters
-#CEF_PRODUCT = 'django_evaluation'
-#CEF_VENDOR = 'Your Company'
-#CEF_VERSION = '0'
-#CEF_DEVICE_VERSION = '0'
-
-# To extend any settings from settings/base.py here's an example:
-INSTALLED_APPS = INSTALLED_APPS + ('django_nose',)
 
 DATABASES = {
     'default': {
@@ -391,32 +268,13 @@ DATABASES = {
         'PASSWORD': 'miklip',
         'HOST': 'wwwdev-miklip',
         'PORT': '3306',
-
-#	'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': '/miklip/integration/evaluation_system/database/db.db',
-#        'USER': '',
-#        'PASSWORD': '',
-#        'HOST': '',
-#        'PORT': '',
-        #'OPTIONS': {
-        #    'init_command': 'SET storage_engine=InnoDB',
-        #    'charset' : 'utf8',
-        #    'use_unicode' : True,
-        #},
-        #'TEST_CHARSET': 'utf8',
-        #'TEST_COLLATION': 'utf8_general_ci',
     },
-    # 'slave': {
-    #     ...
-    # },
 }
 
 # Recipients of traceback emails and other notifications.
 ADMINS = (
     ('Sebastian Illing', 'sebastian.illing@met.fu-berlin.de'),
-    ('Oliver Kunst','oliver.kunst@met.fu-berlin.de'),
     ('Christopher Kadow','christopher.kadow@met.fu-berlin.de'),
-    # ('Your Name', 'your_email@domain.com'),
 )
 MANAGERS = ADMINS
 
@@ -427,14 +285,7 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
-
-# SECURITY WARNING: don't run with debug turned on in production!
-# Debugging displays nice error messages, but leaks memory. Set this to False
-# on all server instances and True only for development.
 DEBUG = TEMPLATE_DEBUG = False
-
-# Is this a development instance? Set this to True on development/master
-# instances and False on stage/prod.
 DEV = False
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -445,40 +296,6 @@ ALLOWED_HOSTS = ['www-miklip.dkrz.de', 'wwwdev-miklip.dkrz.de']
 # Hardcoded values can leak through source control. Consider loading
 # the secret key from an environment variable or a file instead.
 SECRET_KEY = 'hj1bkzobng0ck@0&%t509*1ki$#)i5y+i0)&=7zv@amu8pm5*t'
-
-# Uncomment these to activate and customize Celery:
-# CELERY_ALWAYS_EAGER = False  # required to activate celeryd
-# BROKER_HOST = 'localhost'
-# BROKER_PORT = 5672
-# BROKER_USER = 'django'
-# BROKER_PASSWORD = 'django'
-# BROKER_VHOST = 'django'
-# CELERY_RESULT_BACKEND = 'amqp'
-
-## Log settings
-
-# Remove this configuration variable to use your custom logging configuration
-# LOGGING_CONFIG = None
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': True,
-#     'handlers': {
-#         'mail_admins': {
-#             'level': 'DEBUG',
-#             'class': 'django.utils.log.AdminEmailHandler',
-#         }
-#     },
-#     'loggers': {
-#         'django_evaluation': {
-#             'level': "INFO"
-#         },
-#         'django.request': {
-#             'handlers': ['mail_admins'],
-#             'level': 'DEBUG',
-#             'propagate': True,
-#         },
-#     }
-# }
 
 LOGGING = {
     'version': 1,
