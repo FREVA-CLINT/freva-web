@@ -20,8 +20,8 @@ class LdapUserInformation(object):
         Establish ldap connection, use django settings
         '''
         if self._con:
-	    return self._con
-	# whenever a CA_CERTDIR is set use it.
+            return self._con
+        # whenever a CA_CERTDIR is set use it.
         try:
             ldap.set_option(ldap.OPT_X_TLS_CACERTDIR, settings.CA_CERT_DIR)
         except:
@@ -43,11 +43,11 @@ class LdapUserInformation(object):
 
         # bind with the simple user
         try:
-	    con.simple_bind_s(settings.LDAP_USER_DN, settings.LDAP_USER_PW)
+            con.simple_bind_s(settings.LDAP_USER_DN, settings.LDAP_USER_PW)
         except (ValueError, AttributeError):
-	    con.simple_bind_s()
-	self._con = con
-	return self._con
+            con.simple_bind_s()
+        self._con = con
+        return self._con
 
     @abstractmethod
     def load_from_ldap(self):
@@ -89,7 +89,7 @@ class FUUserInformation(LdapUserInformation):
     def load_from_ldap(self):
         # search all users belonging
         con = self.connection
-	res= con.search_s(settings.LDAP_GROUP_BASE,
+        res= con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
                           'objectClass=account'
                           )
@@ -128,7 +128,7 @@ class MiklipUserInformation(LdapUserInformation):
         """
         Loads the miklip user ids and the info belonging to the user
         """
-	con = self.connection
+        con = self.connection
         res= con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
                           attrlist=['nisnetgrouptriple'],
@@ -171,8 +171,7 @@ class MiklipUserInformation(LdapUserInformation):
         self.user_info = sorted(user_info, key=lambda tup: tup[1]);
         return self.user_info
 
-#This is for backward compabillity
-miklip_user_information = get_ldap_object()MiklipUserInformation
+
 
 def get_ldap_object():
     '''
@@ -181,11 +180,12 @@ def get_ldap_object():
     try:
         parts = settings.LDAP_MODEL.split('.')
         model_name = parts[-1]
-	module = '.'.join(parts[:-1])
-	print module,model_name
+        module = '.'.join(parts[:-1])
     except (ValueError, AttributeError):
         raise ImproperlyConfigured('LDAP_MODEL must be of the form '
                                    '"module.model_name" (i.e. django_evaluation.ldaptools.MiklipUserInformation')
     m = importlib.import_module(module)
     return getattr(m,model_name)()
 
+#This is for backward compabillity
+miklip_user_information = get_ldap_object
