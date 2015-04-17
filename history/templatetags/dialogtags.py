@@ -1,5 +1,5 @@
 from django import template
-from django_evaluation.ldaptools import get_ldap_object, miklip_user_information
+from django_evaluation.ldaptools import get_ldap_object
 from django.utils.safestring import mark_safe
 from django_evaluation import settings
 
@@ -28,7 +28,7 @@ def caption_dialog(current, default, history_object, user):
 @register.inclusion_tag('history/templatetags/mailfield.html')
 def mailfield(is_guest):
     info = []
-    user_info = get_ldap_object() #miklip_user_information()
+    user_info = get_ldap_object()
 
     if is_guest:
         for uid in settings.EMAIL_RESTRICTIONS:

@@ -172,7 +172,7 @@ class MiklipUserInformation(LdapUserInformation):
         return self.user_info
 
 #This is for backward compabillity
-miklip_user_information = MiklipUserInformation
+miklip_user_information = get_ldap_object()MiklipUserInformation
 
 def get_ldap_object():
     '''
