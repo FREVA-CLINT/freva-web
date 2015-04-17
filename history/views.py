@@ -14,7 +14,7 @@ from datatableview.utils import get_datatable_structure
 from django.views.generic.base import TemplateView
 from django.template import defaultfilters as filters
 
-from django_evaluation.ldaptools import miklip_user_information
+from django_evaluation.ldaptools import get_ldap_object
 
 import json
 import os
@@ -711,7 +711,7 @@ def sendMail(request):
     addresses = []
     names = []
 
-    user_info = miklip_user_information() 
+    user_info = get_ldap_object() 
 
 
     myinfo = user_info.get_user_info(str(request.user))

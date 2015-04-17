@@ -204,7 +204,7 @@ def sendmail_to_follower(request, history_id, subject, message):
     '''
     from django.core.urlresolvers import reverse
     from django.core.mail import EmailMessage
-    from django_evaluation.ldaptools import miklip_user_information
+    from django_evaluation.ldaptools import get_ldap_object
 
     follower = HistoryTag.objects.filter(history_id_id=history_id).filter(type=HistoryTag.tagType.follow)
     
@@ -214,7 +214,7 @@ def sendmail_to_follower(request, history_id, subject, message):
     addresses = []
     names = []
 
-    user_info = miklip_user_information() 
+    user_info = get_ldap_object() 
 
     prev_uid = None
 
