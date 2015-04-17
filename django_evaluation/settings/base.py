@@ -75,7 +75,7 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
     'djcelery',
-    'debug_toolbar',
+#    'debug_toolbar',
     'compressor',
     'bootstrap3',
     'datatableview',
@@ -174,7 +174,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 

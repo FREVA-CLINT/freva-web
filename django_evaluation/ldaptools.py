@@ -124,6 +124,8 @@ class MiklipUserInformation(LdapUserInformation):
     A class to access additional LDAP information using the
     agent user and no binding with the logged in user
     """       
+    ldap_keys = ['sn', 'givenName', 'uid', 'mail', 'mailForwardingAddress']    
+
     def load_from_ldap(self):
         """
         Loads the miklip user ids and the info belonging to the user
