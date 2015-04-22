@@ -1,3 +1,6 @@
-from django.db import models
+from evaluation_system.model.solr.models import UserCrawl
+    
+    
 
-# Create your models here.
+
+
