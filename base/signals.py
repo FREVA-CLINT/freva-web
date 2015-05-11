@@ -3,7 +3,7 @@ from django.contrib.auth.signals import user_logged_in
 from django_evaluation import settings
 from ipware.ip import get_real_ip, get_ip
 from datetime import datetime
-
+import requests
 
 def send_mail_after_guest_login(sender, user, request, **kwargs):
     """
@@ -33,9 +33,16 @@ def send_mail_after_guest_login(sender, user, request, **kwargs):
                 ip = ''
 
 
+        try: 
+            api_key = '28e6f13bda7c619201630b904b36a3c53b02a49b'
+            url = 'http://api.db-ip.com/addrinfo?addr=%s&api_key=%s' % (ip,api_key,)
+            r = requests.get(url)
+            val = r.json()
+        except:
+            val = ''
         message = "Guest login from %s at %s" % (ip,
                                                  datetime.now().isoformat())
-
+        message += '\n\n%s' % val
         print "Send: ", message, " to ", admin_mail_addresses
 
         send_mail('[miklip-guest] Guest Login',
