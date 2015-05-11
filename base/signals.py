@@ -38,7 +38,7 @@ def send_mail_after_guest_login(sender, user, request, **kwargs):
             url = 'http://api.db-ip.com/addrinfo?addr=%s&api_key=%s' % (ip,api_key,)
             r = requests.get(url)
             val = r.json()
-            val = 'Country: %s\nState/Prov: %s\n City: %s' % (val['country'],val['stateprov'],val['city'],)
+            val = 'Country: %s\nState/Prov: %s\nCity: %s' % (val['country'],val['stateprov'],val['city'],)
         except:
             val = ''
         message = "Guest login from %s at %s" % (ip,
