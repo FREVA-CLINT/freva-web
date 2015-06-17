@@ -101,19 +101,27 @@ class FUUserInformation(LdapUserInformation):
         # fill the users list
         for user in user_list:
             uid = user[1]['uid'][0]
-            name = user[1]['cn'][0]
-            mail = user[1].get('mail', None)
+            name = user[1]['cn'][0].split(' ')
+            try:
+                prename = name[1]
+            except:
+                prename = ''
+            try: 
+		lastname = name[0] 
+	    except: 
+		lastname = ''
+	    mail = user[1].get('mail', None)
             gecos = user[1].get('gecos', None)
 
             if mail:
                 email = mail
-                user_info.append((uid,name,name,email))
+                user_info.append((uid,prename,lastname,email))
             elif gecos:
                 tmp = gecos[0].split(',')
                 for val in tmp:
                     if '@' in val:
                         email = val
-                        user_info.append((uid,name,name,email))
+                        user_info.append((uid,prename,lastname,email))
                         break
 
         self.user_info = sorted(user_info, key=lambda tup: tup[1]);
