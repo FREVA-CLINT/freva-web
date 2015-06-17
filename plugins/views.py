@@ -160,7 +160,8 @@ def setup(request, plugin_name, row_id = None):
             # compose the plugin command
             slurm_options = config.get_section('scheduler_options')
 	    # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
-            command = plugin.composeCommand(config_dict,
+            load_module = "source /net/opt/system/modules/default/init/bash > /dev/null; module load modules_wheezy > /dev/null; module load /home/integra/evaluation_system/modules/freva/0.1 > /dev/null;"
+	    command = plugin.composeCommand(config_dict,
                                             batchmode='web',
                                             email=user.getEmail(),
                                             caption=caption)
