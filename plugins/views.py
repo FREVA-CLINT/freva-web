@@ -103,7 +103,7 @@ def setup(request, plugin_name, row_id = None):
     user_can_submit = request.user.has_perm('history.history_submit_job')
 
     if user_can_submit:
-        user = User(request.user.username, request.user.email)
+        user = User('integra')#request.user.username, request.user.email)
     else:
         user = User()
 
@@ -158,15 +158,12 @@ def setup(request, plugin_name, row_id = None):
             hostnames = list(settings.SCHEDULER_HOSTS)
 
             # compose the plugin command
-            # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
-            load_module = "source /client/etc/profile.miklip > /dev/null;module load evaluation_system > /dev/null;"
-            load_module = "source /net/opt/system/modules/default/init/bash > /dev/null; module load /home/integra/evaluation_system/modules/freva/0.1 > /dev/null;"
-            load_module = "source /net/opt/system/modules/default/init/bash > /dev/null; module load modules_wheezy > /dev/null; module load /home/integra/evaluation_system/modules/freva/0.1 > /dev/null;"
+            slurm_options = config.get_section('scheduler_options')
+	    # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
             command = plugin.composeCommand(config_dict,
                                             batchmode='web',
                                             email=user.getEmail(),
                                             caption=caption)
-	    print 'bash -c "%s"' % (load_module + command)
             # create the directories when necessary
             stdout = ssh_call(username=username,
                               password=password,
@@ -182,8 +179,6 @@ def setup(request, plugin_name, row_id = None):
             logging.debug("command:" + str(command))
             logging.debug("output of analyze:" + str(out))
             logging.debug("errors of analyze:" + str(err))
-            print out
-            print err 
             # get the very first line only
             out_first_line = out[0]
             
