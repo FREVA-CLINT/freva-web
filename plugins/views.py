@@ -103,7 +103,7 @@ def setup(request, plugin_name, row_id = None):
     user_can_submit = request.user.has_perm('history.history_submit_job')
 
     if user_can_submit:
-        user = User('integra')#request.user.username, request.user.email)
+        user = User(request.user.username, request.user.email)
     else:
         user = User()
 
