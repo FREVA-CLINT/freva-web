@@ -46,13 +46,14 @@ class history(DatatableView):
     model = History
 
     datatable_options = {
-        'columns' : [('', '', 'checkbox'),
+        'columns' : [('', 'checkbox', 'checkbox'),
                      ('Id', 'id'),
                      ('User', 'uid'),
                      ('Tool', 'tool'),
-                     ('Version', 'version'),
-                     ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%Y %H:%M:%S')),
-                     ('Status', 'status', 'display_status'),
+                     ('Caption', None, 'get_caption'),
+		     #('Version', 'version'),
+                     ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%y %H:%M')),
+                     ('Status', 'get_status_display'),
                      ('Info', 'configuration', 'info_button'),
                     ]
     } 
@@ -87,19 +88,15 @@ class history(DatatableView):
         # return History.objects.order_by('-id').filter(uid=user)
         # MyModel.objects.filter(user=self.request.user)
 
-    # def get_context_data(self, **kwargs):
-        # context = super(DatatableView, self).get_context_data(**kwargs)
-
-        # try:
-        #     pass
-            # context['filter_status'] = request.GET['status']
-        # except:
-        #     pass
-
-        # return context
-
-    def display_status(self, instance, *args, **kwargs):
-        return instance.get_status_display()
+    def get_caption(self, instance, *args, **kwargs):
+        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
+	if user_caption:
+            caption = user_caption
+        elif default_caption:
+            caption = default_caption
+        else:
+            caption = ''#instance.tool
+	return caption
 
     def checkbox(self, instance, *args, **kwargs):
         id = "cb_%i"  % instance.id
