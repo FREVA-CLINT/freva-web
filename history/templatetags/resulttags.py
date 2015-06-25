@@ -127,6 +127,21 @@ def comment_field(user, history_id, historytag_entry=None):
 
 user_mask = {}
 
+
+@register.inclusion_tag('history/templatetags/mail_to_developer.html')
+def mail_to_developer(tool_name):
+    from evaluation_system.api import plugin_manager as pm
+    tool = pm.getPluginInstance(tool_name)
+    
+    try:
+        developer = tool.tool_developer
+    except AttributeError:
+        developer = False
+    
+    return {'tool_name': tool_name,
+            'developer': developer}
+
+
 def get_masked_uid(uid):
     name = None
 
