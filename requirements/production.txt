@@ -56,3 +56,6 @@ django-ipware
 
 #installed version 0.7.0
 django-datatable-view
+
+#send templated mails
+django-templated-email

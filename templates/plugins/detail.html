@@ -1,5 +1,7 @@
 {% extends "_layouts/menu.html" %}
 
+{% load resulttags %}
+
 {% block page_title %}{{plugin.name}} - Evaluation System{% endblock %}
 {% block page_class %}home-page{% endblock %}
 {% block content %}
@@ -17,7 +19,7 @@
 		  {% if docu %}
 		  <a href="{{docu.url}}" class="btn btn-primary">Documentation</a>	
 		  {% endif %}
-		  
+		  {% mail_to_developer plugin.name %}
         </div>
       </div>
  	</div>
