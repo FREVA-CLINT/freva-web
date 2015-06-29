@@ -77,7 +77,6 @@ class PasswordField(forms.CharField):
 
     def validate(self, value):
         u = auth.authenticate(username=self._user, password=value)
-        
         if not u:
             raise exceptions.ValidationError('Invalid password', code='invalid_password')
 

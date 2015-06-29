@@ -18,6 +18,13 @@
 	      </div>
       </div>
        <div class="row">
+		 
+		 <div class="alert alert-success" role="alert" id='alert_send_developer_success' style='display:none'>
+		    <button type="button" class="close" onclick="$('#alert_send_developer_success').hide();">
+		        <span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+		    <span id="span_send_developer_success">Mail sent to {{developer.name}}</span>
+		 </div> <!-- alert success -->  
+		
 		<div class="alert alert-success alert-dismissible" role="alert" id='alert_follow' style='display:none'>
                 <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                 <strong>Following!</strong> You get notified by email, when somebody generated content for this result.
@@ -51,6 +58,7 @@
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
 		                <a class="btn btn-info" id="followButton"><span id='followText'>{{follow}}</span></a>
+		        {% mail_to_developer history_object.tool %}
 		 	 	</div>
           </div>
 	  

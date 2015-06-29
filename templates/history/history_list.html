@@ -22,23 +22,30 @@
 
 .tooltip.left .tooltip-arrow{visibility: hidden;}
 
+.datatable th{
+    width:20px;
+}
+
 .datatable th[data-name="row-id"] {
-    width : 58px;
+    width : 70px;
+}
+.datatable th[data-name="user"] {
+    width : 70px;
 }
 .datatable th[data-name="tool"] {
-    width : 92px;
+    width : 100px;
 }
-.datatable th[data-name="version"] {
-    width : 62px;
+.datatable th[data-name="caption"] {
+    width : 160px;
 }
 .datatable th[data-name="timestamp"] {
-    width : 192px;
+    width : 92px;
 }
 .datatable th[data-name="status"] {
-    width : 148px;
+    width : 100px;
 }
 .datatable th[data-name="info"] {
-    width : 250px;
+    width : 180px;
 }
 </style>
 
@@ -62,10 +69,11 @@
       </div>
           <div class="navbar-default" style="{margin-top:20px}">
           <form class="navbar-form navbar-left" role="delete">
-          <input id="setflag" type="hidden" name="setflag" value="">
-          <input id="rowids" type="hidden" name="rowids" value="">
-          <a class="btn navbar-btn  btn-default" id="btn-delete">Delete</a>
-          </form>
+             <input id="setflag" type="hidden" name="setflag" value="">
+             <input id="rowids" type="hidden" name="rowids" value="">
+             <a class="btn navbar-btn  btn-default" id="btn-delete">Delete</a>
+             <a class="btn navbar-btn  btn-default" id="btn-select-all">Select all</a>  
+	  </form>
           <form class="navbar-form navbar-right" role="form" action="{% url 'history:history' uid %}" method="get">
            <label for="filter_flag" class="control-label" style="{text-align:right;}">Filter entries:</label>
             <div class="form-group">
@@ -137,6 +145,17 @@ $(document).ready(function() {
         $('#password_temp').focus();
     })
 
+   $('#btn-select-all').on('click', function(){
+       if($(this).text() == 'Select all'){
+            $('.chksel').prop('checked', true);
+            $(this).text('Unselect all');
+       
+       }else{
+	    $('.chksel').prop('checked', false);
+            $(this).text('Select all');
+       }
+   });
+
    $('#btn-delete').on('click', function(){
             var rowids = new Array();
 
@@ -156,9 +175,10 @@ $(document).ready(function() {
 
            data = {'ids' : JSON.stringify(rowids), 'flag' : flag};
 
-           $.post(url, data, function(resp) {if(resp != '') alert(resp);});
-           $('#DataTables_Table_0').dataTable().fnClearTable()
-           $('#DataTables_Table_0').dataTable().fnDraw();
+           $.post(url, data, function(resp) {if(resp != '') alert(resp);
+             $('#DataTables_Table_0').dataTable().fnClearTable()
+             $('#DataTables_Table_0').dataTable().fnDraw();
+	   });
 
     });
 
@@ -186,15 +206,18 @@ $(document).ready(function() {
 
 </script>
 
-{% endblock %}
 
- 
-<!--history_list.backup
-{# mymodel_list.html #}
+
+{% endblock %}
 
 {% block media %}
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTable.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/datatableview.js"></script>
 {% endblock %}-->
+
+ 
+<!--history_list.backup
+{# mymodel_list.html #}
+
 
 

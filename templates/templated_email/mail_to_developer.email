@@ -1,0 +1,10 @@
+{% block subject %}Questions about {{tool_name}}{% endblock %}
+{% block plain %}
+Hello {{developer_name}}
+
+{{text}}
+
+Best regards
+{{username}}
+
+{% endblock %}
