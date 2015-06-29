@@ -1,1 +1,1 @@
-from evaluation_system.model.plugins import models
+from evaluation_system.model.plugins.models import Version, Parameter

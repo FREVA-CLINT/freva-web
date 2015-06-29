@@ -46,13 +46,14 @@ class history(DatatableView):
     model = History
 
     datatable_options = {
-        'columns' : [('', '', 'checkbox'),
+        'columns' : [('', 'checkbox', 'checkbox'),
                      ('Id', 'id'),
                      ('User', 'uid'),
                      ('Tool', 'tool'),
-                     ('Version', 'version'),
-                     ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%Y %H:%M:%S')),
-                     ('Status', 'status', 'display_status'),
+                     ('Caption', None, 'get_caption'),
+		     #('Version', 'version'),
+                     ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%y %H:%M')),
+                     ('Status', 'get_status_display'),
                      ('Info', 'configuration', 'info_button'),
                     ]
     } 
@@ -87,19 +88,15 @@ class history(DatatableView):
         # return History.objects.order_by('-id').filter(uid=user)
         # MyModel.objects.filter(user=self.request.user)
 
-    # def get_context_data(self, **kwargs):
-        # context = super(DatatableView, self).get_context_data(**kwargs)
-
-        # try:
-        #     pass
-            # context['filter_status'] = request.GET['status']
-        # except:
-        #     pass
-
-        # return context
-
-    def display_status(self, instance, *args, **kwargs):
-        return instance.get_status_display()
+    def get_caption(self, instance, *args, **kwargs):
+        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
+	if user_caption:
+            caption = user_caption
+        elif default_caption:
+            caption = default_caption
+        else:
+            caption = ''#instance.tool
+	return caption
 
     def checkbox(self, instance, *args, **kwargs):
         id = "cb_%i"  % instance.id
@@ -179,7 +176,7 @@ class history(DatatableView):
             return escape(str(e))
         
         second_button_text = 'Edit Config'
-        second_button_style = 'class="btn btn-success btn-sm" style="width:90px;"'
+        second_button_style = 'class="btn btn-success btn-sm" style="width:80px;"'
         second_button_onclick = ''
 
         try:
@@ -201,19 +198,19 @@ class history(DatatableView):
                                 ]:
             result_text = 'Progress'
             second_button_text = 'Cancel Job'
-            second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel" style="width:90px;"'
+            second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel" style="width:80px;"'
 
             second_button_href = 'onclick="cancelDialog.show(%i);"' % instance.id
 
             # disable button for manually started jobs
             if instance.slurm_output == '0':
                 second_button_text = 'n/a'
-                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:90px;"'
+                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:80px;"'
                 second_button_href = ''
 
             # disable button when its not the user's job
             if instance.uid != self.request.user:
-                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:90px;"'
+                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:80px;"'
                 second_button_href = ''
 
         result_button = "<a  %s %s>%s</a>" % (style, href, result_text)
@@ -396,8 +393,8 @@ def results(request, id, show_output_only = False):
     
     #get history object
     history_object = get_object_or_404(History, id=id)
-
-
+    print 'al'
+    plugin = pm.getPluginInstance(history_object.tool)
     # check if the user has the permission to access the result
     flag = history_object.flag
 
@@ -557,7 +554,8 @@ def results(request, id, show_output_only = False):
                                                     'api_version' : api_version,
                                                     'tool_version' : tool_version,
                                                     'notes' : htag_notes,
-                                                    'follow' : follow_string,})
+                                                    'follow' : follow_string,
+						    'developer': plugin.tool_developer})
         
         
 @login_required()
@@ -642,7 +640,40 @@ def cancelSlurmjob(request):
     except AuthenticationException:
         return HttpResponse(json.dumps('wrong password'), content_type="application/json")    
     
+@login_required()
+def send_mail_to_developer(request):
+    from templated_email import send_templated_mail
     
+    text = request.POST.get('text',None)
+    tool_name = request.POST.get('tool_name',None)
+    
+    tool = pm.getPluginInstance(tool_name)
+    developer = tool.tool_developer
+    
+    user_info = get_ldap_object() 
+    myinfo = user_info.get_user_info(str(request.user))
+    myemail = myinfo[3]
+    
+    a=send_templated_mail(
+        template_name='mail_to_developer',
+        from_email=myemail,
+        recipient_list=[developer['email']],
+        context={
+            'username':request.user.get_full_name(),
+            'developer_name':developer['name'],
+            'text':text,
+            'tool_name': tool_name,
+            'mail': myemail
+        },
+        # Optional:
+        cc=[a[1] for a in settings.ADMINS],
+        # bcc=['bcc@example.com'],
+        headers={'Reply-To' : myemail},
+        # template_prefix="my_emails/",
+        # template_suffix="email",
+    )
+    return HttpResponse(True)
+        
     
 @login_required()
 def sendMail(request):

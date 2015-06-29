@@ -22,4 +22,5 @@ urlpatterns = patterns('history.views',
     url(r'^(?P<history_id>\w+)/(?P<deleted>\w+)/count-notes/$', 'count_notes', name='count-notes'),
     url(r'^(?P<history_id>\w+)/(?P<tag_id>\w+)/edit-historytag/$', 'edit_htag', name='edit-historytag'),
     url(r'^sendmail/$', 'sendMail', name='sendMail'),
+    url(r'^mail-to-developer/$', 'send_mail_to_developer', name='mail_to_developer'),
 )
