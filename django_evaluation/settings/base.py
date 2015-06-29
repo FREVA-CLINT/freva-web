@@ -74,7 +74,7 @@ INSTALLED_APPS = (
     'django.contrib.flatpages',
 
     # Third-party apps, patches, fixes
-    'djcelery',
+#    'djcelery',
 #    'debug_toolbar',
     'compressor',
     'bootstrap3',
