@@ -57,4 +57,5 @@ django-ipware
 #installed version 0.8.2
 django-datatable-view
 
-django-templated-email==0.4.9
+#send templated mails
+django-templated-email

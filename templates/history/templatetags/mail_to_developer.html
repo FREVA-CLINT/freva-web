@@ -1,0 +1,56 @@
+{% load static %} 
+
+{% if developer %}
+ 
+<a href="#" id="mail_to_developer_button" class="btn btn-info">Contact developer</a>
+ 
+  <!-- Modal Passwort Dialog-->
+  <div class="modal fade" id="mail_to_developer" tabindex="-1" role="dialog" aria-labelledby="modalCaption" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">Contact developer</h4>
+        </div>
+        <div class="modal-body" id="browsefield">
+        	<p>The developer of {{tool_name}} is <strong>{{developer.name}}</strong>. If you have questions or want to report a bug, 
+        	   please send him a message:
+        	</p>
+        	<textarea name="developer_text" id="developer_text" class="form-control" rows="3"></textarea> 
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" name="applyBtn" id="send_developer_button">Send</button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  
+<script>
+	$(document).ready(function(){
+
+		$('#mail_to_developer_button').on('click', function(){
+
+			$('#mail_to_developer').modal('show');
+			
+		});
+		
+		
+		$('#send_developer_button').on('click', function(){
+
+		    var data={'text':$('#developer_text').val(),'tool_name':'{{tool_name}}'};
+		    var url = '{% url 'history:mail_to_developer' %}';
+		    $.ajax({
+		        url: url,
+		        method: 'post',
+		        data: data,
+		        success: function(resp){
+		            $('#mail_to_developer').modal('hide');
+		            $('#alert_send_developer_success').show();
+		        },
+		    });
+		});
+	});    
+
+</script>
+
+{% endif%}
