@@ -1,63 +1,85 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'History'
-        db.create_table(u'history_history', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('timestamp', self.gf('django.db.models.fields.DateTimeField')()),
-            ('tool', self.gf('django.db.models.fields.CharField')(max_length=50)),
-            ('version', self.gf('django.db.models.fields.CharField')(max_length=10)),
-            ('configuration', self.gf('django.db.models.fields.TextField')()),
-            ('slurm_output', self.gf('django.db.models.fields.TextField')()),
-            ('uid', self.gf('django.db.models.fields.CharField')(max_length=20)),
-            ('status', self.gf('django.db.models.fields.IntegerField')(max_length=1)),
-        ))
-        db.send_create_signal(u'history', ['History'])
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('plugins', '0001_initial'),
+    ]
 
-        # Adding model 'Result'
-        db.create_table(u'history_result', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('history_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['history.History'])),
-            ('output_file', self.gf('django.db.models.fields.TextField')()),
-            ('file_type', self.gf('django.db.models.fields.IntegerField')(max_length=2)),
-        ))
-        db.send_create_signal(u'history', ['Result'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'History'
-        db.delete_table(u'history_history')
-
-        # Deleting model 'Result'
-        db.delete_table(u'history_result')
-
-
-    models = {
-        u'history.history': {
-            'Meta': {'object_name': 'History'},
-            'configuration': ('django.db.models.fields.TextField', [], {}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'slurm_output': ('django.db.models.fields.TextField', [], {}),
-            'status': ('django.db.models.fields.IntegerField', [], {'max_length': '1'}),
-            'timestamp': ('django.db.models.fields.DateTimeField', [], {}),
-            'tool': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'uid': ('django.db.models.fields.CharField', [], {'max_length': '20'}),
-            'version': ('django.db.models.fields.CharField', [], {'max_length': '10'})
-        },
-        u'history.result': {
-            'Meta': {'object_name': 'Result'},
-            'file_type': ('django.db.models.fields.IntegerField', [], {'max_length': '2'}),
-            'history_id': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['history.History']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'output_file': ('django.db.models.fields.TextField', [], {})
-        }
-    }
-
-    complete_apps = ['history']
+    operations = [
+        migrations.CreateModel(
+            name='Configuration',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('md5', models.CharField(default=b'', max_length=32)),
+                ('value', models.TextField(null=True, blank=True)),
+                ('is_default', models.BooleanField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='History',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('timestamp', models.DateTimeField()),
+                ('tool', models.CharField(max_length=50)),
+                ('version', models.CharField(max_length=20)),
+                ('configuration', models.TextField()),
+                ('slurm_output', models.TextField()),
+                ('status', models.IntegerField(max_length=1, choices=[(0, b'finished'), (1, b'finished (no output)'), (2, b'broken'), (3, b'running'), (4, b'scheduled'), (5, b'not scheduled')])),
+                ('flag', models.IntegerField(default=0, max_length=1, choices=[(0, b'public'), (1, b'shared'), (2, b'private'), (3, b'deleted'), (8, b'users and guest'), (9, b'no login required')])),
+                ('uid', models.ForeignKey(to=settings.AUTH_USER_MODEL, db_column=b'uid', to_field=b'username')),
+                ('version_details', models.ForeignKey(default=1, to='plugins.Version')),
+            ],
+            options={
+                'permissions': (('history_submit_job', 'Can submit a job'), ('history_cancel_job', 'Can cancel a job'), ('browse_full_data', 'Can search all data')),
+            },
+        ),
+        migrations.CreateModel(
+            name='HistoryTag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.IntegerField(max_length=2, choices=[(0, b'Caption'), (1, b'Public note'), (2, b'Private note'), (3, b'Deleted note'), (4, b'Follow'), (5, b'Unfollow')])),
+                ('text', models.TextField()),
+                ('history_id', models.ForeignKey(to='history.History')),
+                ('uid', models.ForeignKey(db_column=b'uid', default=None, to_field=b'username', to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Result',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('output_file', models.TextField()),
+                ('preview_file', models.TextField(default=b'')),
+                ('file_type', models.IntegerField(max_length=2, choices=[(0, b'data'), (1, b'plot'), (2, b'preview'), (9, b'unknown')])),
+                ('history_id', models.ForeignKey(to='history.History')),
+            ],
+            options={
+                'permissions': (('results_view_others', 'Can view results from other users'),),
+            },
+        ),
+        migrations.CreateModel(
+            name='ResultTag',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('type', models.IntegerField(max_length=2, choices=[(0, b'Caption')])),
+                ('text', models.TextField()),
+                ('result_id', models.ForeignKey(to='history.Result')),
+            ],
+        ),
+        migrations.AddField(
+            model_name='configuration',
+            name='history_id',
+            field=models.ForeignKey(related_name='history_id', to='history.History'),
+        ),
+        migrations.AddField(
+            model_name='configuration',
+            name='parameter_id',
+            field=models.ForeignKey(related_name='parameter_id', to='plugins.Parameter'),
+        ),
+    ]

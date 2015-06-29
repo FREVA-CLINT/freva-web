@@ -67,7 +67,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django.contrib.markup',
+# no longer in django1.8    'django.contrib.markup',
     'django.contrib.humanize',
     'django.contrib.syndication',
     'django.contrib.staticfiles',
@@ -82,7 +82,7 @@ INSTALLED_APPS = (
     #'debug_toolbar_user_panel',
 
     # Database migrations
-    'south',
+#    'south',
 
     'base',
     'plugins',
