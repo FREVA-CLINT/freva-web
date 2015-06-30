@@ -54,9 +54,11 @@
 	 	 		{%endif%}
 	 	 		
 	 			<a class="btn btn-info mybtn-sendmail" id="sendButton_{{h_item.id}}" onClick="$('#sendmail_modal').modal('show')">Share Results</a>
+	 		
 	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
+	 		
 		                <a class="btn btn-info" id="followButton"><span id='followText'>{{follow}}</span></a>
 		        {% mail_to_developer history_object.tool %}
 		 	 	</div>
@@ -379,6 +381,9 @@
 		
 		{% if request.user != history_object.uid %}
 		$('#sendButton_{{h_item.id}}').attr('disabled', true); 
+		$('#captionButton_{{h_item.id}}').attr('disabled', true); 
+		
+		
 		{% endif %}
 		
 		{% if "configuration" in collapse %} 
