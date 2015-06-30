@@ -9,7 +9,7 @@ from django.contrib.flatpages.models import FlatPage
 from django.utils.html import escape
 import datatableview
 from datatableview import helpers
-from datatableview.views import DatatableView
+from datatableview.views import DatatableView, XEditableDatatableView
 from datatableview.utils import get_datatable_structure
 from django.views.generic.base import TemplateView
 from django.template import defaultfilters as filters
@@ -33,6 +33,7 @@ from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower, getCap
 from django.shortcuts import get_object_or_404
 from django.core.mail import EmailMessage
 from django.db.models import Q
+from django.core.urlresolvers import reverse
 
 import logging
 from history.models import HistoryTag
@@ -42,7 +43,7 @@ from evaluation_system.model import user
 from templatetags.resulttags import mask_uid
 
 
-class history(DatatableView):
+class history(XEditableDatatableView):
     model = History
 
     datatable_options = {
@@ -50,7 +51,7 @@ class history(DatatableView):
                      ('Id', 'id'),
                      ('User', 'uid'),
                      ('Tool', 'tool'),
-                     ('Caption', None, 'get_caption'),
+                     ('Caption', 'caption', helpers.make_xeditable()),
 		     #('Version', 'version'),
                      ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%y %H:%M')),
                      ('Status', 'get_status_display'),
@@ -88,15 +89,15 @@ class history(DatatableView):
         # return History.objects.order_by('-id').filter(uid=user)
         # MyModel.objects.filter(user=self.request.user)
 
-    def get_caption(self, instance, *args, **kwargs):
-        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
-	if user_caption:
-            caption = user_caption
-        elif default_caption:
-            caption = default_caption
-        else:
-            caption = ''#instance.tool
-	return caption
+#    def get_caption(self, instance, *args, **kwargs):
+#        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
+#	if user_caption:
+#            caption = user_caption
+#        elif default_caption:
+#            caption = default_caption
+#        else:
+#            caption = ''#instance.tool
+#	return caption
 
     def checkbox(self, instance, *args, **kwargs):
         id = "cb_%i"  % instance.id
@@ -113,7 +114,7 @@ class history(DatatableView):
         if instance.slurm_output == '0':
             information = 'Restricted information to manually started job:'
             css_class = "class='btn btn-info btn-sm ttbtn'"
-            button_text = 'info'
+            button_text = 'Info'
 
         try:
             url = reverse('history:jobinfo', args=[instance.id])
@@ -123,24 +124,10 @@ class history(DatatableView):
 
         tooltip_style = "data-toggle='tooltip' data-placement='left'"
 
-        (default_caption, user_caption) = getCaption(instance.id, self.request.user)
-
-        caption = ''
-
-        if not user_caption is None:
-            if default_caption is None:
-                caption = escape(user_caption)
-            elif user_caption != default_caption:
-                caption = '%s<br>[%s]' % (escape(user_caption),
-                                          escape(default_caption))
-            else:
-                caption = escape(user_caption)
-
-        elif default_caption is not None:
-            caption = escape(default_caption)
+        caption = instance.caption if instance.caption else ''
 
 
-        config = '%s<br><br><table class="table-condensed">' % information
+        config = '%s<br><br><table class="table-condensed blacktable">' % information
         
         # fill configuration
         try:
@@ -148,7 +135,7 @@ class history(DatatableView):
             config_dict = json.loads(instance.configuration)
             for key, value in config_dict.items():
                 text = escape(mask_uid(str(value), self.request.user.isGuest()))
-                config = config + "<tr><td>%s</td><td>%s<td></tr>" % (key, text)
+                config = config + '<tr class="blacktable"><td class="blacktable">%s</td><td class="blacktable">%s<td></tr>' % (key, text)
         except Exception, e:
             print "Tooltip error:", e
  
@@ -159,7 +146,7 @@ class history(DatatableView):
         else:
             title = "title='%s'" % (config,)
 
-        info_button = "<a %s %s %s %s>%s</a>" % (css_class,
+        info_button = "<a %s %s %s %s style='width:35px; padding-left:5px'>%s</a>" % (css_class,
                                                  href,
                                                  tooltip_style,
                                                  title,
@@ -167,7 +154,7 @@ class history(DatatableView):
 
 
         result_text = 'Results'
-        style = "class='btn btn-success btn-sm' style='width:80px'"
+        style = "class='btn btn-success btn-sm' style='width:70px'"
 
         try:
             url = reverse('history:results', args=[instance.id])
@@ -176,7 +163,7 @@ class history(DatatableView):
             return escape(str(e))
         
         second_button_text = 'Edit Config'
-        second_button_style = 'class="btn btn-success btn-sm" style="width:80px;"'
+        second_button_style = 'class="btn btn-success btn-sm" style="width:70px; padding-left:3px;"'
         second_button_onclick = ''
 
         try:
@@ -198,19 +185,19 @@ class history(DatatableView):
                                 ]:
             result_text = 'Progress'
             second_button_text = 'Cancel Job'
-            second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel" style="width:80px;"'
+            second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel" style="width:70px; padding-left:3px;"'
 
             second_button_href = 'onclick="cancelDialog.show(%i);"' % instance.id
 
             # disable button for manually started jobs
             if instance.slurm_output == '0':
                 second_button_text = 'n/a'
-                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:80px;"'
+                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:70px; padding-left:3px;"'
                 second_button_href = ''
 
             # disable button when its not the user's job
             if instance.uid != self.request.user:
-                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:80px;"'
+                second_button_style = 'class="btn btn-danger btn-sm mybtn-cancel disabled" style="width:70px; padding-left:3px;"'
                 second_button_href = ''
 
         result_button = "<a  %s %s>%s</a>" % (style, href, result_text)
@@ -501,26 +488,18 @@ def results(request, id, show_output_only = False):
         
     # repository stuff
     repos = history_object.version_details.repository
-    
     tool_repos = repos.split(';')[0]
     api_repos= repos.split(';')[1]
     tool_version = history_object.version_details.internal_version_tool
     api_version = history_object.version_details.internal_version_api
     
     
-    (default_caption, user_caption) = getCaption(id, request.user)
-    
-    if default_caption is None:
-        default_caption = history_object.tool.upper()
-
-    result_caption = default_caption
-        
-    if not user_caption is None:
-        result_caption = user_caption
+    result_caption = history_object.caption
+    if result_caption is None:
+        result_caption = history_object.tool.upper()
 
     htag_notes = None
     follow_string = 'Follow'
-
 
     historytag_objects = HistoryTag.objects.filter(history_id_id=id)
 
@@ -528,7 +507,7 @@ def results(request, id, show_output_only = False):
         htag_notes = historytag_objects.filter((Q(uid=request.user) & Q(type=HistoryTag.tagType.note_private)) | Q(type=HistoryTag.tagType.note_public)).order_by('id')
 
     except Exception, e:
-	logging.error(e)
+        logging.error(e)
 
     try:
         follow = historytag_objects.filter(Q(uid=request.user) & Q(type=HistoryTag.tagType.follow))
@@ -537,12 +516,11 @@ def results(request, id, show_output_only = False):
             follow_string = 'Unfollow'
 
     except Exception, e:
-	logging.error(e)
+        logging.error(e)
 
     return render(request, 'history/results.html', {'history_object': history_object,
                                                     'result_object' : result_object,
                                                     'result_caption' : result_caption,
-                                                    'default_caption' : default_caption, 
                                                     'file_content' : file_content,
                                                     'collapse' : collapse,
                                                     'PREVIEW_URL' : settings.PREVIEW_URL,
@@ -587,31 +565,33 @@ def generate_caption(request, id, type):
  
     retval = pm.generateCaption(caption, toolname)
     
-
-    # change type to integer
-    type = int(type)
-
     if not request.user.isGuest():
-        db = UserDB(request.user)
-
-        caption_type = HistoryTag.tagType.caption
-        user = str(request.user)
-
-        if type == 2 and History.objects.get(id=id).uid == request.user:
-            db.addHistoryTag(id, caption_type, retval)
-        if type in [1,2]:
-            # try to find an existing caption
-            tag_id = None
-            try:
-                tag_obj = HistoryTag.objects.filter(history_id_id=id).filter(type=HistoryTag.tagType.caption)
-                tag_id = tag_obj.filter(uid=user).order_by('-id')[0].id
-            except:
-                pass
-            
-            if tag_id:
-                db.updateHistoryTag(tag_id, caption_type, retval, user)
-            else:
-                db.addHistoryTag(id, caption_type, retval, user)
+        
+        hist = History.objects.get(id=id)
+        if hist.uid == request.user:
+            hist.caption = retval
+            hist.save()
+        
+#        db = UserDB(request.user)
+#
+#        caption_type = HistoryTag.tagType.caption
+#        user = str(request.user)
+#
+#        if type == 2 and History.objects.get(id=id).uid == request.user:
+#            db.addHistoryTag(id, caption_type, retval)
+#        if type in [1,2]:
+#            # try to find an existing caption
+#            tag_id = None
+#            try:
+#                tag_obj = HistoryTag.objects.filter(history_id_id=id).filter(type=HistoryTag.tagType.caption)
+#                tag_id = tag_obj.filter(uid=user).order_by('-id')[0].id
+#            except:
+#                pass
+#            
+#            if tag_id:
+#                db.updateHistoryTag(tag_id, caption_type, retval, user)
+#            else:
+#                db.addHistoryTag(id, caption_type, retval, user)
         else:
             retval = '*' + retval
  

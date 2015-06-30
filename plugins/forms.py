@@ -83,6 +83,23 @@ class PasswordField(forms.CharField):
         super(PasswordField, self).validate(value)
 
 class PluginForm(forms.Form):
+    caption_standard_names = ['caption', 'result_caption', 'web_caption', 'my_caption']
+    
+    def get_caption_field(self, tool):
+        # the caption field should not have a fixed name
+        self.caption_field_name = None
+        criticalcaption = True
+        captionindex = 0
+        # modify the caption name if necessary
+        while criticalcaption:
+            # go through the list of standard names
+            if captionindex < len(self.caption_standard_names):
+                self.caption_field_name = self.caption_standard_names[captionindex]
+                captionindex += 1
+            else:
+                self.caption_field_name = '_' + self.caption_field_name    
+            # check whether the caption name appear in the list of parameters    
+            criticalcaption = self.caption_field_name in tool.__parameters__
     
     def __init__(self, *args, **kwargs):
         tool = kwargs.pop('tool')
@@ -93,26 +110,7 @@ class PluginForm(forms.Form):
         # set the password field
         self.fields['password_hidden'] = PasswordField(uid=uid)
         
-        # the caption field should not have a fixed name
-        self.caption_field_name = None
-        
-        standard_names = ['caption', 'result_caption', 'web_caption', 'my_caption']
-        
-        criticalcaption = True
-        captionindex = 0
-        
-        # modify the caption name if necessary
-        while criticalcaption:
-            # go through the list of standard names
-            if captionindex < len(standard_names):
-                self.caption_field_name = standard_names[captionindex]
-                captionindex += 1
-                
-            else:
-                self.caption_field_name = '_' + self.caption_field_name    
-            
-            # check whether the caption name appear in the list of parameters    
-            criticalcaption = self.caption_field_name in tool.__parameters__
+        self.get_caption_field(tool)
              
         
         for key in tool.__parameters__:
@@ -147,8 +145,8 @@ class PluginForm(forms.Form):
        
         # Add the caption field, now 
         help_str = 'An additional caption to be displayed with the results.'
-        if self.caption_field_name != standard_names[0]:
-            help_str + " Other tools name this field " + standard_names[0] + ", this might be confusing."
+        if self.caption_field_name != self.caption_standard_names[0]:
+            help_str + " Other tools name this field " + self.caption_standard_names[0] + ", this might be confusing."
         self.fields[self.caption_field_name] = forms.CharField(required=False, help_text=help_str)
 
         

@@ -200,6 +200,8 @@ def setup(request, plugin_name, row_id = None):
         if row_id:
             h = History.objects.get(pk=row_id)
             config_dict = h.config_dict()
+            f = PluginForm(tool=plugin, uid=user.getName())
+            config_dict[f.caption_field_name] = h.caption
         else:
             config_dict = plugin.setupConfiguration(check_cfg=False, substitute=True)
                   
