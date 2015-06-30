@@ -14,8 +14,11 @@
 {# Load CSS and JavaScript #}
 {% bootstrap_javascript %}  
 
-<script type="text/javascript" src="{{ STATIC_URL }}js/datatableview.js"></script>
-
+    <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.0/js/jquery.dataTables.min.js"></script>
+    
+    <script type="text/javascript" src="{{ STATIC_URL }}js/datatableview.js"></script>
+    <link href="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
 
 <style type="text/css">
 .tooltip-inner {max-width: 650px; !important; }
@@ -42,18 +45,25 @@
     width : 92px;
 }
 .datatable th[data-name="status"] {
-    width : 100px;
+    width : 90px;
 }
 .datatable th[data-name="info"] {
     width : 180px;
 }
+.editable{
+    color: #000 !important; 
+}
+
+.blacktable{
+	background:#000 !important;
+}
+
+html.wait, html.wait * { cursor: wait !important; }
 </style>
 
 <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css">
 <script type="text/javascript" charset="utf8" src="https://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.min.js"></script>
 
-<link type="text/css" href="select2.css" rel="stylesheet"/>
-<script type="text/javascript" src="select2.js"></script>
 
     <div class="container">
       <!-- Example row of columns -->
@@ -127,17 +137,45 @@
  
 	 
 <script>
+datatableview.auto_initialize = false;
+
+function initTooltips(){
+    // for re-drawing (previous, next) this line is needed
+   $('.ttbtn').tooltip({html:true});
+   console.log('drawing');
+   $('.ttbtn').hover(function(){
+      $('.tooltip').css('top', -110 + 'px')
+    });
+}
+
+function changeCursor(e, settings, processing){
+	console.log(e, settings, processing);
+};
 
 $(document).ready(function() {
+
+// Page javascript
+datatableview.auto_initialize = false;
+$(function(){
+    var xeditable_options = {};
+    datatableview.initialize($('.datatable'), {
+        
+        fnRowCallback: datatableview.make_xeditable(xeditable_options),
+        drawCallback: function(){initTooltips()},
+    });
+})
+
     // the very first initialization needs this line of code
     $('.ttbtn').tooltip({html:true});
 		
-    // for re-drawing (previous, next) this line is needed
-    $('#DataTables_Table_0').on('draw', function() {$('.ttbtn').tooltip({html:true});
-       $('.ttbtn').hover(function(){
-          $('.tooltip').css('top', -110 + 'px')
-        });
-    });
+	$('.datatable')
+    .on( 'processing.dt', function ( e, settings, processing ) {
+    	if(processing)
+    		$('html').addClass('wait');
+    	else
+    		$('html').removeClass('wait');
+        $('#processingIndicator').css( 'display', processing ? 'block' : 'none' );
+    } )	
 
     // Script for the password modal
     // set focus to pw-field
@@ -211,8 +249,8 @@ $(document).ready(function() {
 {% endblock %}
 
 {% block media %}
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTable.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/datatableview.js"></script>
+
+    
 {% endblock %}-->
 
  
