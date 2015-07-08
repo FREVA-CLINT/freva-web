@@ -381,7 +381,11 @@ def results(request, id, show_output_only = False):
     #get history object
     history_object = get_object_or_404(History, id=id)
     print 'al'
-    plugin = pm.getPluginInstance(history_object.tool)
+    try:
+        plugin = pm.getPluginInstance(history_object.tool)
+        developer = plugin.tool_developer
+    except:
+        developer = None
     # check if the user has the permission to access the result
     flag = history_object.flag
 
@@ -533,7 +537,7 @@ def results(request, id, show_output_only = False):
                                                     'tool_version' : tool_version,
                                                     'notes' : htag_notes,
                                                     'follow' : follow_string,
-						    'developer': plugin.tool_developer})
+						    'developer': developer})
         
         
 @login_required()

@@ -60,8 +60,10 @@
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
 	 		
 		                <a class="btn btn-info" id="followButton"><span id='followText'>{{follow}}</span></a>
-		        {% mail_to_developer history_object.tool %}
-		 	 	</div>
+		        {%if developer %}
+			{% mail_to_developer history_object.tool %}
+			{%endif%}	
+	 	 	</div>
           </div>
 	  
 <!-- Configuration -->
