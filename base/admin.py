@@ -2,6 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
 
+from django.contrib.auth.models import Permission
+
 admin.site.unregister(User)
 
 class CustomUserAdmin(UserAdmin):
@@ -11,3 +13,10 @@ class CustomUserAdmin(UserAdmin):
     ordering = ['-date_joined']	
 
 admin.site.register(User, CustomUserAdmin)
+
+
+class PermissionAdmin(admin.ModelAdmin):
+    
+    list_display = ('id','name','codename')
+    
+admin.site.register(Permission, PermissionAdmin)

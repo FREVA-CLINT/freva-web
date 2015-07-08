@@ -164,7 +164,7 @@ def setup(request, plugin_name, row_id = None):
             load_module = settings.LOAD_MODULE
 	    command = plugin.composeCommand(config_dict,
                                             batchmode='web',
-                                            email=user.getEmail(),
+                                            #email=user.getEmail(),
                                             caption=caption)
             # create the directories when necessary
             stdout = ssh_call(username=username,
@@ -189,7 +189,7 @@ def setup(request, plugin_name, row_id = None):
                 row_id = int(out_first_line.split(' ')[-1])
             else:
                 row_id = 0
-                raise Http404, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)            
+                raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)            
                 
             return redirect('history:results', id=row_id) #should be changed to result page 
             
