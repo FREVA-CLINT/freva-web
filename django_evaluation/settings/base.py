@@ -369,9 +369,6 @@ USERNAME_FILTER='[a-z]\d{6,6}'
 USERNAME_REPLACE='*****'
 
 
-# Path to miklip-logo
-MIKLIP_LOGO = STATIC_URL + 'img/miklip-logo.png'
-
 # send an email to the admins whenever a guest logs-in
 SEND_MAIL_AT_GUEST_LOGIN = True
 

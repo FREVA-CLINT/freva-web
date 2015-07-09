@@ -8,6 +8,7 @@ import django.contrib.auth as auth
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django_evaluation.monitor import _restart
+from django.conf import settings
 
 from subprocess import Popen, STDOUT, PIPE
 
@@ -59,6 +60,15 @@ def home(request):
                    'next' : next_page})
     
     # return render(request, 'base/home.html',{'login_failed':login_failed})
+
+def dynamic_css(request):
+    main_color = settings.MAIN_COLOR
+    hover_color = settings.HOVER_COLOR
+    border_color = settings.BORDER_COLOR
+    return render(request, 'base/freva.css', {'main_color': main_color,
+                                              'hover_color': hover_color,
+                                              'border_color': border_color},
+                  content_type='text/css')
 
 def wiki(request):
     """
