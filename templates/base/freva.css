@@ -1,0 +1,236 @@
+/* Brown Color CSS */
+
+body{
+border-top:3px solid {{main_color}};
+}
+
+.color{
+color:{{main_color}};
+}
+
+a, a:visited{
+color:{{main_color}};
+}
+
+a:hover{
+color:{{hover_color}};
+}
+
+.navbar{
+background: {{main_color}} !important;
+border-top:1px solid {{hover_color}} !important;
+border-bottom:1px solid {{hover_color}} !important; 
+}
+
+.nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
+   border-color: {{border_color}};
+}
+
+.navbar button{
+background:{{hover_color}} !important;  
+}
+
+.navbar button:hover{
+background:{{hover_color}} !important;
+}
+
+.navbar .nav{
+border-right:1px solid {{border_color}};
+}
+
+.navbar .nav > li > a{
+background: {{main_color}}; 
+border-left:1px solid {{border_color}};
+}
+
+.navbar .nav > li > a:hover{
+background:{{hover_color}} !important;
+}
+
+.navbar .nav .active > a,
+.navbar .nav .active > a:hover,
+.navbar .nav .active > a:focus {
+background: {{hover_color}} !important;
+}
+
+.dropdown-toggle{
+background: {{main_color}} !important;
+}
+
+
+.dropdown-menu{
+background:{{main_color}} !important;
+border:1px solid {{hover_color}};
+}
+
+.dropdown-menu a{
+background:{{main_color}} !important;
+border-bottom:1px solid {{hover_color}};
+}
+
+.dropdown-menu a:hover,.dropdown-menu a:focus{
+background:{{hover_color}} !important;
+}
+
+.social i{
+background:{{main_color}};
+}
+
+.social i:hover{
+background:{{hover_color}};
+}
+
+.flex-caption{
+border-left:4px solid {{main_color}};
+}
+
+.service i{
+color:{{main_color}};
+}
+
+/* Timeline */
+
+.time .tidate{
+background:{{main_color}};
+}
+
+.time .timatter{
+border-bottom:2px solid {{main_color}};
+}
+
+/* Events - Accordion*/
+
+.events .accordion-heading h5{
+background:{{main_color}};
+}
+
+/* Slider */
+
+.da-slider{
+border-top: 4px solid {{main_color}};
+border-bottom: 4px solid {{main_color}};
+}
+
+.da-slide h2{
+color:{{main_color}};
+}
+
+.da-slide .da-link{
+background:{{main_color}};
+}
+
+/* Testimonial */
+
+.test{
+border-bottom:2px solid {{main_color}};
+}
+
+.test-arrow{
+border-top-color: {{main_color}};
+}
+
+/* Feature alt */
+
+.afeature:hover{
+border:5px solid {{main_color}};
+}
+
+.afmatter i{
+color:{{main_color}};
+}
+
+.rpost1:hover,.rpost2:hover{
+border-bottom:2px solid {{main_color}};
+}
+
+.accordion-heading i{
+color:{{main_color}};
+}
+
+.process i{
+color:{{main_color}};
+}
+
+.process-meta span{
+background:{{main_color}};
+}
+
+.feat h4 i{
+color:{{main_color}};
+}
+
+.content ul li{
+background-image:url('/static/css/img/list-y.png');
+}
+
+.blog .meta i{
+color:{{main_color}};
+}
+
+.posts .tags a{
+background:{{main_color}};
+border:1px solid {{hover_color}};
+border-bottom:3px solid {{hover_color}};
+}
+
+.posts .tags a:hover{
+border-bottom:3px solid {{main_color}};
+background:{{hover_color}};
+border:1px solid {{hover_color}};
+}
+
+.paging a:hover{
+background: {{main_color}};
+border:1px solid {{hover_color}};
+}
+
+.paging .current{
+background: {{main_color}};
+border:1px solid {{hover_color}};
+}
+
+.serv .simg i{
+color:{{main_color}};
+}
+
+.button a, .button a:visited{
+background:{{main_color}};
+border-bottom:2px solid {{hover_color}};
+}
+
+.button a:hover{
+background:{{hover_color}};
+}
+
+.pricel .phead-top{
+background:{{main_color}};
+border:1px solid {{hover_color}};
+}
+
+.pricel .phead-bottom{
+border-top:1px solid {{hover_color}};
+}
+
+.nav-tabs > li > a:hover{
+background:{{main_color}};
+}
+
+.about .asocial i{
+background:{{main_color}};
+}
+
+.resume h4{
+background:{{main_color}};
+}
+
+.resume h5{
+color:{{main_color}};
+}
+
+footer{
+border-top:3px solid {{main_color}};
+}
+
+footer ul li{
+background-image:url('/static/css/img/list-y.png');
+}

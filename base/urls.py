@@ -10,4 +10,5 @@ urlpatterns = patterns('base.views',
     url(r'^contact', 'contact', name='contact'),
     url(r'^restart', 'restart', name='restart'),
     url(r'^ncdump', 'ncdump', name='ncdump'),
+    url(r'^freva.cs', 'dynamic_css', name='dynamic_css')
 )
