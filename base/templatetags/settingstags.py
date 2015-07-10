@@ -11,3 +11,13 @@ def settings_val(value):
     """
     
     return str(getattr(settings, value))
+
+
+@register.simple_tag
+def setting_to_list(value):
+    
+    setting_value = getattr(settings, value)
+    result = ''
+    for val in setting_value:
+        result += '<li>%s</li>' % val
+    return result

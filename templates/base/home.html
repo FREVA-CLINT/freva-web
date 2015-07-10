@@ -8,7 +8,7 @@
 
 {# Load CSS and JavaScript #}
 
-
+{% load settingstags %}
 {% bootstrap_javascript %}
 
 
@@ -95,9 +95,8 @@ restartTour();
                         <!-- Service #1 -->
                         <div class="service">
                            <!-- Icon & title. Font Awesome icon used. -->
-                           <h5><span><i class="glyphicon glyphicon-search"></i> MiKlip</span></h5>
-                           <p>The German research project "MiKlip - Decadal Predictions" aims to develop a system for climate predictions for up to a decade ahead.
-          	The system is based on the MPI-M Earth System Model (MPI-ESM) from the Max Planck Institute for Meteorology in Hamburg.</p>
+                           <h5><span><i class="glyphicon glyphicon-search"></i> {% settings_val 'HOMEPAGE_HEADING'%}</span></h5>
+                           <p>{% settings_val 'HOMEPAGE_TEXT'%}</p>
                         </div>
                         
                      </div>
@@ -106,11 +105,16 @@ restartTour();
                         <!-- Service #2 -->
                         <div class="service">
                            <!-- Icon & title. Font Awesome icon used. -->
-                           <h5><span><i class="glyphicon glyphicon-search"></i> INTEGRATION</span></h5>
-                           <p>The INTEGRATION project provides a standardized data and evaluation system for application within the MiKlip system. 
-								The evaluation system provides efficient and comprehensive access to the model data base as well as to evaluation data sets. 
-								The application system is developed as an easy to use low-end application minimizing technical requirements for users 
-								within MiKlip and potential end users outside of MiKlip.
+                           <h5><span><i class="glyphicon glyphicon-search"></i> Freva - Freie University Evaluation System </span></h5>
+                           <p>
+                           The MiKlip INTEGRATION project provides a 
+                           standardized data and evaluation system framework - 
+                           developed at the Freie University Berlin in Germany. 
+                           Freva provides efficient and comprehensive access to 
+                           the model data base as well as to evaluation data 
+                           sets. The application system is developed as an easy 
+                           to use low-end application minimizing technical 
+                           requirements for users and tool developers. 
 							</p>
                         </div>                     
                         
