@@ -2011,7 +2011,7 @@ line-height:22px;
 /* Footer */
 
 footer{
-background:#222 url('../img/fback.png') repeat;
+background:#000;
 margin-top:10px;
 font-size:13px;
 padding-top:10px;
@@ -2019,7 +2019,7 @@ color:#ddd;
 }
 
 footer hr{
-border-top:1px solid #333;
+border-top:1px solid #f29631;
 padding:0px;
 border-bottom:1px solid #111;
 }
@@ -2027,7 +2027,7 @@ border-bottom:1px solid #111;
 footer h4{
 font-size:15px;
 padding-bottom:6px;
-border-bottom:1px solid #313131;
+border-bottom:1px solid #f29631;
 margin-bottom:4px;
 color:#ccc;
 }
