@@ -131,11 +131,7 @@
          <h4>About Us</h4>
 <!--    INTEGRAted data and evaluation system for decadal scale predicTION. -->
 <p>
-The <a href="http://fona-miklip.de/en/332.php" style='color:#F29631'target="_blank">INTEGRATION project</a> provides a standardized data and evaluation system for application within the MiKlip system.
-</p>
-
-<p>
-Here you go!
+{% settings_val 'ABOUT_US_TEXT' %}
 </p>
          </div>
       </div>
@@ -144,8 +140,7 @@ Here you go!
          <div class="widget">
             <h4>Contact</h4>
 			<ul>
-				<li>christopher.kadow@met.fu-berlin.de</li>
-				<li>sebastian.illing@met.fu-berlin.de</li>
+			     {% setting_to_list 'CONTACTS' %}
 			</ul>
 			
          </div>
@@ -155,11 +150,8 @@ Here you go!
          <div class="widget">
             <h4>Imprint</h4>
 			<ul>
-				<li>MiKlip - INTEGRATION</li>
-				<li>Institut für Meteorologie</li>
-				<li>Carl-Heinrich-Becker-Weg 6-10
-				<li>12165 Berlin</li>
-			
+			     {% setting_to_list 'IMPRINT' %}
+
 			</ul>
 
          </div>
@@ -168,7 +160,7 @@ Here you go!
 	 <div class="row">
       <hr />
       <div class="col-md-12"><p class="copy pull-left">
-               Copyright &copy; <a href="{% url 'base:home'%}">www-miklip.dkrz.de</a> | Created by <a href="https://code.zmaw.de/projects/miklip-d-integration" target="_blank">INTEGRATION</a></p></div>
+               Created by <a href="https://code.zmaw.de/projects/miklip-d-integration" target="_blank">Freva</a></p></div>
     </div>
   </div>
 </footer>
