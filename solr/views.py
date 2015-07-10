@@ -12,8 +12,8 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_post_parameters
 
 from evaluation_system.model.solr import SolrFindFiles
-
-from django_evaluation import settings
+#from django_evaluation import settings
+from django.conf import settings
 from paramiko import AuthenticationException
 
 from plugins.utils import ssh_call
@@ -30,7 +30,7 @@ def data_browser(request):
 def ncdump(request):
     fn = request.POST['file']
     user_pw = request.POST['pass']
-    command = '/client/bin/ncdump -h %s' % (fn,)
+    command = '%s -h %s' % (settings.NCDUMP_BINARY, fn,)
      
     try:
         result = ssh_call(request.user.username,user_pw,command,settings.SCHEDULER_HOSTS)
