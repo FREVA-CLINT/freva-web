@@ -50,7 +50,7 @@ class history(XEditableDatatableView):
         'columns' : [('', 'checkbox', 'checkbox'),
                      ('Id', 'id'),
                      ('User', 'uid'),
-                     ('Tool', 'tool'),
+                     ('Plugin', 'tool'),
                      ('Caption', 'caption', helpers.make_xeditable()),
 		     #('Version', 'version'),
                      ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%y %H:%M')),
