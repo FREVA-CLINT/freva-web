@@ -1,0 +1,7 @@
+{% block subject %}New message from {{username}}{% endblock %}
+{% block plain %}
+Message:
+
+{{text}}
+
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "_layouts/menu.html" %}
+
+{% block page_title %}Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+{{test}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            {% if success %}
+                <div id="alert_follow" class="alert alert-success alert-dismissible" style="" role="alert">
+                    Mail successfully send
+                </div>
+            {%endif%}
+            <p>If you have any questions or found a bug in the system, please write us a message:</p>
+            <form method="post">
+                {% csrf_token %}
+                <textarea id="text" class="form-control" rows="3" name="text"></textarea>
+                <br/>
+                <input type="submit" value="Send message to admins" class="btn btn-info col-md-12"/>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

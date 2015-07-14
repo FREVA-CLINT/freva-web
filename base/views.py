@@ -9,7 +9,8 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django_evaluation.monitor import _restart
 from django.conf import settings
-
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from subprocess import Popen, STDOUT, PIPE
 
 
@@ -80,7 +81,26 @@ def contact(request):
     """
     View rendering the iFrame for the wiki page.
     """
-    return render(request, 'base/wiki.html', {'page':'https://code.zmaw.de/projects/miklip-d-integration/issues/new'})
+    if request.method == 'POST':
+        from templated_email import send_templated_mail
+        from django_evaluation.ldaptools import get_ldap_object
+        user_info = get_ldap_object() 
+        myinfo = user_info.get_user_info(str(request.user))
+        myemail = myinfo[3]
+        mail_text = request.POST.get('text')
+        a=send_templated_mail(
+            template_name='mail_to_admins',
+            from_email=myemail,
+            recipient_list=[a[1] for a in settings.ADMINS],
+            context={
+                'username':request.user.get_full_name(),
+                'text':mail_text,
+            },
+            headers={'Reply-To' : myemail},
+        )
+        return HttpResponseRedirect('%s?success=1' % reverse('base:contact'))
+    success = True if request.GET.get('success',None) else False
+    return render(request, 'base/contact.html', {'success': success})
 
 def logout(request):
     """
