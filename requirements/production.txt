@@ -58,4 +58,5 @@ django-ipware
 django-datatable-view
 
 #send templated mails
-django-templated-email
+#django-templated-email
+git+https://github.com/BradWhittington/django-templated-email.git
