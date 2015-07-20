@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse
 from django.shortcuts import redirect
 from subprocess import Popen, STDOUT, PIPE
 
+from evaluation_system.misc import config
 
 @sensitive_variables('passwd')
 @sensitive_post_parameters('password')
@@ -95,6 +96,8 @@ def contact(request):
             context={
                 'username':request.user.get_full_name(),
                 'text':mail_text,
+                'project': config.get('project_name'),
+                'website': config.get('project_website')
             },
             headers={'Reply-To' : myemail},
         )
