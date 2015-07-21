@@ -238,7 +238,7 @@ var SolrSearchPanel = React.createClass({
 		return (
 			<div className="panel panel-default">
 				<div className="panel-body">
-					solr_search {this.solrSearchCommand()}
+					freva --databrowser {this.solrSearchCommand()}
 				</div>
 			</div>
 		);
