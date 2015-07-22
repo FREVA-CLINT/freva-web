@@ -56,15 +56,11 @@
 	          <ul class="nav navbar-nav ">
 	            <li><a id="plugin_menu" href="{% url 'plugins:home' %}">Plugins</a></li>
 	            <li><a id="history_menu" href="{% url 'history:history' %}">History</a></li>
-		    <li><a id="browser_menu"href="{% url 'solr:data_browser' %}">Data-Browser</a></li>
-		    <li><a id="docu_menu"href="{% url 'plugins:about' %}">Docu</a></li>
-	            <li><a id="contact_menu"href="{% url 'base:contact' %}">Contact</a></li>
-	            <!-- <li><a href="https://code.zmaw.de/projects/miklip-d-integration/issues/new" target="_blank">Contact</a></li> -->
-	            <li><a id="wiki_menu"href="{% url 'base:wiki' %}">Help</a></li>
-	            <!-- <li><a href="https://code.zmaw.de/projects/miklip-d-integration/wiki" target="_blank">Wiki</a> -->
+		        <li><a id="browser_menu"href="{% url 'solr:data_browser' %}">Data-Browser</a></li>
+		        <li><a id="docu_menu"href="{% url 'plugins:about' %}">Help</a></li>
+	            <li><a id="contact_menu"href="{% url 'base:contact' %}">Contact</a></li>  
 	          </ul>
 
- 
              {% if not request.user.is_authenticated %}
 		<div class="navbar-right  navbar-nav col-md-6">
 			  <form class="navbar-form navbar-right  navbar-nav" method="post" action="{% url 'base:home' %}">
