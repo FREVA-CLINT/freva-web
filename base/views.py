@@ -78,6 +78,7 @@ def wiki(request):
     """
     return render(request, 'base/wiki.html', {'page':'https://code.zmaw.de/projects/miklip-d-integration/wiki'})
 
+@login_required()
 def contact(request):
     """
     View rendering the iFrame for the wiki page.
