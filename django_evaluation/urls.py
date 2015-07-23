@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     url(r'^bad/$', bad),
     url(r'', include('base.urls', namespace='base')),
     
-    url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'favicon.ico'))
+    url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/freva-favicon.png'))
 )
 
 ## In DEBUG mode, serve media files through Django.
