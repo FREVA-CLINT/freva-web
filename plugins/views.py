@@ -169,8 +169,10 @@ def setup(request, plugin_name, row_id = None):
             # create the directories when necessary
             stdout = ssh_call(username=username,
                               password=password,
-                              command=(load_module + command),
-#                              command='bash -c "%s"' % (load_module + command),
+#                              command=(load_module + command),
+			      # we use "bash -c because users with other login shells can't use "export"
+                              # not clear why we removed this in the first place...
+                              command='bash -c "%s"' % (load_module + command),
 #                              command='bash -c "%s"' % (dirtyhack + command),
                               hostnames=hostnames)
                         
@@ -182,8 +184,10 @@ def setup(request, plugin_name, row_id = None):
             logging.debug("output of analyze:" + str(out))
             logging.debug("errors of analyze:" + str(err))
             # get the very first line only
-            out_first_line = out[0]
-            
+            try:
+	        out_first_line = out[0]
+            except:
+                raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)
             # read the id from stdout
             if out_first_line.split(' ')[0] == 'Scheduled':
                 row_id = int(out_first_line.split(' ')[-1])
