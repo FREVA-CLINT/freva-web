@@ -6,6 +6,7 @@ from django.template import RequestContext, loader
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
+from django.views.decorators.http import require_POST 
 from django.contrib.flatpages.models import FlatPage
 from django.core import serializers
 
@@ -25,17 +26,41 @@ from django_evaluation import settings
 import logging
 import paramiko # this is the ssh client
 
-import urllib, os
+import urllib, os, sys
 import json
+from evaluation_system.api import plugin
 
 @login_required()
 def home(request):
     """ Default view for the root """    
-    tools = pm.getPlugins()    
-    return render(request, 'plugins/home.html', {'tool_list': sorted(tools.iteritems())})
+    logging.error(os.environ.get('EVALUATION_SYSTEM_PLUGINS_illing'))
+    user_can_submit = request.user.has_perm('history.history_submit_job')
+
+    if user_can_submit:
+        user = User(request.user.username, request.user.email)
+    else:
+        user = User()
+    home_dir = user.getUserHome()
+    scratch_dir = None
+    try:
+        scratch_dir = user.getUserScratch()
+    except:
+        pass
+    
+    exported_plugin = os.environ.get("EVALUATION_SYSTEM_PLUGINS_%s" % request.user, None)
+    
+    pm.reloadPlugins(request.user.username)
+    tools = pm.getPlugins() 
+    logging.error(tools)   
+    return render(request, 'plugins/home.html', 
+                  {'tool_list': sorted(tools.iteritems()),
+                   'home_dir': home_dir,
+                   'scratch_dir': scratch_dir,
+                   'exported_plugin': exported_plugin})
 
 @login_required()
 def detail(request, plugin_name):
+    pm.reloadPlugins(request.user.username)
     
     plugin = get_plugin_or_404(plugin_name)
     plugin_web = PluginWeb(plugin)
@@ -97,7 +122,7 @@ def search_similar_results(request,plugin_name=None, history_id=None):
 @sensitive_variables('password')
 @login_required()    
 def setup(request, plugin_name, row_id = None):
-    
+    pm.reloadPlugins(request.user.username)
     user = None
 
     user_can_submit = request.user.has_perm('history.history_submit_job')
@@ -159,18 +184,26 @@ def setup(request, plugin_name, row_id = None):
 
             # compose the plugin command
             slurm_options = config.get_section('scheduler_options')
-	    # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
+	        # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
             load_module = "source /net/opt/system/modules/default/init/bash > /dev/null; module load modules_wheezy > /dev/null; module load /home/integra/evaluation_system/modules/freva/0.1python4freva > /dev/null;"
             load_module = settings.LOAD_MODULE
-	    command = plugin.composeCommand(config_dict,
+            
+            if "EVALUATION_SYSTEM_PLUGINS_%s" % request.user in os.environ:
+                plugin_str = os.environ['EVALUATION_SYSTEM_PLUGINS_%s' % request.user] 
+                export_user_plugin = 'export EVALUATION_SYSTEM_PLUGINS=%s;'\
+                    % plugin_str
+            else:
+                export_user_plugin = ''
+            
+            command = plugin.composeCommand(config_dict,
                                             batchmode='web',
                                             #email=user.getEmail(),
                                             caption=caption)
             # create the directories when necessary
             stdout = ssh_call(username=username,
                               password=password,
-                              command=(load_module + command),
-#                              command='bash -c "%s"' % (load_module + command),
+#                              command=(load_module + export_user_plugin + command),
+                              command='bash -c "%s"' % (load_module + export_user_plugin + command),
 #                              command='bash -c "%s"' % (dirtyhack + command),
                               hostnames=hostnames)
                         
@@ -220,6 +253,8 @@ def setup(request, plugin_name, row_id = None):
 def dirlist(request):
     r=['<ul class="jqueryFileTree" style="display: none;">']
     files = list()
+    # we can specify an ending in GET request
+    file_type = request.GET.get('file_type', 'nc')
     try:
         r=['<ul class="jqueryFileTree" style="display: none;">']
         d=urllib.unquote(request.POST.get('dir'))
@@ -230,7 +265,7 @@ def dirlist(request):
                     r.append('<li class="directory collapsed"><a href="#" rel="%s/">%s</a></li>' % (ff,f))
                 else:
                     e=os.path.splitext(f)[1][1:] # get .ext and remove dot
-                    if e == 'nc':
+                    if e == file_type:
                         files.append('<li class="file ext_%s"><a href="#" rel="%s">%s</a></li>' % (e,ff,f))
         r = r+files
         r.append('</ul>')
@@ -239,8 +274,32 @@ def dirlist(request):
         r.append('</ul>')
     return HttpResponse(''.join(r))  
 
+
 def listDocu(request):
     return render(request, 'plugins/list-docu.html')
+
+
+@require_POST
+@login_required()
+def export_plugin(request):
+    """
+    Website version of "export EVALUATION_SYSTEM_PLUGINS=..."
+    """
+    try:
+        del os.environ["EVALUATION_SYSTEM_PLUGINS_%s" % request.user]
+        return redirect('plugins:home')
+    except:
+        fn = request.POST.get('export_file')
+        if fn is not None and os.path.isfile(fn):
+            parts = fn.split('/')
+            path = '/'.join(parts[:-1])
+            module = parts[-1].split('.')[0]
+            os.environ["EVALUATION_SYSTEM_PLUGINS_%s" % request.user] =\
+                "%s,%s" % (path, module)
+    
+    return redirect('plugins:home')
+    
+    
 
 
     
