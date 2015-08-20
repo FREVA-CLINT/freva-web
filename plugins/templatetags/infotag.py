@@ -1,5 +1,6 @@
 from django import template
 from evaluation_system.api.plugin_manager import getErrorWarning
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -26,3 +27,11 @@ def error_warning_dialog(toolname):
         return infodialog('Warning', warning, 'show')
     else:
         return infodialog('', '', 'hide')
+    
+
+@register.inclusion_tag('plugins/templatetags/plugin_your_plugin.html')
+def export_plugin_dialog(user_home, user_scratch):
+    return {'caption' : 'Plug-in your own plugin',
+            'user_home': user_home,
+            'user_scratch': user_scratch
+            }
