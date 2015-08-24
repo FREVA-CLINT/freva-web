@@ -59,7 +59,7 @@ class LdapUserInformation(object):
         """
         if not self.user_info:
             get_cache('default')
-            self.user_info = False#cache.get('LDAP_user_info')
+            self.user_info = cache.get('LDAP_user_info')
 
             if not self.user_info:
                 self.load_from_ldap()
