@@ -74,7 +74,7 @@ def detail(request, plugin_name):
 
 @login_required()
 def search_similar_results(request,plugin_name=None, history_id=None):
-    
+    pm.reloadPlugins(request.user.username)
     def hist_to_dict(h_obj):
         hist_dict = dict()
         results = h_obj.result_set.filter(file_type=1)  
