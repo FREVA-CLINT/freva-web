@@ -1,5 +1,6 @@
 from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.models import AnonymousUser
+from evaluation_system.api import plugin_manager as pm
 
 
 try:
@@ -8,6 +9,12 @@ except ImportError:
     from django.utils._threading_local import local
 
 _thread_locals = local()
+
+
+class ReloadPluginsMiddleware(object):
+    
+    def process_request(self, request):
+        pm.reloadPlugins(request.user.username)
 
 
 class GlobalUserMiddleware(object):

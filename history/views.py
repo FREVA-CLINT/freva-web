@@ -382,7 +382,8 @@ def results(request, id, show_output_only = False):
     history_object = get_object_or_404(History, id=id)
     print 'al'
     try:
-        plugin = pm.getPluginInstance(history_object.tool)
+        plugin = pm.getPluginInstance(history_object.tool,
+                                      user_name=request.user.username)
         developer = plugin.tool_developer
     except:
         developer = None
@@ -631,7 +632,7 @@ def send_mail_to_developer(request):
     text = request.POST.get('text',None)
     tool_name = request.POST.get('tool_name',None)
     
-    tool = pm.getPluginInstance(tool_name)
+    tool = pm.getPluginInstance(tool_name, user_name=request.user.username)
     developer = tool.tool_developer
     
     user_info = get_ldap_object() 
