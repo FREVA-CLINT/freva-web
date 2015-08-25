@@ -52,13 +52,19 @@ class history(XEditableDatatableView):
                      ('User', 'uid'),
                      ('Plugin', 'tool'),
                      ('Caption', 'caption', helpers.make_xeditable()),
-		     #('Version', 'version'),
-                     ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%y %H:%M')),
+                    # ('Timestamp', 'timestamp', helpers.format_date('%d.%m.%y %H:%M')),
+                     ('Timestamp', None, 'format_date'),
                      ('Status', 'get_status_display'),
                      ('Info', 'configuration', 'info_button'),
                     ]
     } 
 
+    def format_date(self, instance, *args, **kwargs):
+        """
+        We use this because we don't want timestamp to be searchable
+        """
+        return instance.timestamp.strftime('%d.%m.%y %H:%M')
+        
     def get_queryset(self):
         user = self.kwargs.get('uid', self.request.user)
 
