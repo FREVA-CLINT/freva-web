@@ -1,17 +1,20 @@
 import evaluation_system.api.plugin_manager as pm
+from evaluation_system.model.user import User
 from django.views.decorators.debug import sensitive_variables
 from django.http import Http404
 
 import paramiko
 import logging
 
-def get_plugin_or_404(plugin_name,user=None):
+def get_plugin_or_404(plugin_name, user=None, user_name=None):
     
     try:
-        return pm.getPluginInstance(plugin_name,user)
+        if user: user_name = user.getName()
+        return pm.getPluginInstance(plugin_name, None, user_name)
     except SyntaxError:
         raise 
     except:
+        raise
         raise Http404
     
 
