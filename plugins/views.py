@@ -33,7 +33,6 @@ from evaluation_system.api import plugin
 @login_required()
 def home(request):
     """ Default view for the root """    
-    logging.error(os.environ.get('EVALUATION_SYSTEM_PLUGINS_illing'))
     user_can_submit = request.user.has_perm('history.history_submit_job')
 
     if user_can_submit:
@@ -50,8 +49,7 @@ def home(request):
     exported_plugin = os.environ.get("EVALUATION_SYSTEM_PLUGINS_%s" % request.user, None)
     
     pm.reloadPlugins(request.user.username)
-    tools = pm.getPlugins() 
-    logging.error(tools)   
+    tools = pm.getPlugins(request.user.username) 
     return render(request, 'plugins/home.html', 
                   {'tool_list': sorted(tools.iteritems()),
                    'home_dir': home_dir,
@@ -61,8 +59,7 @@ def home(request):
 @login_required()
 def detail(request, plugin_name):
     pm.reloadPlugins(request.user.username)
-    
-    plugin = get_plugin_or_404(plugin_name)
+    plugin = get_plugin_or_404(plugin_name, user_name=request.user.username)
     plugin_web = PluginWeb(plugin)
     #logging.debug(plugin.__long_description__)    
     try:
@@ -74,7 +71,7 @@ def detail(request, plugin_name):
 
 @login_required()
 def search_similar_results(request,plugin_name=None, history_id=None):
-    
+    pm.reloadPlugins(request.user.username)
     def hist_to_dict(h_obj):
         hist_dict = dict()
         results = h_obj.result_set.filter(file_type=1)  
@@ -98,7 +95,8 @@ def search_similar_results(request,plugin_name=None, history_id=None):
 
         else:
             # create the tool
-            tool = pm.getPluginInstance(plugin_name)
+            tool = pm.getPluginInstance(plugin_name,
+                                        user_name=request.user.username)
             param_dict = tool.__parameters__
             param_dict.synchronize(plugin_name)
             plugin_fields = param_dict.keys()
@@ -109,7 +107,7 @@ def search_similar_results(request,plugin_name=None, history_id=None):
                     if key in plugin_fields:
                         data[key]=val
 
-            o = pm.dict2conf(plugin_name, data)
+            o = pm.dict2conf(plugin_name, data, user_name=request.user.username)
             hist_objects = History.find_similar_entries(o, uid=request.user.username, max_entries = 5)
 
     res = list()
