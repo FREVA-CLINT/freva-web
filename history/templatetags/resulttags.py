@@ -131,7 +131,8 @@ user_mask = {}
 @register.inclusion_tag('history/templatetags/mail_to_developer.html')
 def mail_to_developer(tool_name):
     from evaluation_system.api import plugin_manager as pm
-    tool = pm.getPluginInstance(tool_name)
+    from django_evaluation.middelwares import get_current_user
+    tool = pm.getPluginInstance(tool_name, user_name=get_current_user().username)
     
     try:
         developer = tool.tool_developer
