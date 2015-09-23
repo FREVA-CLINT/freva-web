@@ -643,14 +643,19 @@ def send_mail_to_developer(request):
     
     user_info = get_ldap_object() 
     myinfo = user_info.get_user_info(str(request.user))
-    myemail = myinfo[3]
+    try:
+        myemail = myinfo[3]
+        username = request.user.get_full_name()
+    except:
+        myemail = settings.SERVER_EMAIL
+        username = 'guest'
     
     a=send_templated_mail(
         template_name='mail_to_developer',
         from_email=myemail,
         recipient_list=[developer['email']],
         context={
-            'username':request.user.get_full_name(),
+            'username':username,
             'developer_name':developer['name'],
             'text':text,
             'tool_name': tool_name,
