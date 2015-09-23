@@ -84,7 +84,15 @@ def shell_in_a_box(request):
     """
     View for the shell in a box iframe
     """
-    return render(request, 'base/shell-in-a-box.html')
+    if request.user.groups.filter(
+        name=config.get('external_group', 'noexternalgroupset')
+    ).exists():
+        shell_url  = '/shell2/'
+    else:
+        shell_url = '/shell/'
+    
+    return render(request, 'base/shell-in-a-box.html',
+                  {'shell_url': shell_url})
 
 
 @login_required()
@@ -97,14 +105,19 @@ def contact(request):
         from django_evaluation.ldaptools import get_ldap_object
         user_info = get_ldap_object() 
         myinfo = user_info.get_user_info(str(request.user))
-        myemail = myinfo[3]
+        try:
+            myemail = myinfo[3]
+            username = request.user.get_full_name()
+        except:
+            myemail = settings.SERVER_EMAIL
+            username = 'guest'
         mail_text = request.POST.get('text')
         a=send_templated_mail(
             template_name='mail_to_admins',
             from_email=myemail,
             recipient_list=[a[1] for a in settings.ADMINS],
             context={
-                'username':request.user.get_full_name(),
+                'username':username,
                 'text':mail_text,
                 'project': config.get('project_name'),
                 'website': config.get('project_website')
