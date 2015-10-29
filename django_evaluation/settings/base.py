@@ -38,6 +38,8 @@ AUTHENTICATION_BACKENDS = (
 # the host to start the scheduler
 SCHEDULER_HOSTS=['miklip02.dkrz.de','miklip03.dkrz.de']
 
+INSTITUTION_LOGO = ''
+
 LOGIN_URL = '/?login_required=1'
 
 # temporary directory for tailed scheduler files
