@@ -88,6 +88,7 @@ INSTALLED_APPS = (
     'plugins',
     'history',
     'solr',
+    'externaluser',
 )
 
 # Place bcrypt first in the list, so it will be the default password hashing
@@ -175,9 +176,11 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django_evaluation.middelwares.GlobalUserMiddleware',
+    'django_evaluation.middelwares.ReloadPluginsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 TEMPLATE_CONTEXT_PROCESSORS = [
@@ -236,6 +239,7 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.signals.SignalsPanel',
     'debug_toolbar.panels.logging.LoggingPanel',
     'debug_toolbar.panels.redirects.RedirectsPanel', 
+    'debug_toolbar.panels.profiling.ProfilingPanel',
 )
 
 # Specify a custom user model to use

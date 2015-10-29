@@ -1,0 +1,89 @@
+{% extends "_layouts/menu.html" %}
+
+{% block page_title %}Register{% endblock %}
+{% block content %}
+
+{% load bootstrap3 %}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12"> 
+        
+        {% if show_success %}
+            <div class="alert alert-success" role="alert">Signup successful. <br/>We will inform you as soon as your account is activated.</div>
+        {% endif %}
+        <h1>Welcome to Freva – the Freie Univ Evaluation System!</h1>
+        <p>
+            Feel free to register for our BETA phase of the Shell and Web system. <br/>
+            Browse, click around and explore our command line system. See what Freva is capable of 
+            as projects, working groups or institutes evaluation infrastructure in the earth system 
+            science community. This instance Freva is for show cases and no platform which guarantees 
+            you work environment. We are happy to show you what Freva can do for you, and your institute. 
+            Freva takes care that you don’t get lost in your climate science adventure by advancing 
+            transparency and reproducibility. With an eye on usability and flexibility, Freva gives 
+            you the full control of your data and software. 
+            By registering you agree to the <a href="#" onClick="show_terms(); return false;">terms and condtions</a>. <br/>
+            Exploration time begins now…
+        </p>
+        <form action="" method="post" name="plugin_form" id="plugin_form">
+            {% csrf_token %}        
+            {% bootstrap_form form %}
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" required> I have read and accept the <a href="#" onClick="show_terms(); return false">terms and conditions</a> of Freva
+                </label>
+              </div>
+                    <input type="submit" class="btn-lg btn-primary btn-block btn"
+                            value="Signup" />
+        </form>
+        
+        </div>
+    </div>
+</div>
+
+<script>
+    function show_terms(){
+        $('#myModal').modal('toggle')
+        return false;
+    }
+</script>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Terms and Conditions</h4>
+      </div>
+      <div class="modal-body">
+      <p>
+        Freva is software developed within the MiKlip INTEGRATION project by 
+        the Institute for Meteorology at the Freie Universität Berlin Germany. 
+        The projects funded by the Minestry of Teaching and Research (BMBF) in 
+        Germany.
+      </p><p>
+        By registering with your real name, email address, and institution you allow 
+        the hosts of Freva to save these informations for the terms of system related 
+        actions, like account set up, quota problems, Guidance, etc. <br/>
+        The hosts will NOT give your data to any third party related group. <br/>
+        You are NOT allowed to download any data from the data pool, besides your own. <br/>
+        Freva is NOT a data 
+        portal for downloading reanalysis, observations, CMIP, or similar. Analyzing 
+        these data sets and downloading the results is of course fine.
+      </p><p>
+        The Freva hosts are allowed to delete, lock, freeze and change the system, 
+        the terms and conditions and its user account at any time. It is a 
+        developmental system, therefore it gaves no guarantee for a stable 
+        usage and longterm archive for results. This system is a showcase 
+        system that should show you what Freva is capable of.
+      </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
