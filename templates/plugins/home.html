@@ -19,7 +19,7 @@
           <h2>Plugins</h2>
           </div>
           	
-          	
+{% if not request.user.isGuest %}          	
           	<div class="col-md-6" style="padding-top:10px;">
           	  {% if not exported_plugin %}
           	     <a href="#" class="btn btn-info pull-right" data-toggle="modal" 
@@ -33,6 +33,7 @@
           	     </form>
           	  {%endif %} 
           	</div>
+{%endif%}
           	</div>
           	<div class="list-group" style="margin-top:20px;">
 		    {% for key, value in tool_list %}
