@@ -155,6 +155,8 @@ def setup(request, plugin_name, row_id = None):
             if not caption:
                 caption = None
             
+            unique_output = config_dict['unique_output_id'][0]
+            
             # empty values in the form will not be added to the dictionary.
             # as a consequence we can not submit intentionally blank fields.
             tmp_dict = dict()
@@ -197,7 +199,8 @@ def setup(request, plugin_name, row_id = None):
             command = plugin.composeCommand(config_dict,
                                             batchmode='web',
                                             #email=user.getEmail(),
-                                            caption=caption)
+                                            caption=caption,
+                                            unique_output=unique_output)
             # create the directories when necessary
             stdout = ssh_call(username=username,
                               password=password,

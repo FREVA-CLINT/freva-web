@@ -16,7 +16,7 @@ from evaluation_system.model.solr import SolrFindFiles
 from django.conf import settings
 from paramiko import AuthenticationException
 
-from plugins.utils import ssh_call
+from plugins.utils import ssh_call, get_scheduler_hosts
 import json
 import logging
 
@@ -31,15 +31,25 @@ def ncdump(request):
     fn = request.POST['file']
     user_pw = request.POST['pass']
     command = '%s -h %s' % (settings.NCDUMP_BINARY, fn,)
+    
+    if not request.user.has_perm('history.browse_full_data'):
+        ncdump_out = 'Guest users are not allowed to use this command.<br/>Normally you would see the output of <strong>ncdump</strong> here.'
+        return HttpResponse(json.dumps(dict(ncdump=mark_safe(ncdump_out),
+                                            error_msg='')),
+                            status=200)        
      
     try:
-        result = ssh_call(request.user.username,user_pw,command,settings.SCHEDULER_HOSTS)
+        result = ssh_call(request.user.username, user_pw,
+                          command, get_scheduler_hosts(request.user))
         ncdump_out = result[1].readlines()
         ncdump_err = result[2].readlines()
         ncdump_out = '<pre>'+''.join(ncdump_out)+'</pre>'
-        return HttpResponse(json.dumps(dict(ncdump=mark_safe(ncdump_out),error_msg=''.join(ncdump_err))),status=200)
+        return HttpResponse(json.dumps(dict(ncdump=mark_safe(ncdump_out),
+                                            error_msg=''.join(ncdump_err))),
+                            status=200)
     except AuthenticationException:
-        return HttpResponse('AuthenticationException', status=500, content_type="application/json")
+        return HttpResponse('AuthenticationException', status=500,
+                            content_type="application/json")
 
 @login_required()
 def solr_search(request):
