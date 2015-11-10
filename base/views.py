@@ -84,7 +84,15 @@ def shell_in_a_box(request):
     """
     View for the shell in a box iframe
     """
-    return render(request, 'base/shell-in-a-box.html')
+    if request.user.groups.filter(
+        name=config.get('external_group', 'noexternalgroupset')
+    ).exists():
+        shell_url  = '/shell2/'
+    else:
+        shell_url = '/shell/'
+    
+    return render(request, 'base/shell-in-a-box.html',
+                  {'shell_url': shell_url})
 
 
 @login_required()

@@ -69,7 +69,7 @@
 		<div class="navbar-right  navbar-nav col-md-6">
 			  <form class="navbar-form navbar-right  navbar-nav" method="post" action="{% url 'base:home' %}">
  				{% csrf_token %}
-	            <div class="form-group col-md-6">
+	            <div class="form-group col-md-5" style="padding-left:0px;">
 	                <div class="input-group">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" id='guest_credentials' title='Press to insert the credentials for the guest login.' data-toggle='tooltip' data-placement='top' data-container='body'>
@@ -83,11 +83,13 @@
                 </div><!-- /input-group -->
 
 	            </div>
-	            <div class="form-group col-md-4">
+	            <div class="form-group col-md-3"  style=" padding-left:0px;">
 	              <input name="password" type="password" placeholder="Password" class="form-control" id='in_pwd'>
 	            </div>
 	             <input name="next" type="hidden" id="next_page">
-	            <button type="submit" class="col-md-2 btn btn-primary">Sign in</button>
+	             
+	             <button type="submit" class="col-md-2 btn">Sign in</button>
+	             <button class="col-md-2 btn" id="signup">Sign Up</button>
 	          </form>
 	        </div> 
 		 {% else %}
@@ -108,6 +110,12 @@
         $('#in_user').val('guest');
         $('#in_pwd').val('miklip');
     });
+    
+    $('#signup').on('click', function(){
+       document.location = '{%url 'external:external_register'%}';
+       return false;
+    });
+    
     });
     </script>
 
