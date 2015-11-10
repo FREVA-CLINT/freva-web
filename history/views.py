@@ -643,7 +643,6 @@ def send_mail_to_developer(request):
     except:
         myemail = settings.SERVER_EMAIL
         username = 'guest'   
- 
     a=send_templated_mail(
         template_name='mail_to_developer',
         from_email=myemail,

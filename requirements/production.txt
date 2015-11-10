@@ -60,3 +60,5 @@ django-datatable-view
 #send templated mails
 #django-templated-email
 git+https://github.com/BradWhittington/django-templated-email.git
+
+django-model-utils

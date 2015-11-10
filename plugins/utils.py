@@ -1,10 +1,23 @@
 import evaluation_system.api.plugin_manager as pm
 from evaluation_system.model.user import User
+from evaluation_system.misc import config
 from django.views.decorators.debug import sensitive_variables
 from django.http import Http404
+from django.conf import settings
 
 import paramiko
 import logging
+
+def get_scheduler_hosts(user):
+    if user.groups.filter(
+        name=config.get('external_group', 'noexternalgroupset')
+    ).exists():
+        try:
+            return settings.SCHEDULER_HOSTS_EXTERNAL
+        except AttributeError:
+            return settings.SCHEDULER_HOSTS
+    else:
+        return settings.SCHEDULER_HOSTS
 
 def get_plugin_or_404(plugin_name, user=None, user_name=None):
     

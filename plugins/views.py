@@ -18,7 +18,7 @@ from evaluation_system.model.solr import SolrFindFiles
 from evaluation_system.model.slurm import slurm_file
 from evaluation_system.misc import config
 
-from plugins.utils import get_plugin_or_404, ssh_call
+from plugins.utils import get_plugin_or_404, ssh_call, get_scheduler_hosts
 from plugins.forms import PluginForm, PluginWeb
 from history.models import History, Configuration
 from django_evaluation import settings
@@ -155,6 +155,8 @@ def setup(request, plugin_name, row_id = None):
             if not caption:
                 caption = None
             
+            unique_output = config_dict['unique_output_id'][0]
+            
             # empty values in the form will not be added to the dictionary.
             # as a consequence we can not submit intentionally blank fields.
             tmp_dict = dict()
@@ -178,8 +180,9 @@ def setup(request, plugin_name, row_id = None):
             # start the scheduler via sbatch
             username = request.user.username
             password = request.POST['password_hidden']
-            hostnames = list(settings.SCHEDULER_HOSTS)
+            hostnames = list(get_scheduler_hosts(request.user))
 
+            logging.error(hostnames)
             # compose the plugin command
             slurm_options = config.get_section('scheduler_options')
 	        # dirtyhack = 'export PYTHONPATH=/miklip/integration/evaluation_system/src;/sw/centos58-x64/python/python-2.7-ve0-gccsys/bin/python /miklip/integration/evaluation_system/bin/'
@@ -196,7 +199,8 @@ def setup(request, plugin_name, row_id = None):
             command = plugin.composeCommand(config_dict,
                                             batchmode='web',
                                             #email=user.getEmail(),
-                                            caption=caption)
+                                            caption=caption,
+                                            unique_output=unique_output)
             # create the directories when necessary
             stdout = ssh_call(username=username,
                               password=password,

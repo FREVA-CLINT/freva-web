@@ -20,6 +20,7 @@ urlpatterns = patterns('',
     url(r'^plugins/', include('plugins.urls', namespace='plugins')),
     url(r'^history/', include('history.urls', namespace='history')),
     url(r'^solr/', include('solr.urls', namespace='solr')),
+    url(r'^external/', include('externaluser.urls', namespace='external')),
     
     #url(r'^', include('debug_toolbar_user_panel.urls')),
     url(r'^bad/$', bad),
@@ -27,6 +28,13 @@ urlpatterns = patterns('',
     
     url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/freva-favicon.png'))
 )
+
+if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns += patterns('',
+        url(r'^__debug__/', include(debug_toolbar.urls)),
+    )
+
 
 ## In DEBUG mode, serve media files through Django.
 if settings.DEBUG:

@@ -149,6 +149,14 @@ class PluginForm(forms.Form):
             help_str + " Other tools name this field " + self.caption_standard_names[0] + ", this might be confusing."
         self.fields[self.caption_field_name] = forms.CharField(required=False, help_text=help_str)
 
+        # add the "unique_output" field
+        self.fields['unique_output_id'] = forms.BooleanField(
+            required=False,
+            help_text='If true append the freva run id to every output folder',
+            widget=forms.RadioSelect(choices=(('False', 'False'),
+                                              ('True', 'True'))),
+            initial=True
+        )
         
         
         
