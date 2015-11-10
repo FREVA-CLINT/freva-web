@@ -10,7 +10,7 @@ def get_plugin_or_404(plugin_name, user=None, user_name=None):
     
     try:
         if user: user_name = user.getName()
-        return pm.getPluginInstance(plugin_name, None, user_name)
+        return pm.getPluginInstance(plugin_name, user, user_name)
     except SyntaxError:
         raise 
     except:
