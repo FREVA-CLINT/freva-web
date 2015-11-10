@@ -141,40 +141,30 @@ class MiklipUserInformation(LdapUserInformation):
         con = self.connection
         res= con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
-                          attrlist=['nisnetgrouptriple'],
+                          attrlist=['memberUid'],
                           filterstr=settings.LDAP_MIKLIP_GROUP_FILTER)
         self.miklip_user = []
         user_info = []
-        user_list = res[0][1]['nisnetgrouptriple']
-
-        nisnetgrouptriple_pattern = "^\(,.*,\)$"
-        nisnetgrouptriple_re = re.compile(nisnetgrouptriple_pattern)
+        user_list = res[0][1]['memberUid']
              
         # fill the users list
         for user in user_list:
-            uid = None
-            if nisnetgrouptriple_re.match(user):
-                uid = user[2:-2]
-                self.miklip_user.append(uid)
-            else:
-                raise ValueError('NisNetGroupTriple has not the expected pattern')
-        
             # look up the user entries in the LDAP System
             res= con.search_s(settings.LDAP_USER_BASE,
                               ldap.SCOPE_SUBTREE,
                               attrlist=self.ldap_keys,
-                              filterstr='uid=%s' % uid)
+                              filterstr='uid=%s' % user)
             
             mail = res[0][1].get('mail', None)
             forward = res[0][1].get('mailForwardingAddress', None)
             
             if forward:
-                user_info.append((uid,
+                user_info.append((user,
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   forward[-1],))
             elif mail:
-                user_info.append((uid,
+                user_info.append((user,
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   mail[-1],))
