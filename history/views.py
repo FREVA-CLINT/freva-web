@@ -483,7 +483,8 @@ def results(request, id, show_output_only = False):
         file_tree.uncompress_single_files()
         
         collapse.append('results')
-
+        if len(file_tree) == 0:
+            collapse.append('output')
     else:
         collapse.append('output')
 

@@ -242,17 +242,15 @@
 		 	 		<div class="col-md-3">
 		 	 			<p>There was no output produced!</p>
 		 	 		</div>
-		 	 		
+		 	 	{% endif %}	
 		 	 		<div class="col-md-3">
 		 	 			<p>{{history_object.tool}} produced no plots.</p>
 		 	 		</div>
                    <div class="col-md-12">
-                   <h2><br>Files created:</h2>
-                   <ul >
-	                   {{ file_list|unordered_list|mask_safe_uid:request.user.isGuest }}
-	               </ul>
+                   
 	               </div>
-               {% endif %}
+               
+               
 		 	{%else%}
 	   
 	        <div class="col-md-12">
