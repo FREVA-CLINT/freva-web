@@ -149,6 +149,7 @@ class MiklipUserInformation(LdapUserInformation):
              
         # fill the users list
         for user in user_list:
+            # look up the user entries in the LDAP System
             res= con.search_s(settings.LDAP_USER_BASE,
                               ldap.SCOPE_SUBTREE,
                               attrlist=self.ldap_keys,
@@ -158,12 +159,12 @@ class MiklipUserInformation(LdapUserInformation):
             forward = res[0][1].get('mailForwardingAddress', None)
             
             if forward:
-                user_info.append((uid,
+                user_info.append((user,
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   forward[-1],))
             elif mail:
-                user_info.append((uid,
+                user_info.append((user,
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   mail[-1],))

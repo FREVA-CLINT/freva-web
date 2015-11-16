@@ -77,7 +77,7 @@ INSTALLED_APPS = (
 
     # Third-party apps, patches, fixes
 #    'djcelery',
-    'debug_toolbar',
+#    'debug_toolbar',
     'compressor',
     'bootstrap3',
     'datatableview',
@@ -178,11 +178,10 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'django_evaluation.middelwares.GlobalUserMiddleware',
     'django_evaluation.middelwares.ReloadPluginsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 TEMPLATE_CONTEXT_PROCESSORS = [
@@ -212,37 +211,36 @@ TEMPLATE_LOADERS = (
 )
 
 
-DEBUG_TOOLBAR_PATCH_SETTINGS = False
+#DEBUG_TOOLBAR_PATCH_SETTINGS = False
 
 def custom_show_toolbar(request):
     """ Only show the debug toolbar to users with the superuser flag. """
-    return request.user.is_superuser
+    return False#request.user.is_superuser
 
 
-DEBUG_TOOLBAR_CONFIG = {
-    'INTERCEPT_REDIRECTS': False,
-    'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
-    'HIDE_DJANGO_SQL': True,
-    'TAG': 'body',
-    'SHOW_TEMPLATE_CONTEXT': True,
-    'ENABLE_STACKTRACES': True,
-}
+#DEBUG_TOOLBAR_CONFIG = {
+#    'INTERCEPT_REDIRECTS': False,
+#    'SHOW_TOOLBAR_CALLBACK': custom_show_toolbar,
+#    'HIDE_DJANGO_SQL': True,
+#    'TAG': 'body',
+#    'SHOW_TEMPLATE_CONTEXT': True,
+#    'ENABLE_STACKTRACES': True,
+#}
 
-DEBUG_TOOLBAR_PANELS = (
-    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-    'debug_toolbar.panels.settings.SettingsPanel',
-    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-    'debug_toolbar.panels.templates.TemplatesPanel',
-    'debug_toolbar.panels.cache.CachePanel',
-    'debug_toolbar.panels.signals.SignalsPanel',
-    'debug_toolbar.panels.logging.LoggingPanel',
-    'debug_toolbar.panels.redirects.RedirectsPanel', 
-    'debug_toolbar.panels.profiling.ProfilingPanel',
-)
+#DEBUG_TOOLBAR_PANELS = (
+#    'debug_toolbar.panels.versions.VersionsPanel',
+#    'debug_toolbar.panels.timer.TimerPanel',
+#    'debug_toolbar.panels.settings.SettingsPanel',
+#    'debug_toolbar.panels.headers.HeadersPanel',
+#    'debug_toolbar.panels.request.RequestPanel',
+#    'debug_toolbar.panels.sql.SQLPanel',
+#    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
+#    'debug_toolbar.panels.templates.TemplatesPanel',
+#    'debug_toolbar.panels.cache.CachePanel',
+#    'debug_toolbar.panels.signals.SignalsPanel',
+#    'debug_toolbar.panels.logging.LoggingPanel',
+#    'debug_toolbar.panels.redirects.RedirectsPanel', 
+#)
 
 # Specify a custom user model to use
 #AUTH_USER_MODEL = 'accounts.MyUser'
