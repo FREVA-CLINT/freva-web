@@ -87,11 +87,12 @@ def preview_tree(value, autoescape=None):
                     caption = '<br>'.join([key, caption])
                 else:
                     caption = key
-		fn=value['preview_file']
- 		if fn.split('.')[-1] == 'pdf':
-			output.append('<ul class="jqueryFileTree" style="'+visible+'"><li class="file ext_pdf"><a class="pdf_download" target="_blank" href="'+settings.PREVIEW_URL+fn+'">'+key+'</a></li></ul>')
+                fn=value['preview_file']
+                file_ext = fn.split('.')[-1]
+                if file_ext in ['pdf', 'zip']:
+                    output.append('<ul class="jqueryFileTree" style="'+visible+'"><li class="file ext_'+file_ext+'"><a class="pdf_download" target="_blank" href="'+settings.PREVIEW_URL+fn+'">'+key+'</a></li></ul>')
                 else:
-                	output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
+                    output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
                                                                                          'PREVIEW_URL':settings.PREVIEW_URL,
                                                                                          'visible':visible}))
             else:
@@ -108,6 +109,7 @@ def preview_tree(value, autoescape=None):
 
         return '\n'.join(output)
     return mark_safe(_helperDict(value))
+
 
 @register.inclusion_tag('history/templatetags/comment.html')
 def comment_field(user, history_id, historytag_entry=None):
@@ -155,6 +157,7 @@ def get_masked_uid(uid):
 
     return name
 
+
 @register.filter('mask_uid')
 def mask_uid(text, isGuest):
     rettext = text
@@ -172,6 +175,7 @@ def mask_uid(text, isGuest):
             pass
 
     return rettext
+
 
 @register.filter('mask_safe_uid')
 def mask_safe_uid(text, isGuest):
