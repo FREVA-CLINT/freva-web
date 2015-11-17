@@ -89,7 +89,8 @@
 	             <input name="next" type="hidden" id="next_page">
 	             
 	             <button type="submit" class="col-md-2 btn">Sign in</button>
-		{%if external_group %}		
+		{% external_group as show_external%}
+		{%if show_external %}		
 		     <button class="col-md-2 btn" id="signup">Sign Up</button>
 		{%endif%}
 	          </form>
