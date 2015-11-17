@@ -29,7 +29,7 @@ def setting_to_list(value):
 def shell_in_a_box():
     get_cache('default')
     shell_status_code = None
-    return True
+    return False
     #shell_status_code = cache.get('shell_in_a_box')
     if not shell_status_code:
         url = 'https://%s/shell/' % settings.ALLOWED_HOSTS[0]

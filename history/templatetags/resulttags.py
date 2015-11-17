@@ -110,7 +110,6 @@ def preview_tree(value, autoescape=None):
         return '\n'.join(output)
     return mark_safe(_helperDict(value))
 
-
 @register.inclusion_tag('history/templatetags/comment.html')
 def comment_field(user, history_id, historytag_entry=None):
     htag = None
@@ -157,7 +156,6 @@ def get_masked_uid(uid):
 
     return name
 
-
 @register.filter('mask_uid')
 def mask_uid(text, isGuest):
     rettext = text
@@ -175,7 +173,6 @@ def mask_uid(text, isGuest):
             pass
 
     return rettext
-
 
 @register.filter('mask_safe_uid')
 def mask_safe_uid(text, isGuest):
