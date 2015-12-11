@@ -1,5 +1,6 @@
 {% load static %} 
 {% load dialogtags %}
+{% load settingstags %}  
  
  <!-- Beware that this is not part of the dialog! -->   
  <div class="alert alert-success" role="alert" id='alert_send_success' style='display:none'>
@@ -21,7 +22,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Send email to MiKlip users</h4>
+          <h4 class="modal-title">Send email to {% settings_val 'INSTITUTION_NAME' %} users</h4>
         </div>
         <div class="modal-body" id="browsefield">
         	<div class="form-group">

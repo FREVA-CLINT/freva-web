@@ -23,7 +23,7 @@ class ExternalUserForm(forms.ModelForm):
     def clean_username(self):
         value = self.cleaned_data['username']
         self.validate_characters(value)
-        return value
+        return value.lower()
     
     def clean_first_name(self):
         value = self.cleaned_data['first_name']
