@@ -26,7 +26,7 @@ from evaluation_system.misc import utils, config
 
 from evaluation_system.model.history.models import History, Result, ResultTag, HistoryTag
 from django_evaluation import settings
-from plugins.utils import ssh_call
+from plugins.utils import ssh_call, get_scheduler_hosts
 
 from history.utils import FileDict, utf8SaveEncode, sendmail_to_follower, getCaption
 
@@ -618,7 +618,13 @@ def cancelSlurmjob(request):
     slurm_id = history_item.slurmId() 
 
     try:
-        result = ssh_call(username=request.user.username, password=request.POST['password'], command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel -Q %s 2>&1;exit 0"' % (slurm_id,), hostnames=settings.SCHEDULER_HOSTS)
+        hostnames = get_scheduler_hosts(request.user)
+        source_machine = settings.LOAD_MODULE
+        result = ssh_call(
+            username=request.user.username, password=request.POST['password'],
+            command='bash -c "%s module load slurm; scancel -Q %s;exit 0"' % (source_machine, slurm_id,), hostnames=hostnames
+            #command='bash -c "source /client/etc/profile.miklip > /dev/null; scancel -Q %s 2>&1;exit 0"' % (slurm_id,), hostnames=hostnames
+        )
         #logging.debug(result[1].readlines())
         history_item.status=2
         history_item.save()
