@@ -1,8 +1,5 @@
 from django import template
-import requests
 from django.conf import settings
-from django.core.cache import cache, get_cache
-
 
 register = template.Library()
 
