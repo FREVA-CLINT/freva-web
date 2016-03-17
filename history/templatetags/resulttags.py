@@ -10,7 +10,6 @@ from history.utils import FileDict
 from history.models import HistoryTag
 
 import re
-import logging
 
 register = template.Library()
 
@@ -27,25 +26,24 @@ def preview_tree(value, autoescape=None):
     else:
         escaper = lambda x: x
        
-    def _helperDict(dict_, depth=0):
-        '''
+    def _helper_dict(dict_, depth=0):
+        """
         Helper function for the nested display process 
         Output is a file tree (unordered list) and preview images using fancybox2
         
         :param dict_: compressed_copy of a FileDict
         :param depth: tree depth
-        '''
+        """
         output = []
 
+        print 'Sorted:\n', sorted(dict_.items(), key=lambda(k, v): '*' + str(k) if isinstance(v, FileDict) else str(k))
 
-        print 'Sorted:\n', sorted(dict_.items(), key=lambda(k, v) : '*' + str(k) if isinstance(v,FileDict) else str(k))
-
-        sort_key = lambda(k, v) : ('d' if isinstance(v,FileDict) else 'f') + str(k)
+        sort_key = lambda(k, v): ('d' if isinstance(v, FileDict) else 'f') + str(k)
 
         first_dir = True
         first_file = True
 
-        for key,value in sorted(dict_.items(), key=sort_key):
+        for key, value in sorted(dict_.items(), key=sort_key):
             subdict = ''
             subdict_item = None
 
@@ -68,33 +66,35 @@ def preview_tree(value, autoescape=None):
                     output.append('<div class="row" >')
                     first_file = False
                     
-            #if child is a dictionary use recursion
+            # if child is a dictionary use recursion
             if subdict_item:
-                subdict = _helperDict(subdict_item,depth+1)
+                subdict = _helper_dict(subdict_item, depth+1)
 
-            #next lines define css-sytles of listitems
+            # next lines define css-styles of list items
             visible = 'display:none;' if depth > 1 else ''
             wordwrap = 'word-wrap: break-word; white-space: normal;'
-            folder_image = 'directory collapsed' if depth >0 else 'directory expanded'
+            folder_image = 'directory collapsed' if depth > 0 else 'directory expanded'
 
             if not subdict_item:
                 caption = None
 
-                if isinstance(value,dict):
+                if isinstance(value, dict):
                     caption = value.get('caption', None)
                 
                 if caption:
                     caption = '<br>'.join([key, caption])
                 else:
                     caption = key
-                fn=value['preview_file']
+                fn = value['preview_file']
                 file_ext = fn.split('.')[-1]
                 if file_ext in ['pdf', 'zip']:
-                    output.append('<ul class="jqueryFileTree" style="'+visible+'"><li class="file ext_'+file_ext+'"><a class="pdf_download" target="_blank" href="'+settings.PREVIEW_URL+fn+'">'+key+'</a></li></ul>')
+                    output.append('<ul class="jqueryFileTree" style="'+visible+'"><li class="file ext_' + file_ext\
+                                  + '"><a class="pdf_download" target="_blank" href="'+settings.PREVIEW_URL+fn+'">'\
+                                  + key + '</a></li></ul>')
                 else:
-                    output.append(render_to_string('history/templatetags/preview-img.html', {'imgname':caption, 'preview':value['preview_file'], 
-                                                                                         'PREVIEW_URL':settings.PREVIEW_URL,
-                                                                                         'visible':visible}))
+                    output.append(render_to_string('history/templatetags/preview-img.html',
+                                                   {'imgname': caption, 'preview': value['preview_file'],
+                                                    'PREVIEW_URL': settings.PREVIEW_URL, 'visible': visible}))
             else:
                 output.append('<li class="%s" style="%s"><a href="#">%s</a>%s</li>' % (folder_image,
                                                                                        visible + wordwrap,
@@ -108,7 +108,8 @@ def preview_tree(value, autoescape=None):
             output.append('</ul>')
 
         return '\n'.join(output)
-    return mark_safe(_helperDict(value))
+    return mark_safe(_helper_dict(value))
+
 
 @register.inclusion_tag('history/templatetags/comment.html')
 def comment_field(user, history_id, historytag_entry=None):
@@ -119,11 +120,11 @@ def comment_field(user, history_id, historytag_entry=None):
         htag = historytag_entry
         class_id = str(htag.id)
         
-    return {'user' : user,
-            'class_id' : class_id,
-            'history_id' : history_id,
-            'htag' : htag,
-            'tagType' : HistoryTag.tagType,}
+    return {'user': user,
+            'class_id': class_id,
+            'history_id': history_id,
+            'htag': htag,
+            'tagType': HistoryTag.tagType}
 
 
 user_mask = {}
@@ -145,10 +146,9 @@ def mail_to_developer(tool_name):
 
 
 def get_masked_uid(uid):
-    name = None
-
     try:
         name = user_mask[uid]
+    # TODO: Exception too broad!
     except:
         number = len(user_mask) + 1
         name = 'User%i' % number
@@ -156,26 +156,24 @@ def get_masked_uid(uid):
 
     return name
 
+
 @register.filter('mask_uid')
-def mask_uid(text, isGuest):
+def mask_uid(text, is_guest):
     rettext = text
     
-    if isGuest:
+    if is_guest:
         try:
             users = re.findall(settings.USERNAME_FILTER, text)
             for u in users:
                 rettext = rettext.replace(u, get_masked_uid(u))
-
-        # rettext = re.sub(settings.USERNAME_FILTER,
-        #                 settings.USERNAME_REPLACE,
-        #                 text,)
         except:
             pass
 
     return rettext
 
+
 @register.filter('mask_safe_uid')
-def mask_safe_uid(text, isGuest):
-    from  django.utils.safestring import mark_safe
+def mask_safe_uid(text, is_guest):
+    from django.utils.safestring import mark_safe
  
-    return mark_safe(mask_uid(text, isGuest))
+    return mark_safe(mask_uid(text, is_guest))
