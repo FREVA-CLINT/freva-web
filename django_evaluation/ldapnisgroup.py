@@ -3,6 +3,7 @@ import ldap
 from django.http import Http404
 from django_auth_ldap.config import LDAPGroupType
 
+
 class LDAPNisGroupType(LDAPGroupType):
     """
     This class provides group verification via LDAP at
@@ -37,10 +38,10 @@ class LDAPNisGroupType(LDAPGroupType):
 
         SEARCH_BASE = 'ou=netgroup,o=ldap,o=root'
         uid = str(ldap_user.attrs['uid'][0])
-        ldap_filter='(nisNetgroupTriple=\(,%s,\))' % uid
+        ldap_filter = '(nisNetgroupTriple=\(,%s,\))' % uid
         attrs = ['cn']
 
-        s = ldap_user.connection.search_s( SEARCH_BASE, ldap.SCOPE_SUBTREE,
+        s = ldap_user.connection.search_s(SEARCH_BASE, ldap.SCOPE_SUBTREE,
                                            ldap_filter,
                                            attrs)
 
@@ -68,17 +69,16 @@ class LDAPNisGroupType(LDAPGroupType):
 
         SEARCH_BASE = 'ou=netgroup,o=ldap,o=root'
         uid = str(ldap_user.attrs['uid'][0])
-        ldap_filter='(&(nisNetgroupTriple=\(,%s,\))(cn=%s))' % (uid, group_dn)
+        ldap_filter = '(&(nisNetgroupTriple=\(,%s,\))(cn=%s))' % (uid, group_dn)
         attrs = ['cn']
 
         try:
-            s = ldap_user.connection.search_s( SEARCH_BASE,
+            s = ldap_user.connection.search_s(SEARCH_BASE,
                                                ldap.SCOPE_SUBTREE,
                                                ldap_filter,
                                                attrs)
         except Exception, e:
             raise Http404, str(e)
-
 
         return len(s) > 0
 
@@ -88,4 +88,3 @@ class LDAPNisGroupType(LDAPGroupType):
         django_groups = []
 
         return group_info
-    

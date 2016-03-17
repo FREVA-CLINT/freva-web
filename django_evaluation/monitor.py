@@ -4,7 +4,6 @@ http://code.google.com/p/modwsgi/wiki/ReloadingSourceCode#Restarting_Daemon_Proc
 """
 import os
 import sys
-import time
 import signal
 import threading
 import atexit
@@ -17,6 +16,7 @@ _files = []
 _running = False
 _queue = Queue.Queue()
 _lock = threading.Lock()
+
 
 def _restart(path=None):
     """
@@ -34,6 +34,7 @@ def _restart(path=None):
         print >> sys.stderr, '%s Triggering process restart.' % prefix
         
     os.kill(os.getpid(), signal.SIGINT)
+
 
 def _modified(path):
     try:
@@ -60,12 +61,13 @@ def _modified(path):
         if mtime != _times[path]:
             return True
     except:
-        # If any exception occured, likely that file has been
+        # If any exception occurred, likely that file has been
         # been removed just before stat(), so force a restart.
 
         return True
 
     return False
+
 
 def _monitor():
     while 1:
@@ -99,6 +101,7 @@ def _monitor():
 _thread = threading.Thread(target=_monitor)
 _thread.setDaemon(True)
 
+
 def _exiting():
     try:
         _queue.put(True)
@@ -108,9 +111,11 @@ def _exiting():
 
 atexit.register(_exiting)
 
+
 def track(path):
-    if not path in _files:
+    if path not in _files:
         _files.append(path)
+
 
 def start(interval=1.0):
     global _interval
@@ -125,4 +130,3 @@ def start(interval=1.0):
         _running = True
         _thread.start()
     _lock.release()
-

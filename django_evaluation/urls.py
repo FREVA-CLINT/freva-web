@@ -21,12 +21,11 @@ urlpatterns = patterns('',
     url(r'^history/', include('history.urls', namespace='history')),
     url(r'^solr/', include('solr.urls', namespace='solr')),
     url(r'^external/', include('externaluser.urls', namespace='external')),
-    
-    #url(r'^', include('debug_toolbar_user_panel.urls')),
+
     url(r'^bad/$', bad),
     url(r'', include('base.urls', namespace='base')),
     
-    url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/freva-favicon.png'))
+    url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/freva-favicon.png', permanent=True))
 )
 
 if settings.DEBUG:
@@ -35,8 +34,7 @@ if settings.DEBUG:
         url(r'^__debug__/', include(debug_toolbar.urls)),
     )
 
-
-## In DEBUG mode, serve media files through Django.
+# In DEBUG mode, serve media files through Django.
 if settings.DEBUG:
     urlpatterns += staticfiles_urlpatterns()
     # Remove leading and trailing slashes so the regex matches.
