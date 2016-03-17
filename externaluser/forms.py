@@ -2,7 +2,6 @@ from django import forms
 from externaluser.models import ExternalUser
 import hashlib
 import os
-from base64 import urlsafe_b64encode as encode
 import re
 
 
@@ -63,12 +62,3 @@ class ExternalUserForm(forms.ModelForm):
         # now tag the digest above with the {SSHA} tag
         tagged_digest_salt = '{{SSHA}}{}'.format(digest_salt_b64)
         return tagged_digest_salt
-    
-#     def clean_password(self):
-#         pw = self.cleaned_data['password']
-#         return self.hash_password(pw)
-#     
-#     def clean_confirm_password(self):
-#         pw = self.cleaned_data['confirm_password']
-#         return self.hash_password(pw)
-    

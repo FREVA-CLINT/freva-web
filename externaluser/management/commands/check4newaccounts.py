@@ -6,8 +6,9 @@ from evaluation_system.misc import config
 
 
 class Command(BaseCommand):
-    '''
-    '''
+    """
+    Check for new created accounts and send confirmation email
+    """
     def handle(self, *args, **kwargs):
         
         new_users = ExternalUser.objects.filter(status='account_created')
