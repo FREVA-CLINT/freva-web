@@ -3,7 +3,6 @@ import os
 from evaluation_system.misc import utils
 from models import History, HistoryTag
 from django_evaluation import settings
-# from contrib.comments.views.moderation import delete
 
 
 def getCaption(history_id, user):
@@ -17,47 +16,11 @@ def getCaption(history_id, user):
     :param user: the user to get individual captions
 
     """
-    
     hist = History.objects.get(id=history_id)
-    return (hist.caption, hist.caption)
-    
-#    default_caption = None
-#    user_caption = None
-#    
-#    caption_objects = None
-#    defaultcaption_object = None
-#    usercaption_object = None
-#    historytag_objects = None
-#
-#    try:
-#        historytag_objects = HistoryTag.objects.filter(history_id_id=history_id)
-#        caption_objects = historytag_objects.filter(type=HistoryTag.tagType.caption) 
-#    except HistoryTag.DoesNotExist:
-#        pass
-#    
-#    
-#    # check for a user defined caption
-#    if caption_objects:
-#        try:
-#            usercaption_object = caption_objects.filter(uid=user)
-#        except:
-#            pass
-#        try:
-#            defaultcaption_object = caption_objects.filter(uid=None)
-#        except:
-#            pass
-#    
-#    
-#    if usercaption_object:
-#        user_caption = usercaption_object.order_by('-id')[0].text
-#
-#    if defaultcaption_object:
-#        default_caption = defaultcaption_object.order_by('-id')[0].text
-#        
-#    return (default_caption, user_caption)
+    return hist.caption, hist.caption
   
 
-def pygtailwrapper(id, restart = False):
+def pygtailwrapper(id, restart=False):
     """
     This function return the pygtail result for the slurm file
     specified in the history
@@ -74,13 +37,13 @@ def pygtailwrapper(id, restart = False):
     
     # offset file
     offset_file_name = os.path.join(settings.TAIL_TMP_DIR, file_name)
-    offset_file_name = offset_file_name + '.offset'
+    offset_file_name += '.offset'
     
     if restart and os.path.isfile(offset_file_name):
         os.remove(offset_file_name)
-    
-    
+
     return Pygtail(full_file_name, offset_file=offset_file_name)    
+
 
 class FileDict(dict):
     """
@@ -97,6 +60,7 @@ class FileDict(dict):
                      
             self[split_path[0]] = fdict._add_file(split_path[1:], value)
         return self
+
     def add_file(self, str_to_file, value=None):
         """
         Adds a file to the directory structure and assigns a value to it.
@@ -155,13 +119,13 @@ class FileDict(dict):
                     self.pop(k)
                     subdict = FileDict()
                     subdict.add_file(tail, entry)
-                    self[head]=subdict
+                    self[head] = subdict
     
     def get_list(self):
         """
         Returns a nested list of the tree object. 
         """
-        ret =[]
+        ret = []
         
         for item in self.items():
             ret.append(item[0])
@@ -169,7 +133,8 @@ class FileDict(dict):
                 ret.append(item[1].get_list())
         
         return ret
-        
+
+
 def utf8SaveEncode(str_or_list):
     """
     Encodes a string or a list of strings in UTF8
@@ -184,8 +149,7 @@ def utf8SaveEncode(str_or_list):
         :param str: variable to encode
         """
         return unicode(ascii, errors='replace')
-    
-    retval = None
+
     if isinstance(str, basestring):
         retval = strEncode(str_or_list)
         
@@ -196,7 +160,7 @@ def utf8SaveEncode(str_or_list):
         
 
 def sendmail_to_follower(request, history_id, subject, message):
-    '''
+    """
     sends a mail to all follower of the result, except the django user
     :type request: the request object
     :param request: the standard request object
@@ -206,7 +170,7 @@ def sendmail_to_follower(request, history_id, subject, message):
     :param subject: the subject of the mail
     :type message: string
     :param message: the mesaage
-    '''
+    """
     from django.core.urlresolvers import reverse
     from django.core.mail import EmailMessage
     from django_evaluation.ldaptools import get_ldap_object
@@ -215,9 +179,7 @@ def sendmail_to_follower(request, history_id, subject, message):
     
     follower = follower.order_by('uid')
 
-
     addresses = []
-    names = []
 
     user_info = get_ldap_object() 
 
@@ -236,19 +198,16 @@ def sendmail_to_follower(request, history_id, subject, message):
     from_email = request.user.email
     to_email = []
     subject = '[evaluation system]  %s' % subject
-        
 
-    replyto = {'Reply-To' : 'do_not_reply@www-miklip.de'}
+    replyto = {'Reply-To': 'do_not_reply@www-miklip.de'}
 
     for user in follower:
         uid = str(user.uid)
 
         if uid != prev_uid and user.uid != request.user:
-            info= user_info.get_user_info(uid)
+            info = user_info.get_user_info(uid)
             addresses.append(info[3])
         prev_uid = uid
-
-
 
         for addr in addresses:
 
@@ -258,7 +217,6 @@ def sendmail_to_follower(request, history_id, subject, message):
                          text,
                          from_email,
                          to_email,
-                         headers = replyto)
+                         headers=replyto)
 
     email.send()
-            
