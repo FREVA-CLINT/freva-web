@@ -1,5 +1,3 @@
-from django.utils.functional import SimpleLazyObject
-from django.contrib.auth.models import AnonymousUser
 from evaluation_system.api import plugin_manager as pm
 
 

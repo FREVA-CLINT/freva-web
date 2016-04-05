@@ -1,5 +1,4 @@
 import evaluation_system.api.plugin_manager as pm
-from evaluation_system.model.user import User
 from evaluation_system.misc import config
 from django.views.decorators.debug import sensitive_variables
 from django.http import Http404
@@ -7,6 +6,7 @@ from django.conf import settings
 
 import paramiko
 import logging
+
 
 def get_scheduler_hosts(user):
     if user.groups.filter(
@@ -19,10 +19,12 @@ def get_scheduler_hosts(user):
     else:
         return settings.SCHEDULER_HOSTS
 
+
 def get_plugin_or_404(plugin_name, user=None, user_name=None):
-    
+
     try:
-        if user: user_name = user.getName()
+        if user:
+            user_name = user.getName()
         return pm.getPluginInstance(plugin_name, user, user_name)
     except SyntaxError:
         raise 
@@ -81,4 +83,4 @@ def ssh_call(username, password, command, hostnames=['127.0.0.1']):
     # close the connection
     ssh.close()
     
-    return (stdin, stdout, stderr)
+    return stdin, stdout, stderr

@@ -12,7 +12,6 @@ from django.utils.safestring import mark_safe
 from django.views.decorators.debug import sensitive_post_parameters
 
 from evaluation_system.model.solr import SolrFindFiles
-#from django_evaluation import settings
 from django.conf import settings
 from paramiko import AuthenticationException
 
@@ -24,6 +23,7 @@ import logging
 @login_required()
 def data_browser(request):
     return render(request, 'solr/data_browser_new.html')
+
 
 @sensitive_post_parameters('pass')
 @login_required()
@@ -51,16 +51,17 @@ def ncdump(request):
         return HttpResponse('AuthenticationException', status=500,
                             content_type="application/json")
 
+
 @login_required()
 def solr_search(request):
-    args = dict(request.GET)#self.request.arguments.copy()
-    latest = True#bool(request.GET.get('latest', [False]))
+    args = dict(request.GET)
+    latest = True
     try:
         facets = request.GET['facet']
     except KeyError:
         facets = False
     
-    #get page and strange "_" argument
+    # get page and strange "_" argument
     try:
         page_limit = args.pop('page_limit')
         _token = args.pop('_')
@@ -80,66 +81,65 @@ def solr_search(request):
         tmp.update(args)
         args = tmp
 
-
-    if 'start' in args: args['start'] = int(request.GET['start']) 
-    if 'rows' in args: args['rows'] = int(request.GET['rows'])
+    if 'start' in args:
+        args['start'] = int(request.GET['start'])
+    if 'rows' in args:
+        args['rows'] = int(request.GET['rows'])
     
     metadata = None
    
-    def removeYear(d):
-	tmp = [] 
-	for i,val in enumerate(d):
-		try:
-			if i%2 == 0:	
-				try:
-					int(val[-6:])
-					tmp_val = val[:-6]
-				except:
-					int(val[-4:])
-                                        tmp_val = val[:-4]
-				if tmp_val not in tmp:
-					tmp.append(tmp_val)
-					tmp.append(d[i+1])
-		except:
-			tmp.append(val)
-			tmp.append(d[i+1])
-	return tmp
-		
-    def reorderResults(res):
+    def remove_year(d):
+        tmp = []
+        for i, val in enumerate(d):
+            try:
+                if i % 2 == 0:
+                    try:
+                        int(val[-6:])
+                        tmp_val = val[:-6]
+                    except:
+                        int(val[-4:])
+                        tmp_val = val[:-4]
+                    if tmp_val not in tmp:
+                        tmp.append(tmp_val)
+                        tmp.append(d[i+1])
+            except:
+                tmp.append(val)
+                tmp.append(d[i+1])
+        return tmp
+
+    def reorder_results(res):
         import collections
-        cmor = ['project','product','institute','model','experiment','time_frequency','realm','variable','ensemble','data_type']
+        cmor = ['project', 'product', 'institute', 'model', 'experiment', 'time_frequency', 'realm', 'variable',
+                'ensemble', 'data_type']
         results = collections.OrderedDict()
         for cm in cmor:
-	    try:
+            try:
                 results[cm] = res.pop(cm)
             except KeyError:
                 pass
-        for k,v in res.iteritems():
+        for k, v in res.iteritems():
             results[k] = v
         return results
- 
-    #return HttpResponse(json.dumps({"data": {"product": ["baseline0", 10, "baseline1", 10, "output", 1129, "output1", 1834]}, "metadata": None}))
+
     if facets:
-	args['facet.limit']=-1
-	logging.debug(args)
-	#return HttpResponse(json.dumps(args))
+        args['facet.limit'] = -1
+        logging.debug(args)
         args.pop('facet')
         if facets == '*':
-            #means select all, 
+            # means select all,
             facets = None
 
         if facets == 'experiment_prefix':
-		args['experiment'] = args.pop('experiment_prefix')
-	  	results = SolrFindFiles.facets(facets='experiment', **args)
-		results['experiment_prefix'] = removeYear(results.pop('experiment'))
-		#results = {"experiment_prefix": ["baseline0", 10, "baseline1", 10, "output", 1129, "output1", 1834]}
-	else:
-		if 'experiment_prefix' in args: args['experiment'] = args.pop('experiment_prefix')[0]+'*'
-		results = SolrFindFiles.facets(facets=facets, **args)
-		results = reorderResults(results)
+            args['experiment'] = args.pop('experiment_prefix')
+            results = SolrFindFiles.facets(facets='experiment', **args)
+            results['experiment_prefix'] = remove_year(results.pop('experiment'))
+        else:
+            if 'experiment_prefix' in args:
+                args['experiment'] = args.pop('experiment_prefix')[0]+'*'
+            results = SolrFindFiles.facets(facets=facets, **args)
+            results = reorder_results(results)
     else:
-        #return HttpResponse(json.dumps(dict(hallo='was')))
-        results = SolrFindFiles.search( _retrieve_metadata = True, **args)
+        results = SolrFindFiles.search(_retrieve_metadata=True, **args)
         metadata = results.next()
         results = list(results)
       
