@@ -356,38 +356,36 @@ $(document).ready(function(){
 	});
    
     {% if restricted_user %} 
-    $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+        $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
 
-    // actually the runbutton is a forwarding
-    $('#runButton').removeAttr('disabled');
-    $('.tourbtn').removeAttr('disabled');
-    $('#runButton').on('click', function(e){
-    	$('#guestModal').modal({show : true, backdrop : 'static'});
-    }); 
-
-    searchResults('similarDiv');
+        // actually the runbutton is a forwarding
+        $('#runButton').removeAttr('disabled');
+        $('.tourbtn').removeAttr('disabled');
+        $('#runButton').on('click', function(e){
+        	$('#guestModal').modal({show : true, backdrop : 'static'});
+        }); 
     {% elif error_message %}
-    $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
-    $('#okBtn').removeAttr('disabled');
+        $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+        $('#okBtn').removeAttr('disabled');
     
     {% else %}
     
-    $('#runButton').on('click', function(e){
-	searchResults('similarResults'); //This triggers the search for similar results
-    	$('#myModalPw').modal('show');
-    }); 
+        $('#runButton').on('click', function(e){
+            searchResults('similarResults'); //This triggers the search for similar results
+    	    $('#myModalPw').modal('show');
+        }); 
  
     
-    $('#submit_analysis').on('click', function(e){
-        $('#submit_analysis').button('loading');	
-    	var pw = $('#password_temp').val();
-    	$('html').addClass('wait');
-    	$('#id_password_hidden').val(pw);
+        $('#submit_analysis').on('click', function(e){
+            $('#submit_analysis').button('loading');	
+    	    var pw = $('#password_temp').val();
+    	    $('html').addClass('wait');
+    	    $('#id_password_hidden').val(pw);
     	
-    	$('#plugin_form').submit();
-	return false;    	
+    	    $('#plugin_form').submit();
+	    return false;    	
     
-    });
+        });
 
 //    $('form :input').change(function(){
 //	console.log('chnage');
@@ -399,15 +397,17 @@ $(document).ready(function(){
     $('form :input').change(function(){
         searchResults('similarDiv');
     });
+    searchResults('similarDiv'); 
+    
 
-$('#simAffix').affix({
-  offset: {
-    top: 200,
-    bottom: function () {
-      return (this.bottom = $('.footer').outerHeight(true))
-    }
-  }
-})
+    $('#simAffix').affix({
+        offset: {
+            top: 200,
+            bottom: function () {
+                return (this.bottom = $('.footer').outerHeight(true))
+            }
+        }
+    });
 
 
 });
