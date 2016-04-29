@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from externaluser.forms import ExternalUserForm
-from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from templated_email import send_templated_mail
@@ -27,8 +26,7 @@ def external_register(request):
                     'website': config.get('project_website')
                 },
             )
-            
-            
+
             return HttpResponseRedirect('%s?success=true' % reverse('external:external_register'))
     else:
         form = ExternalUserForm()

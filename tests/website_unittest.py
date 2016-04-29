@@ -1,17 +1,17 @@
 import unittest
 import time
-import inspect
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.support.select import Select
+
 
 class EvaluationSystemWeb(unittest.TestCase):
     
     id_to_test = '13056'
     
     def logout_user(self):
-        #if user is logge, log him out
+        # if user is logged, log him out
         try:
             elem = self.driver.find_element_by_link_text('logout ('+self.username+')')
             elem.click()
@@ -21,41 +21,37 @@ class EvaluationSystemWeb(unittest.TestCase):
     def login_user(self):
         try:
             elem = self.driver.find_element_by_link_text('logout ('+self.username+')')
-        except :
+        except:
             elem = self.driver.find_element_by_name('user')
             elem.send_keys(self.username)
             elem = self.driver.find_element_by_name('password')
             elem.send_keys(self.pw+Keys.RETURN)
             time.sleep(2)
             self.assert_('Evaluation System' in self.driver.title)    
-    def click_link(self,linktext):
+
+    def click_link(self, linktext):
         try:
             elem = self.driver.find_element_by_link_text(linktext)
             elem.click()    
         except NoSuchElementException:
-            self.fail("Can't find linktext %s" % (linktext))    
+            self.fail("Can't find link text %s" % linktext)
     
-    def start_tool(self,tool,caption=''):
+    def start_tool(self, tool, caption=''):
         self.driver.find_element_by_id('runButton').click()
         elem = self.driver.find_element_by_id('password_temp')
         elem.clear()
         elem.send_keys(self.pw)
         self.driver.find_element_by_id('submit_analysis').click()        
         if caption == '':
-            self.assertEqual(tool+' results - Evaluation System',self.driver.title,'Tool could not be started')
+            self.assertEqual(tool+' results - Evaluation System', self.driver.title, 'Tool could not be started')
         else:
-            self.assertEqual(caption+' ('+tool.upper()+') results - Evaluation System',self.driver.title,'Tool could not be started')
+            self.assertEqual(caption+' ('+tool.upper()+') results - Evaluation System',
+                             self.driver.title, 'Tool could not be started')
               
-    def __init__(self,*args,**kwargs):
+    def __init__(self, *args, **kwargs):
         
-        super(EvaluationSystemWeb,self).__init__(*args,**kwargs)
-#        fp = webdriver.FirefoxProfile(profile_directory="/home/illing/.mozilla/firefox/9rju279k.test/")
-#        fp = webdriver.FirefoxProfile(profile_directory="/home/illing/.mozilla/firefox/my01rnff.default/")
-#        fp.set_preference("webdriver_assume_untrusted_issuer", False)
-#        fp.set_preference("webdriver_accept_untrusted_certs", True)
-#        fp.accept_untrusted_certs = True
-#        fp.update_preferences()
-        self.driver = webdriver.Firefox()#firefox_profile=fp)
+        super(EvaluationSystemWeb, self).__init__(*args, **kwargs)
+        self.driver = webdriver.Firefox()
         self.driver.desired_capabilities['acceptSslCerts'] = True 
         self.driver.setAcceptUntrustedCertificates = True 
         self.driver.setAssumeUntrustedIssueer = False
@@ -63,26 +59,25 @@ class EvaluationSystemWeb(unittest.TestCase):
         self.username = username
         self.pw = pw
         
-    def __del__(self,*args,**kwargs):
-        #pass
+    def __del__(self, *args, **kwargs):
         self.driver.close()
     
     def setUp(self):
         self.driver.get('https://www-miklip.dkrz.de/')
-        self.driver.implicitly_wait(10) # seconds
+        self.driver.implicitly_wait(10)  # seconds
         self.login_user()
         
     def test_login(self):
         self.driver.get('https://www-miklip.dkrz.de/')
         self.assert_('Evaluation System' in self.driver.title)
-        #test login process
+        # test login process
         self.logout_user()
         elem = self.driver.find_element_by_name('user')
         elem.send_keys(self.username)
         elem = self.driver.find_element_by_name('password')
         elem.send_keys(self.pw+Keys.RETURN)
         self.assert_('Evaluation System' in self.driver.title)
-        #raises NoSuchElementException if not logged in
+        # raises NoSuchElementException if not logged in
         try:
             elem = self.driver.find_element_by_link_text('logout ('+self.username+')')
         except NoSuchElementException:
@@ -92,24 +87,23 @@ class EvaluationSystemWeb(unittest.TestCase):
         self.driver.get('https://www-miklip.dkrz.de/solr/data-browser/')
         self.assert_('Data Browser - Evaluation System' in self.driver.title)
         self.click_link('project')
-        self.driver.implicitly_wait(10) # seconds
+        self.driver.implicitly_wait(10)  # seconds
         self.click_link('baseline0')
         elem = self.driver.find_element_by_css_selector('span.ncdump')
         elem.click()
 
-        #test ncdump functionality
+        # test ncdump functionality
         elem = self.driver.find_element_by_id('password_temp')
         elem.send_keys(self.pw+Keys.RETURN)
         elem = self.driver.find_element_by_css_selector('pre')
-        #self.assert_('netcdf sftof_fx_MPI-ESM-LR_dffs4e1984_r0i0p0 {' in elem.text)
         elem = self.driver.find_element_by_class_name('close')
         elem.click()
 
-        #test variable title 
+        # test variable title
         self.driver.find_element_by_class_name('facet_clear').click()
         self.click_link('variable')
         elem = self.driver.find_element_by_link_text('tas')
-        self.assertEqual('Near-Surface Air Temperature',elem.get_attribute('data-original-title'))    
+        self.assertEqual('Near-Surface Air Temperature', elem.get_attribute('data-original-title'))
         
     def test_tools(self):
         import time
@@ -117,7 +111,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         self.driver.get('https://www-miklip.dkrz.de/plugins/')
         self.assertEqual('Tools - Evaluation System', self.driver.title)
         
-        #tool_to_check
+        # tool_to_check
         tool = 'MoviePlotter'
         elem = self.driver.find_element_by_partial_link_text(tool)
         elem.click()
@@ -126,14 +120,14 @@ class EvaluationSystemWeb(unittest.TestCase):
         self.click_link('Start analysis')
         self.assertEqual(tool + ' setup - Evaluation System', self.driver.title)
         
-        #test movieplotter form
+        # test movieplotter form
         self.driver.find_element_by_id('id_input_solr').click()
         
         solr_dict = dict(experiment='hadcrut3v')
 
         self.driver.find_element_by_class_name('VS-search-inner').click()
-        self.driver.implicitly_wait(10) # seconds
-        for key,val in solr_dict.iteritems():
+        self.driver.implicitly_wait(10)  # seconds
+        for key, val in solr_dict.iteritems():
             elem = self.driver.find_element_by_partial_link_text(key).click()
             elem = self.driver.find_element_by_partial_link_text(val).click()   
         time.sleep(5)
@@ -141,22 +135,23 @@ class EvaluationSystemWeb(unittest.TestCase):
         elem.send_keys(Keys.TAB+Keys.SPACE)
         self.driver.find_element_by_id('solr_select_file').click()
 
-        elem=self.driver.find_element_by_id('id_seldate')
+        elem = self.driver.find_element_by_id('id_seldate')
         elem.clear()
         elem.send_keys('2010-01-0100:00:00,2010-12-3122:00:00')
         
-        #add caption to result
+        # add caption to result
         testcaption = 'test case caption'
         self.driver.find_element_by_id('id_caption').send_keys(testcaption)
         
-        self.start_tool('MOVIEPLOTTER',testcaption)
+        self.start_tool('MOVIEPLOTTER', testcaption)
         
-        #test caption 
-        self.assertEqual(testcaption+' ('+tool.upper()+')', self.driver.find_element_by_id('result_caption').text, 'Setting caption failed')
+        # test caption
+        self.assertEqual(testcaption+' ('+tool.upper()+')', self.driver.find_element_by_id('result_caption').text,
+                         'Setting caption failed')
         
-        #cancel job
+        # cancel job
         self.driver.find_element_by_id('cancelButton_').click()
-        elem=self.driver.find_element_by_id('password_temp')
+        elem = self.driver.find_element_by_id('password_temp')
         elem.clear()
         elem.send_keys(self.pw)
         self.driver.find_element_by_id('submitCancelBtn').click()
@@ -165,7 +160,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         except:
             self.fail('Job is not cancelled')
         
-        #rerun configuration
+        # rerun configuration
         self.driver.find_element_by_id('config_button').click()
         self.assertEqual(tool+' setup - Evaluation System', self.driver.title, 'Edit config not loaded')
         
@@ -173,25 +168,27 @@ class EvaluationSystemWeb(unittest.TestCase):
         
     def test_results(self):
         self.driver.get('https://www-miklip.dkrz.de/history/'+self.id_to_test+'/results/')
-        self.assertEqual('MOVIEPLOTTER results - Evaluation System', self.driver.title, 'Cant find result (title changed?)')
+        self.assertEqual('MOVIEPLOTTER results - Evaluation System', self.driver.title,
+                         'Cant find result (title changed?)')
         
-        #test share results
+        # test share results
         self.click_link('Share Results')
         time.sleep(2)
         elem = self.driver.find_element_by_class_name('select2-choices')
-        #send mail to 'b324057'
+        # send mail to 'b324057'
         self.driver.execute_script("$('#mail_to_field').val('"+self.username+"');")
         self.driver.find_element_by_id('sendBtn').click()
-        #WORKAROUND OPEN DIALOG AGAIN
+        # WORKAROUND OPEN DIALOG AGAIN
         self.click_link('Share Results')
-        time.sleep(5)  #wait until mail is sent
-        self.assertEqual(self.driver.find_element_by_css_selector('div#status_div > p').text, 'Sent to Sebastian Illing','Mail not sent')
+        time.sleep(5)  # wait until mail is sent
+        self.assertEqual(self.driver.find_element_by_css_selector('div#status_div > p').text,
+                         'Sent to Sebastian Illing', 'Mail not sent')
         self.driver.find_element_by_class_name('close').click()
         
-        #test set caption
+        # test set caption
         self.click_link('Set Caption')
         time.sleep(2)
-        elem=self.driver.find_element_by_id('caption_field')
+        elem = self.driver.find_element_by_id('caption_field')
         elem.clear()
         elem.send_keys('test caption')
         self.driver.find_element_by_id('applyBtn').click()
@@ -204,7 +201,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         time.sleep(1)
         self.assertEqual('test caption (MOVIEPLOTTER)', self.driver.title, 'Cant set caption')
         
-        #test notes
+        # test notes
         self.driver.find_element_by_partial_link_text('Notes').click()
         time.sleep(1)
         self.click_link('New')
@@ -212,7 +209,7 @@ class EvaluationSystemWeb(unittest.TestCase):
         elem.send_keys('Super Results!')
         self.click_link('Save')
         time.sleep(3)
-        #edit note
+        # edit note
         elem = self.driver.find_element_by_link_text('Edit')
         note_id = elem.get_attribute('id')
         note_id = note_id.split('_')[-1]
@@ -228,24 +225,24 @@ class EvaluationSystemWeb(unittest.TestCase):
     def test_history(self):
         
         self.driver.get('https://www-miklip.dkrz.de/history/')
-        self.assertEqual('History - Evaluation System', self.driver.title, 'Cant open hisoty')
-        self.driver.implicitly_wait(10) # seconds
-        #get latest result id
-        elem = self.driver.find_element_by_css_selector('tbody tr')#table#DataTables_Table_0  tr')
+        self.assertEqual('History - Evaluation System', self.driver.title, 'Cant open history')
+        self.driver.implicitly_wait(10)  # seconds
+        # get latest result id
+        elem = self.driver.find_element_by_css_selector('tbody tr')
         hist_id = elem.get_attribute('id')
         
-        #delete element
+        # delete element
         self.driver.find_element_by_id('cb_'+hist_id).click()
         self.click_link('Delete')
-        #filter deleted elements
+        # filter deleted elements
         select = Select(self.driver.find_element_by_css_selector('select#filter_flag'))
         select.select_by_value('3')
         btn = self.driver.find_element_by_css_selector('form button')
         btn.click()
-        #undelete element
+        # undelete element
         self.driver.find_element_by_id('cb_'+hist_id).click()
         self.click_link('Undelete')
-        #filter undeleted
+        # filter undeleted
         select = Select(self.driver.find_element_by_css_selector('select#filter_flag'))
         select.select_by_value('-1')
         btn = self.driver.find_element_by_css_selector('form button')

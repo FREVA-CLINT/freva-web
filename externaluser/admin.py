@@ -3,7 +3,7 @@ from externaluser.models import ExternalUser
 
 
 class ExternalUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'email', 'status')
+    list_display = ('id', 'email', 'status_changed', 'status')
 
 
 admin.site.register(ExternalUser, ExternalUserAdmin)

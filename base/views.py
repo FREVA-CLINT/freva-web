@@ -1,8 +1,6 @@
-""" Views for the base application """
-
 import logging
 
-from django.http import Http404, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 import django.contrib.auth as auth
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -10,10 +8,10 @@ from django.views.decorators.debug import sensitive_variables, sensitive_post_pa
 from django_evaluation.monitor import _restart
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.shortcuts import redirect
 from subprocess import Popen, STDOUT, PIPE
 
 from evaluation_system.misc import config
+
 
 @sensitive_variables('passwd')
 @sensitive_post_parameters('password')
@@ -40,7 +38,7 @@ def home(request):
     
                     guest_login = u.groups.filter(name='Guest')
     
-                    if(forward):
+                    if forward:
                         return HttpResponseRedirect(forward)
 
                 else:
@@ -55,13 +53,11 @@ def home(request):
             login_failed = True
             logging.debug(str(e))
 
-
     return render(request, 'base/home.html',
-                  {'login_failed':login_failed,
-                   'guest_login' : guest_login,
-                   'next' : next_page})
-    
-    # return render(request, 'base/home.html',{'login_failed':login_failed})
+                  {'login_failed': login_failed,
+                   'guest_login': guest_login,
+                   'next': next_page})
+
 
 def dynamic_css(request):
     main_color = settings.MAIN_COLOR
@@ -72,11 +68,12 @@ def dynamic_css(request):
                                               'border_color': border_color},
                   content_type='text/css')
 
+
 def wiki(request):
     """
     View rendering the iFrame for the wiki page.
     """
-    return render(request, 'base/wiki.html', {'page':'https://code.zmaw.de/projects/miklip-d-integration/wiki'})
+    return render(request, 'base/wiki.html', {'page': 'https://code.zmaw.de/projects/miklip-d-integration/wiki'})
 
 
 @login_required()
@@ -87,7 +84,7 @@ def shell_in_a_box(request):
     if request.user.groups.filter(
         name=config.get('external_group', 'noexternalgroupset')
     ).exists():
-        shell_url  = '/shell2/'
+        shell_url = '/shell2/'
     else:
         shell_url = '/shell/'
     
@@ -108,25 +105,27 @@ def contact(request):
         try:
             myemail = myinfo[3]
             username = request.user.get_full_name()
+        # TODO: Exception too broad!
         except:
             myemail = settings.SERVER_EMAIL
             username = 'guest'
         mail_text = request.POST.get('text')
-        a=send_templated_mail(
+        send_templated_mail(
             template_name='mail_to_admins',
             from_email=myemail,
             recipient_list=[a[1] for a in settings.ADMINS],
             context={
-                'username':username,
-                'text':mail_text,
+                'username': username,
+                'text': mail_text,
                 'project': config.get('project_name'),
                 'website': config.get('project_website')
             },
-            headers={'Reply-To' : myemail},
+            headers={'Reply-To': myemail},
         )
         return HttpResponseRedirect('%s?success=1' % reverse('base:contact'))
-    success = True if request.GET.get('success',None) else False
+    success = True if request.GET.get('success', None) else False
     return render(request, 'base/contact.html', {'success': success})
+
 
 def logout(request):
     """
@@ -134,18 +133,19 @@ def logout(request):
     """
     auth.logout(request)
     
-    return render(request, 'base/home.html',{'k':'logged out'})
+    return render(request, 'base/home.html', {'k': 'logged out'})
+
 
 @login_required()
 @user_passes_test(lambda u: u.is_superuser)
 def restart(request):
     """
-    Restart formular for the webserver
+    Restart form for the webserver
     """
-    
     try:
-        if request.POST['restart']=='1':
+        if request.POST['restart'] == '1':
             _restart(path=None)
+    # TODO: Exception too broad!
     except:
         return render(request, 'base/restart.html')
 
@@ -163,7 +163,7 @@ def ncdump(request):
     exception = ''
     command = ''
 
-    if not file is None:
+    if file is not None:
         command = '/usr/local/www-bin/ncdump ' + file
         try:
             p = Popen(command, stdout=PIPE, stderr=STDOUT)
@@ -172,7 +172,7 @@ def ncdump(request):
             exception = str(e)
 
     return render(request, 'base/ncdump.html', {'ncd_file': file,
-                                                'ncd_out' : stdout,
-                                                'ncd_err' : stderr,
-                                                'ncd_exc' : exception,
-                                                'ncd_cmd' : command})
+                                                'ncd_out': stdout,
+                                                'ncd_err': stderr,
+                                                'ncd_exc': exception,
+                                                'ncd_cmd': command})

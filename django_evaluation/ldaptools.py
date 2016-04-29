@@ -1,12 +1,14 @@
-import ldap
+#import ldap
 
 import settings
 from exceptions import ValueError
 from django.core.cache import cache, get_cache
-import re
 from django.core.exceptions import ImproperlyConfigured
 import importlib
 from abc import ABCMeta, abstractmethod
+import grp
+import pwd
+
 
 class LdapUserInformation(object):
     __metaclass__ = ABCMeta
@@ -16,9 +18,9 @@ class LdapUserInformation(object):
     user_info_dict = {}   
  
     def _connect_to_ldap(self):
-        '''
+        """
         Establish ldap connection, use django settings
-        '''
+        """
         if self._con:
             return self._con
         # whenever a CA_CERTDIR is set use it.
@@ -31,7 +33,7 @@ class LdapUserInformation(object):
         con = None
         connected_to = None
         # try any LDAP server in list
-        while(SERVER):
+        while SERVER:
             try:
                 con = ldap.initialize(SERVER)
                 connected_to = SERVER
@@ -53,7 +55,7 @@ class LdapUserInformation(object):
     def load_from_ldap(self):
         pass
 
-    def get_user_info(self, uid = None):
+    def get_user_info(self, uid=None):
         """
         Returns the user info and loads it whenever necessary
         """
@@ -81,15 +83,16 @@ class LdapUserInformation(object):
     def connection(self):
         return self._connect_to_ldap()
 
-    def __del__(self,*args,**kwargs):
+    def __del__(self, *args, **kwargs):
         self._con.unbind_s()
+
 
 class FUUserInformation(LdapUserInformation):
 
     def load_from_ldap(self):
         # search all users belonging
         con = self.connection
-        res= con.search_s(settings.LDAP_GROUP_BASE,
+        res = con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
                           'objectClass=account'
                           )
@@ -107,25 +110,26 @@ class FUUserInformation(LdapUserInformation):
             except:
                 prename = ''
             try: 
-		lastname = name[0] 
-	    except: 
-		lastname = ''
-	    mail = user[1].get('mail', None)
+                lastname = name[0]
+            except:
+                lastname = ''
+            mail = user[1].get('mail', None)
             gecos = user[1].get('gecos', None)
 
             if mail:
                 email = mail
-                user_info.append((uid,prename,lastname,email))
+                user_info.append((uid, prename, lastname, email))
             elif gecos:
                 tmp = gecos[0].split(',')
                 for val in tmp:
                     if '@' in val:
                         email = val
-                        user_info.append((uid,prename,lastname,email))
+                        user_info.append((uid, prename, lastname, email))
                         break
 
-        self.user_info = sorted(user_info, key=lambda tup: tup[1]);
+        self.user_info = sorted(user_info, key=lambda tup: tup[1])
         return self.user_info
+
 
 class MiklipUserInformation(LdapUserInformation):
     """
@@ -139,7 +143,7 @@ class MiklipUserInformation(LdapUserInformation):
         Loads the miklip user ids and the info belonging to the user
         """
         con = self.connection
-        res= con.search_s(settings.LDAP_GROUP_BASE,
+        res = con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
                           attrlist=['memberUid'],
                           filterstr=settings.LDAP_MIKLIP_GROUP_FILTER)
@@ -150,7 +154,7 @@ class MiklipUserInformation(LdapUserInformation):
         # fill the users list
         for user in user_list:
             # look up the user entries in the LDAP System
-            res= con.search_s(settings.LDAP_USER_BASE,
+            res = con.search_s(settings.LDAP_USER_BASE,
                               ldap.SCOPE_SUBTREE,
                               attrlist=self.ldap_keys,
                               filterstr='uid=%s' % user)
@@ -168,15 +172,28 @@ class MiklipUserInformation(LdapUserInformation):
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   mail[-1],))
-        self.user_info = sorted(user_info, key=lambda tup: tup[1]);
+        self.user_info = sorted(user_info, key=lambda tup: tup[1])
         return self.user_info
 
 
+class UCARUserInformation(LdapUserInformation):
+
+    def load_from_ldap(self):
+        info = grp.getgrnam('freva')
+        users = info.gr_mem
+        user_info = []
+        for user in users:
+            tmp = pwd.getpwnam(user)
+            name = tmp.pw_gecos.split(' ')
+            user_info.append((user, name[1], name[0], '%s@ucar.edu' % user))                
+        self.user_info = sorted(user_info, key=lambda tup: tup[1])
+        return self.user_info
+
 
 def get_ldap_object():
-    '''
+    """
     Returns an instance of the ldap class specified in django settings
-    '''
+    """
     try:
         parts = settings.LDAP_MODEL.split('.')
         model_name = parts[-1]
@@ -185,7 +202,7 @@ def get_ldap_object():
         raise ImproperlyConfigured('LDAP_MODEL must be of the form '
                                    '"module.model_name" (i.e. django_evaluation.ldaptools.MiklipUserInformation')
     m = importlib.import_module(module)
-    return getattr(m,model_name)()
+    return getattr(m, model_name)()
 
-#This is for backward compabillity
+# This is for backward compatibility
 miklip_user_information = get_ldap_object
