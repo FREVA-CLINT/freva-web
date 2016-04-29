@@ -1,4 +1,4 @@
-import ldap
+#import ldap
 
 import settings
 from exceptions import ValueError
@@ -6,6 +6,8 @@ from django.core.cache import cache, get_cache
 from django.core.exceptions import ImproperlyConfigured
 import importlib
 from abc import ABCMeta, abstractmethod
+import grp
+import pwd
 
 
 class LdapUserInformation(object):
@@ -170,6 +172,20 @@ class MiklipUserInformation(LdapUserInformation):
                                   ' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   mail[-1],))
+        self.user_info = sorted(user_info, key=lambda tup: tup[1])
+        return self.user_info
+
+
+class UCARUserInformation(LdapUserInformation):
+
+    def load_from_ldap(self):
+        info = grp.getgrnam('freva')
+        users = info.gr_mem
+        user_info = []
+        for user in users:
+            tmp = pwd.getpwnam(user)
+            name = tmp.pw_gecos.split(' ')
+            user_info.append((user, name[1], name[0], '%s@ucar.edu' % user))                
         self.user_info = sorted(user_info, key=lambda tup: tup[1])
         return self.user_info
 
