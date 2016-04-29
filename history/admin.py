@@ -1,5 +1,5 @@
 from django.contrib import admin
-from history.models import History
+from history.models import History, Configuration
 from django.contrib.auth.models import User
 
 
@@ -34,5 +34,10 @@ class HistoryAmdin(admin.ModelAdmin):
             return instance.uid
         except:
             return History.objects.values_list('uid',flat=True).filter(id=instance.id)[0]
-	
+
+class ConfigurationAdmin(admin.ModelAdmin):
+    list_display = ('value',)	
+
+
 admin.site.register(History, HistoryAmdin)
+admin.site.register(Configuration, ConfigurationAdmin)
