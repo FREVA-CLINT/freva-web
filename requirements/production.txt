@@ -2,7 +2,7 @@
 -r compiled.txt
 
 # Django stuff
-Django>=1.8
+Django>=1.8,<1.9
 
 # Templates
 Markdown
