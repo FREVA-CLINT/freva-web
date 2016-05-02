@@ -1,4 +1,4 @@
-#import ldap
+import ldap
 
 import settings
 from exceptions import ValueError
