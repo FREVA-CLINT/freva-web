@@ -92,7 +92,7 @@ class FUUserInformation(LdapUserInformation):
         con = self.connection
         res = con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
-                          'objectClass=account'
+                          'objectClass=person'
                           )
 
         self.miklip_user = []
