@@ -6,20 +6,11 @@ repo. If you need to override a setting locally, use local.py
 import os
 import logging
 
-import ldap
-
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
 
 import django.utils
-
-import django_auth_ldap.config as ldap_cfg
-from django_auth_ldap.config import LDAPSearch
-
-from django_evaluation.ldapnisgroup import LDAPNisGroupType
-
-#from evaluation_system.model.solr import SolrFindFiles
 
 def get_env_setting(setting):
     """ Get the environment setting or return exception """
@@ -28,17 +19,6 @@ def get_env_setting(setting):
     except KeyError:
         error_msg = "Set the %s env variable" % setting
         raise ImproperlyConfigured(error_msg)
-
-# register the LDAP authentication backend 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'django_auth_ldap.backend.LDAPBackend',
-)
-
-# the host to start the scheduler
-SCHEDULER_HOSTS=['miklip02.dkrz.de','miklip03.dkrz.de']
-
-INSTITUTION_LOGO = ''
 
 LOGIN_URL = '/?login_required=1'
 
@@ -69,22 +49,17 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.admindocs',
-# no longer in django1.8    'django.contrib.markup',
     'django.contrib.humanize',
     'django.contrib.syndication',
     'django.contrib.staticfiles',
     'django.contrib.flatpages',
 
     # Third-party apps, patches, fixes
-#    'djcelery',
 #    'debug_toolbar',
     'compressor',
     'bootstrap3',
     'datatableview',
 #    'debug_toolbar_user_panel',
-
-    # Database migrations
-#    'south',
 
     'base',
     'plugins',
@@ -139,7 +114,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    ('preview', '/miklip/integration/evaluation_system/database/preview'),
+    ('preview', '/home/freva/ral-ces/misc4freva/db4freva/preview/'),
 )
 
 # If you set this to False, Django will make some optimizations so as not
@@ -242,9 +217,6 @@ def custom_show_toolbar(request):
 #    'debug_toolbar.panels.redirects.RedirectsPanel', 
 #)
 
-# Specify a custom user model to use
-#AUTH_USER_MODEL = 'accounts.MyUser'
-
 FILE_UPLOAD_PERMISSIONS = 0664
 
 # The WSGI Application to use for runserver
@@ -270,17 +242,6 @@ SYSLOG_TAG = "http_app_django_evaluation"  # Make this unique to your project.
 
 SECRET_KEY = 'hj1bkzobng0ck@0&%t509*1ki$#)i5y+i0)&=7zv@amu8pm5*t'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'evaluationsystem',
-        'USER': 'evaluationsystem',
-        'PASSWORD': 'miklip',
-        'HOST': 'wwwdev-miklip',
-        'PORT': '3306',
-    },
-}
-
 # Recipients of traceback emails and other notifications.
 ADMINS = (
     ('Sebastian Illing', 'sebastian.illing@met.fu-berlin.de'),
@@ -297,10 +258,6 @@ CACHES = {
 }
 DEBUG = TEMPLATE_DEBUG = False
 DEV = False
-
-# Hosts/domain names that are valid for this site; required if DEBUG is False
-# See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ['www-miklip.dkrz.de', 'wwwdev-miklip.dkrz.de']
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Hardcoded values can leak through source control. Consider loading

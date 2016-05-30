@@ -345,6 +345,9 @@ def results(request, id, show_output_only=False):
                                                                                         History.Flag.shared,
                                                                                         History.Flag.guest]):
                 raise PermissionDenied
+    if not request.user.is_authenticated():
+        request.user.isGuest = True
+
 
     try:
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
