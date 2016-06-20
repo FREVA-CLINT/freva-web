@@ -281,7 +281,13 @@ function activate_browse(dir) {
  }
 
 function searchResults(container){
-	var form_vals = $('#plugin_form').serialize();
+	var form_vals = $('#plugin_form').serializeArray();
+        var index_pw;
+        $.each(form_vals, function(index, value) {
+            if(value.name == 'password_hidden')
+                index_pw = index;
+        });
+        form_vals.splice(index_pw, 1);
 	$('#'+container).html('<p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" style="margin-left:50px;"/>');
 	$.ajax({
 	   url: '/plugins/{{tool.name}}/similar-results/',
