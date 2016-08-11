@@ -94,7 +94,7 @@ class FUUserInformation(LdapUserInformation):
         con = self.connection
         res = con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
-                          'objectClass=account'
+                          'objectClass=person'
                           )
 
         self.miklip_user = []
@@ -113,7 +113,7 @@ class FUUserInformation(LdapUserInformation):
                 lastname = name[0]
             except:
                 lastname = ''
-            mail = user[1].get('mail', None)
+            mail = user[1].get('mail', None)[0]
             gecos = user[1].get('gecos', None)
 
             if mail:
