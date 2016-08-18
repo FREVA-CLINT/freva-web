@@ -281,7 +281,7 @@ function activate_browse(dir) {
  }
 
 function searchResults(container){
-	var form_vals = $('#plugin_form').serializeArray();
+        var form_vals = $('#plugin_form').serializeArray();
         var index_pw;
         $.each(form_vals, function(index, value) {
             if(value.name == 'password_hidden')
