@@ -131,6 +131,36 @@ class FUUserInformation(LdapUserInformation):
         return self.user_info
 
 
+class DWDUserInformation(LdapUserInformation):
+    """
+    A classt to get additional User information at DWD
+    """
+    def load_from_ldap(self):
+        # search all users belonging
+        con = self.connection
+        res = con.search_s(settings.LDAP_GROUP_BASE,
+                          ldap.SCOPE_SUBTREE,
+                          'objectClass=Person'
+                          )
+        self.miklip_user = []
+        user_info = []
+        user_list = res
+
+        # fill the users list
+        for user in user_list:
+            uid = user[1].get('uid', [None])[0]
+            lastname = user[1].get('sn', [None])[0]
+            prename = user[1].get('givenName', [None])[0]
+            mail = user[1].get('dwdmailRoutingAddress', [None])[0]
+
+            if mail and uid:
+                user_info.append((uid, lastname, prename, mail))
+
+        self.user_info = sorted(user_info, key=lambda tup: tup[1])
+        return self.user_info
+
+
+
 class MiklipUserInformation(LdapUserInformation):
     """
     A class to access additional LDAP information using the
