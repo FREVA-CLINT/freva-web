@@ -150,6 +150,8 @@ class PluginForm(forms.Form):
                                                        predefined_facets=param.predefined_facets))
             elif param_subtype == int:
                 self.fields[key] = forms.IntegerField(required=required, help_text=help_str)
+            elif param_subtype == float:
+                self.fields[key] = forms.FloatField(required=required, help_text=help_str)
             elif isinstance(param, parameters.File):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str,
                                                    widget=PluginFileFieldWidget({}))
