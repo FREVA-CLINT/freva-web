@@ -4,8 +4,9 @@ from django.core import exceptions
 from django.forms.widgets import Input
 from django.template import loader
 import evaluation_system.api.parameters as parameters
-
+from plugins.utils import ssh_call, get_scheduler_hosts
 from evaluation_system.misc.utils import PrintableList
+from django.conf import settings
 
 
 class PluginNotFoundError(Exception):
@@ -76,10 +77,16 @@ class PasswordField(forms.CharField):
         self._user = kwargs.pop('uid')
 
     def validate(self, value):
-        u = auth.authenticate(username=self._user, password=value)
-        if not u:
-            raise exceptions.ValidationError('Invalid password', code='invalid_password')
-
+        password_type = getattr(settings, 'FORM_PASSWORD_CHECK', 'LDAP')
+        if password_type == 'ldap':
+            u = auth.authenticate(username=self._user, password=value)
+            if not u:
+                raise exceptions.ValidationError('Invalid password', code='invalid_password')
+        elif password_type == 'ssh':
+            try:
+                ssh_call(self._user, value, 'ls', settings.SCHEDULER_HOSTS)
+            except:
+                raise exceptions.ValidationError('Invalid password', code='invalid_password')
         super(PasswordField, self).validate(value)
 
 
@@ -143,6 +150,8 @@ class PluginForm(forms.Form):
                                                        predefined_facets=param.predefined_facets))
             elif param_subtype == int:
                 self.fields[key] = forms.IntegerField(required=required, help_text=help_str)
+            elif param_subtype == float:
+                self.fields[key] = forms.FloatField(required=required, help_text=help_str)
             elif isinstance(param, parameters.File):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str,
                                                    widget=PluginFileFieldWidget({}))
