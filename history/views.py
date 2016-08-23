@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.flatpages.models import FlatPage
@@ -430,12 +430,18 @@ def results(request, id, show_output_only=False):
         collapse = ['output']
 
     # repository stuff
-    repos = history_object.version_details.repository
+    try:
+        repos = history_object.version_details.repository
+    except ObjectDoesNotExist:
+        repos = 'Not available;Not available'
     tool_repos = repos.split(';')[0]
     api_repos = repos.split(';')[1]
-    tool_version = history_object.version_details.internal_version_tool
-    api_version = history_object.version_details.internal_version_api
-
+    try:
+        tool_version = history_object.version_details.internal_version_tool
+        api_version = history_object.version_details.internal_version_api
+    except ObjectDoesNotExist:
+        tool_version = 'Not available'
+        api_version = 'Not available'
     result_caption = history_object.caption
     if result_caption is None:
         result_caption = history_object.tool.upper()

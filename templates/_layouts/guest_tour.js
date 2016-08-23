@@ -169,7 +169,6 @@ function startTour(){
 // Initialize the tour
    tour2.init();
    var step = window.localStorage.getItem('tour_current_step');
-   console.log(step);
    if(step !== null )
 	setTimeout(function() {tour2.start();},1000);
 }
