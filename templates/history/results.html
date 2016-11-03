@@ -368,7 +368,8 @@
 					// ret = true;
 					$($(children[i]).children()).toggle();
 			}
-
+                        // Trigger scroll event, that lazy load plugins gets fired
+                        $(window).trigger("scroll");
 			
 			return ret; //don't activate the link
 		});	
