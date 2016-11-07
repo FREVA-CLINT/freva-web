@@ -225,16 +225,14 @@ def setup(request, plugin_name, row_id=None):
 
             # THIS IS HOW WE DETERMINE THE ID USING A SCHEDULER
             if slurm_options:
-                # get the very first line only
-                try:
-                    out_first_line = out[0]
-                except:
-                    raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)
-                # read the id from stdout
-                if out_first_line.split(' ')[0] == 'Scheduled':
-                    row_id = int(out_first_line.split(' ')[-1])
+                substr = 'Scheduled job with history'
+                # find first line containing the substr
+                scheduler_output = next((s for s in out if substr in s), None)  # returns 'abc123'
+                if scheduler_output:
+                    row_id = int(scheduler_output.split(' ')[-1])
                 else:
-                    raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)            
+                    raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)
+
             else:
                 # IF WE SEND USING NOHUP WE DON'T GET ANY FEEDBACK ABOUT THE ID
                 # SO WE MAKE A GUESS THAT IT WAS THE LAST ISSUED BY A USER
