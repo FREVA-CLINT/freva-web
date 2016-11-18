@@ -1,6 +1,7 @@
 {% extends "_layouts/menu.html" %}
 
 {% block page_title %}{{ flatpage.title }}{% endblock %}
+{% block css_files %}<link rel="stylesheet" type="text/css" href="{{STATIC_URL}}preview/doc/{{flatpage.title}}/{{flatpage.title}}.css" />{% endblock %} 
 {% block content %}
 <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
 <div class="container">

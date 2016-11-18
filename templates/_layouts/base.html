@@ -21,7 +21,10 @@
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.0/css/jquery.dataTables.css">
 
   <link rel="stylesheet" type="text/css" href="{{STATIC_URL}}css/MurCSS.css" />
-   <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  
+  {% block css_files %}{% endblock %} 
+ 
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
 
   <link rel="stylesheet" href="{{ STATIC_URL }}jqueryfiletree/jqueryFileTree.css">
   
@@ -31,7 +34,7 @@
   
   <link rel="stylesheet" href="{{ STATIC_URL }}select2/select2.css">
 
-
+  
 
   <link href="{{STATIC_URL}}js/bootstrap-tour/build/css/bootstrap-tour.min.css" rel="stylesheet">
 
