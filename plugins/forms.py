@@ -26,10 +26,15 @@ class PluginWeb(object):
 
 
 class PluginFileFieldWidget(Input):
-    def render(self, name, value, attrs=None):
+
+    def __init__(self, *args, **kwargs):
+        self.file_extension = kwargs.pop('file_extension', None)
+        super(PluginFileFieldWidget, self).__init__(*args, **kwargs)
+
+    def render(self, name, value, attrs=None, **kwargs):
         if value is not None and type(value) == list:
             value = PrintableList(value)
-        return loader.render_to_string('plugins/filefield.html', {'name': name, 'value': value, 'id': attrs['id']})
+        return loader.render_to_string('plugins/filefield.html', {'name': name, 'value': value, 'id': attrs['id'], 'attr': attrs, 'file_extension': self.file_extension})
 
 
 class PluginSelectFieldWidget(Input):
@@ -154,7 +159,7 @@ class PluginForm(forms.Form):
                 self.fields[key] = forms.FloatField(required=required, help_text=help_str)
             elif isinstance(param, parameters.File):
                 self.fields[key] = forms.CharField(required=required, help_text=help_str,
-                                                   widget=PluginFileFieldWidget({}))
+                                                   widget=PluginFileFieldWidget(file_extension=param.file_extension))
             else:
                 self.fields[key] = forms.CharField(required=required, help_text=help_str)
        
