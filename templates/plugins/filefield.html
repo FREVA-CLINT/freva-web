@@ -1,5 +1,3 @@
-
-{{file_extension}}
 <div class="input-group">
 	<div class="input-group-btn ">
 		<button type="button" class="btn btn-primary" id="{{id}}_browse">Browse</button>
@@ -12,15 +10,16 @@
 <script>
 $(document).ready(function(){
 	$('#{{id}}_browse').on('click', function(e){
-		var sender = $(e.target).attr('id').replace('_browse','');
-		$('#senderField').val(sender);
-        $('#fileExtension').val('{{ file_extension }}')
-		$('#myModal').modal('show');
+	    var sender = $(e.target).attr('id').replace('_browse','');
+	    $('#senderField').val(sender);
+            $('#fileExtension').val('{{ file_extension }}')
+            activate_browse('{{user_scratch}}', '{{file_extension}}');
+	    $('#myModal').modal('show');
 	});
 	
 	$('#{{id}}_solr').on('click', function(e){
-		solr.target_container =  $('#{{ id }}');
-		$('#myModal_solr').modal('show');
+	    solr.target_container =  $('#{{ id }}');
+	    $('#myModal_solr').modal('show');
 	});
 	
 });

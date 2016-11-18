@@ -201,9 +201,7 @@ html.wait, html.wait * { cursor: wait !important; }
 function getActiveFacets(facet_to_look,facet_group)
 {
     	//var form = $('#plugin_form');
-	//console.log(form.serialize());
 	
-	//console.log(facet_group);
 	if(facet_group=='global'){
 		var solr_fields = $('input[data-group]');
 		var solr_fields_global = {};
@@ -212,7 +210,6 @@ function getActiveFacets(facet_to_look,facet_group)
 		var solr_fields_global = $('input[data-group="global"]');
 		//var solr_fields = $.extend(solr_fields1, solr_fields2);
 	}
-	//console.log(solr_fields);
 	var search = '';
 	$.each(solr_fields, function(index,value){
 		search += facetToQuery(index,value, facet_to_look);	
@@ -222,7 +219,6 @@ function getActiveFacets(facet_to_look,facet_group)
 		search += facetToQuery(index,value, facet_to_look);
 		
 	});
-	//console.log(search);
 
 	return search;
 
@@ -267,13 +263,12 @@ $('#password_temp').keypress(function (e) {
 
 function activate_browse(dir, file_extension) {
 	$('#browsefield').fileTree({
-		root : dir,
-        script: `{% url 'plugins:dirlist' %}?file_type=${file_extension}`,
+		root : dir ? dir : '{{user_home}}',
+        script: '{% url 'plugins:dirlist' %}?file_type='+file_extension,
         expandSpeed: 100,
         collapseSpeed: 100,
         multiFolder: false
     }, function(file) {
-        console.log(file);
 		var sender = $('#senderField').val();
 		$('#'+sender).val(file);
         $('#myModal').modal('hide');
@@ -345,15 +340,14 @@ function similarDialog(res,i){
 $(document).ready(function(){
 	getActiveFacets();	
 
-	activate_browse('{{user_home}}');
-
+	activate_browse('{{user_home}}', $('#fileExtension').val());
 
 	$("input:radio[name='browse_options']").on('change', function () {
 		kind = $( "input:radio[name='browse_options']:checked" ).val();
 
  		if(this.value==kind)
 		{
-            var file_extension = $('fileExtension').val()
+            var file_extension = $('#fileExtension').val()
 			if(kind=='scratch'){
 				 activate_browse('{{user_scratch}}', file_extension);
 			}
@@ -395,10 +389,6 @@ $(document).ready(function(){
     
         });
 
-//    $('form :input').change(function(){
-//	console.log('chnage');
-//	searchResults('similarDiv');
-//    });
 
    {% endif %}
 
