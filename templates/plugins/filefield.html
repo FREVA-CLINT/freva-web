@@ -14,6 +14,7 @@ $(document).ready(function(){
 	$('#{{id}}_browse').on('click', function(e){
 		var sender = $(e.target).attr('id').replace('_browse','');
 		$('#senderField').val(sender);
+        $('#fileExtension').val('{{ file_extension }}')
 		$('#myModal').modal('show');
 	});
 	
