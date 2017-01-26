@@ -44,7 +44,34 @@ def home(request):
     
     pm.reloadPlugins(request.user.username)
     tools = pm.getPlugins(request.user.username) 
-    return render(request, 'plugins/home.html', 
+    return render(request, 'plugins/home.html',
+                  {'tool_list': sorted(tools.iteritems()),
+                   'home_dir': home_dir,
+                   'scratch_dir': scratch_dir,
+                   'exported_plugin': exported_plugin})
+
+
+@login_required()
+def plugin_list(request):
+    """ Default view for the root """
+    user_can_submit = request.user.has_perm('history.history_submit_job')
+
+    if user_can_submit:
+        user = User(request.user.username, request.user.email)
+    else:
+        user = User()
+    home_dir = user.getUserHome()
+    scratch_dir = None
+    try:
+        scratch_dir = user.getUserScratch()
+    except:
+        pass
+
+    exported_plugin = os.environ.get("EVALUATION_SYSTEM_PLUGINS_%s" % request.user, None)
+
+    pm.reloadPlugins(request.user.username)
+    tools = pm.getPlugins(request.user.username)
+    return render(request, 'plugins/list.html',
                   {'tool_list': sorted(tools.iteritems()),
                    'home_dir': home_dir,
                    'scratch_dir': scratch_dir,

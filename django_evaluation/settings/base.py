@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'compressor',
     'bootstrap3',
     'datatableview',
+    'webpack_loader',
 #    'debug_toolbar_user_panel',
 
     'base',
@@ -115,7 +116,10 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     ('preview', '/home/freva/ral-ces/misc4freva/db4freva/preview/'),
+    ('assets', os.path.join(PROJECT_ROOT, 'assets'))
 )
+
+print os.path.join(PROJECT_ROOT, 'assets')
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
