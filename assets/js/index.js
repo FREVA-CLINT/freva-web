@@ -1,10 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux'
+import {createStore, applyMiddleware} from 'redux';
+import configureStore from './configureStore'
+import App from './Containers/App'
 
-class Hello extends React.Component {
-  render() {
-    return <h1>Hello world</h1>
-  }
-}
 
-ReactDOM.render(<Hello/>, document.getElementById('react-app'));
+const initialState = window.INITIAL_STATE || {};
+
+const store = configureStore(initialState);
+
+ReactDOM.render(
+    <Provider store={store}>
+        <App/>
+    </Provider>,
+    document.getElementById('react-app')
+);
