@@ -7,6 +7,7 @@ from django.conf import settings
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django.views.decorators.http import require_POST 
 from django.contrib.flatpages.models import FlatPage
+from django.utils.safestring import mark_safe
 
 import evaluation_system.api.plugin_manager as pm
 
@@ -71,8 +72,9 @@ def plugin_list(request):
 
     pm.reloadPlugins(request.user.username)
     tools = pm.getPlugins(request.user.username)
+    import json
     return render(request, 'plugins/list.html',
-                  {'tool_list': sorted(tools.iteritems()),
+                  {'tool_list': mark_safe(json.dumps(sorted(tools.iteritems()))),
                    'home_dir': home_dir,
                    'scratch_dir': scratch_dir,
                    'exported_plugin': exported_plugin})

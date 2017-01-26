@@ -8,19 +8,18 @@
 
     {% load infotag %}
     {% export_plugin_dialog home_dir scratch_dir %}
+    <script>
+        window.INITIAL_STATE = {
+            appReducer: {isIE: false},
+            pluginListReducer: {
+                plugins: JSON.parse('{{ tool_list }}'),
+                exported: '{{ exported_plugin}}' !== 'None' ? '{{ exported_plugin}}' : null
+            }
+        };
+        console.log(JSON.parse('{{ tool_list }}'))
+    </script>
 
-    <script>window.INITIAL_STATE = {appReducer: {isIE: false}}</script>
+    <div id="react-app"></div>
+    {% render_bundle 'main' %}
 
-    <div class="container">
-        <!-- Example row of columns -->
-        <div class="row">
-            <div class="col-md-12">
-
-                <div id="react-app"></div>
-                {% render_bundle 'main' %}
-
-            </div>
-
-        </div>
-    </div>
 {% endblock %}
