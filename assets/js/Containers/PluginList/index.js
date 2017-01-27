@@ -5,6 +5,7 @@ import {Row, Col, Button, ListGroup, ListGroupItem, Grid, Modal, ButtonGroup, In
     FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
 import FileTree from '../../Components/FileTree'
 import {fetchDir, closeDir, changeRoot} from '../../Components/FileTree/actions'
+import {exportPlugin} from './actions'
 
 class PluginList extends React.Component {
 
@@ -18,6 +19,11 @@ class PluginList extends React.Component {
 
     componentDidMount() {
         this.props.dispatch(fetchDir(this.props.fileTree.root.path, 'py'))
+    }
+
+    handleExport() {
+        this.props.dispatch(exportPlugin(this.state.value));
+        this.setState({showModal: false})
     }
 
     render() {
@@ -38,7 +44,7 @@ class PluginList extends React.Component {
                 <Row>
                     <Col md={6}><h2>Plugins</h2></Col>
                     <Col md={6} style={{paddingTop: 10}}>
-                        <Button bsStyle="info" className="pull-right" onClick={() => this.setState({showModal: true})}>
+                        <Button bsStyle="info" className="pull-right" onClick={() => exported ? this.props.dispatch(exportPlugin()) : this.setState({showModal: true})}>
                             {exported ? 'Remove exported Plugin' : 'Plug-my-Plugin'}
                         </Button>
                     </Col>
@@ -89,7 +95,7 @@ class PluginList extends React.Component {
                     </Modal.Body>
 
                     <Modal.Footer>
-                        <Button bsStyle="primary">Export Plugin</Button>
+                        <Button bsStyle="primary" onClick={() => this.handleExport()}>Export Plugin</Button>
                     </Modal.Footer>
 
                 </Modal>

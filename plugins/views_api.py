@@ -10,7 +10,10 @@ class PluginsList(APIView):
     def get(self, request, format=None):
         pm.reloadPlugins(request.user.username)
         tools = pm.getPlugins(request.user.username)
-        return Response(tools)
+        res = []
+        for key, val in sorted(tools.iteritems()):
+            res.append([key, val])
+        return Response(res)
 
 
 class ExportPlugin(APIView):
