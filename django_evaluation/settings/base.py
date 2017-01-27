@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'datatableview',
     'webpack_loader',
+    'rest_framework',
 #    'debug_toolbar_user_panel',
 
     'base',
