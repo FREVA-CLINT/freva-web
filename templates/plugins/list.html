@@ -9,6 +9,7 @@
     {% load infotag %}
     {% export_plugin_dialog home_dir scratch_dir %}
     <script>
+        // Create initial state for react-redux application
         window.INITIAL_STATE = {
             appReducer: {isIE: false},
             pluginListReducer: {
@@ -16,7 +17,6 @@
                 exported: '{{ exported_plugin}}' !== 'None' ? '{{ exported_plugin}}' : null
             }
         };
-        console.log(JSON.parse('{{ tool_list }}'))
     </script>
 
     <div id="react-app"></div>

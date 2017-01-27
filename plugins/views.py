@@ -326,6 +326,42 @@ def dirlist(request):
     return HttpResponse(''.join(r))  
 
 
+@login_required()
+def list_dir(request):
+    files = list()
+    folders = list()
+    # we can specify an ending in GET request
+    file_type = request.GET.get('file_type', 'pdf')
+    try:
+        d = urllib.unquote(request.GET.get('dir'))
+        for f in sorted(os.listdir(d)):
+            if f[0] != '.':
+                ff = os.path.join(d, f)
+                if os.path.isdir(ff):
+                    folders.append(
+                        dict(
+                            type='folder',
+                            path=ff,
+                            name=f
+                        )
+                    )
+                else:
+                    e = os.path.splitext(f)[1][1:]  # get .ext and remove dot
+                    if e == file_type:
+                        files.append(
+                            dict(
+                                type='file',
+                                ext=e,
+                                path=ff,
+                                name=f
+                            )
+                        )
+        folders = folders+files
+    except Exception, e:
+        folders.append('Could not load directory: %s' % str(e))
+    return HttpResponse(json.dumps(folders))
+
+
 def list_docu(request):
     return render(request, 'plugins/list-docu.html')
 

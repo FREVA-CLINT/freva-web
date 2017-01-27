@@ -1,7 +1,8 @@
 import * as constants from './constants';
 
 const pluginListInitialState = {
-    isIE: true
+    plugins: [],
+    exported: null
 };
 
 export const pluginListReducer = (state = pluginListInitialState, action) => {
