@@ -3,13 +3,23 @@ import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import {
     Row, Col, Button, ListGroup, ListGroupItem, Grid, Modal, ButtonGroup, Input,
-    FormGroup, ControlLabel, FormControl, InputGroup
+    FormGroup, ControlLabel, FormControl, InputGroup, Badge, Label
 } from 'react-bootstrap'
 import FileTree from '../../Components/FileTree'
 import {fetchDir, closeDir, changeRoot} from '../../Components/FileTree/actions'
-import {exportPlugin, loadPlugins} from './actions'
+import {exportPlugin, loadPlugins, updateCategoryFilter, updateTagFilter, updateSearchFilter} from './actions'
 import _ from 'lodash';
 import ActionSearch from 'material-ui/svg-icons/action/search';
+import Checkbox from 'material-ui/Checkbox';
+
+const styles = {
+    chip: {
+        cursor: 'pointer',
+        margin: 5,
+        padding: 6
+    }
+};
+
 
 class PluginList extends React.Component {
 
@@ -18,7 +28,6 @@ class PluginList extends React.Component {
         this.state = {
             showModal: false,
             value: '',
-            searchValue: ''
         };
     }
 
@@ -33,17 +42,9 @@ class PluginList extends React.Component {
 
     render() {
 
-        let {plugins, exported} = this.props.pluginList;
+        let {plugins, exported, tags, categories, categoriesFilter, tagsFilter, filteredPlugins, searchFilter} = this.props.pluginList;
         const {nodes, root} = this.props.fileTree;
-        const {currentUser} = this.props;
-
-        const {searchValue} = this.state;
-
-        plugins = _.filter(plugins, (p) => {
-            const title = _.includes(p[1].name.toLowerCase(), searchValue.toLowerCase());
-            const description = _.includes(p[1].description.toLowerCase(), searchValue.toLowerCase());
-            return title || description
-        });
+        const {currentUser, dispatch} = this.props;
 
         let childs = nodes.map(n =>
             <FileTree node={n}
@@ -68,7 +69,7 @@ class PluginList extends React.Component {
                 <Row>
                     <Col md={8}>
                         <ListGroup style={{marginTop: 20}}>
-                            {plugins.map(val => {
+                            {filteredPlugins.map(val => {
                                 return (
                                     <ListGroupItem header={val[1].name} href={`/plugins/${val[0]}/detail/`}
                                                    key={val[0]}>
@@ -83,13 +84,43 @@ class PluginList extends React.Component {
                     </Col>
                     <Col md={4}>
                         <InputGroup style={{marginTop: 20}}>
-                            <FormControl type="text" ref="searchInput" value={this.state.searchValue}
-                                         onChange={() => this.setState({searchValue: ReactDOM.findDOMNode(this.refs.searchInput).value})}
+                            <FormControl type="text" ref="searchInput" value={searchFilter}
+                                         onChange={() => dispatch(updateSearchFilter(ReactDOM.findDOMNode(this.refs.searchInput).value))}
                                          placeholder="Search for plugins"/>
                             <InputGroup.Addon style={{padding: 0, paddingLeft: 8, paddingRight: 8}}>
                                 <ActionSearch />
                             </InputGroup.Addon>
                         </InputGroup>
+
+                        <div style={{marginTop:10}}>
+                            <ControlLabel>Categories:</ControlLabel>
+                            <div>
+                                {
+                                    _.map(categories, (v, k) => {
+                                        return <Checkbox label={`${k} (${v.length})`}
+                                                         onCheck={() => dispatch(updateCategoryFilter(k))}
+                                                         checked={_.includes(categoriesFilter, k)}/>
+                                    })
+                                }
+                            </div>
+                        </div>
+
+                        <div style={{marginTop:10}}>
+                            <ControlLabel>Tags:</ControlLabel>
+                            <div>
+                                {
+                                    tags.map(tag => {
+                                        return <Col md={4} style={{paddingLeft:0}}>
+                                            <Label bsStyle={_.includes(tagsFilter, tag) ? "success" : 'default'}
+                                                   style={styles.chip}
+                                                   onClick={() => dispatch(updateTagFilter(tag))}>
+                                                {tag}
+                                            </Label></Col>
+                                    })
+                                }
+
+                            </div>
+                        </div>
                     </Col>
 
                 </Row>

@@ -1,8 +1,8 @@
 import * as constants from './constants';
 
-export const appStartup = () => ({
+export const appStartup = () => {
     type: constants.APP_STARTUP
-});
+};
 
 export const getCurrentUser = () => (dispatch) => {
     let url = `/api/users/active/`;
