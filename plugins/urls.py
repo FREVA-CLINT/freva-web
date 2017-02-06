@@ -1,5 +1,7 @@
-from django.conf.urls import url, patterns
-from views_api import PluginsList, ExportPlugin
+from django.conf.urls import url, patterns, include
+
+
+
 
 urlpatterns = patterns(
     'plugins.views',
@@ -14,8 +16,5 @@ urlpatterns = patterns(
     url(r'^(?P<plugin_name>\w+)/similar-results/$', 'search_similar_results', name='similar'),
     url(r'^(?P<history_id>\d+)/similar-results-by-id/$', 'search_similar_results', name='similar'),
     url(r'^export-plugin/$', 'export_plugin', name='export_plugin'),
-
-    # API views
-    url(r'^api/plugin-list/$', PluginsList.as_view(), name='api-plugin-list'),
-    url(r'^api/export-plugin/$', ExportPlugin.as_view(), name='api-export-plugin'),
 )
+

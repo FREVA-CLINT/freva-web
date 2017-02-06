@@ -2,7 +2,7 @@ import * as constants from './constants';
 import fetch from 'isomorphic-fetch'
 
 export const exportPlugin = (path) => (dispatch) => {
-    let url = `/plugins/api/export-plugin/?export_file=${path}`;
+    let url = `/api/plugins/export/?export_file=${path}`;
     return fetch(url)
         .then(response => response.json())
         .then(json => {
@@ -16,7 +16,7 @@ export const exportPlugin = (path) => (dispatch) => {
 
 export const loadPlugins = () => (dispatch) => {
 
-    let url = `/plugins/api/plugin-list/`;
+    let url = `/api/plugins/list/`;
     return fetch(url)
         .then(response => response.json())
         .then(json => dispatch({
