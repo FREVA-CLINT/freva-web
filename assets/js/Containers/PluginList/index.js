@@ -30,9 +30,11 @@ class PluginList extends React.Component {
 
         const {plugins, exported} = this.props.pluginList;
         const {nodes, root} = this.props.fileTree;
+        const {currentUser} = this.props;
 
         let childs = nodes.map(n =>
             <FileTree node={n}
+                      key={n.name}
                       extension="py"
                       handleOpen={(e, path) => {e.preventDefault(); this.props.dispatch(fetchDir(path, "py"))}}
                       handleClose={(e, path) => {e.preventDefault(); this.props.dispatch(closeDir(path))}}
@@ -69,25 +71,26 @@ class PluginList extends React.Component {
 
                 </Row>
 
-                <Modal show={this.state.showModal} onHide={() => this.setState({showModal: false})}>
+                <Modal show={this.state.showModal} onShow={() => this.props.dispatch(changeRoot({id: 'home', path: currentUser.home}, 'py'))}
+                       onHide={() => this.setState({showModal: false})}>
                     <Modal.Header closeButton>
                         <Modal.Title>Plug-in your own plugin</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>
                         <p>Here you can plugin your own plugin</p>
-                        <ButtonGroup>
+                        <ButtonGroup style={{marginBottom: 10}}>
                             <Button bsStyle="primary" active={root.id === 'home'}
-                                onClick={() => this.props.dispatch(changeRoot({id: 'home', path:'/home/illing/'}, 'py'))}>
+                                onClick={() => this.props.dispatch(changeRoot({id: 'home', path: currentUser.home}, 'py'))}>
                                 Home
                             </Button>
                             <Button bsStyle="primary" active={root.id === 'scratch'}
-                                onClick={() => this.props.dispatch(changeRoot({id: 'scratch', path:'/net/scratch/illing/'}, 'py'))}>
+                                onClick={() => this.props.dispatch(changeRoot({id: 'scratch', path: currentUser.scratch}, 'py'))}>
                                 Scratch
                             </Button>
                         </ButtonGroup>
                         {childs}
-                        <FormGroup>
+                        <FormGroup style={{marginTop: 10}}>
                             <ControlLabel>File to plugin</ControlLabel>
                             <FormControl type="text" ref="input" value={this.state.value}
                                          onChange={() => this.setState({value: ReactDOM.findDOMNode(this.refs.input).value})}/>
@@ -107,7 +110,8 @@ class PluginList extends React.Component {
 
 const mapStateToProps = state => ({
     pluginList: state.pluginListReducer,
-    fileTree: state.fileTreeReducer
+    fileTree: state.fileTreeReducer,
+    currentUser: state.appReducer.currentUser
 });
 
 export default connect(mapStateToProps)(PluginList);

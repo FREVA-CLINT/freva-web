@@ -16,7 +16,7 @@ const pushEntry = (needle, n, newChild) => {
 
 const fileTreeInitialState = {
     nodes: [],
-    root: {id: 'home', path: '/home/illing/'}
+    root: {id: 'r', path: '/'}
 };
 
 export const fileTreeReducer = (state = fileTreeInitialState, action) => {
