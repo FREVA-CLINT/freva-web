@@ -6,19 +6,6 @@
 {% block page_class %}home-page{% endblock %}
 {% block content %}
 
-    {% load infotag %}
-    {% export_plugin_dialog home_dir scratch_dir %}
-    <script>
-        // Create initial state for react-redux application
-        window.INITIAL_STATE = {
-            appReducer: {isIE: false},
-            pluginListReducer: {
-                plugins: JSON.parse('{{ tool_list }}'),
-                exported: '{{ exported_plugin}}' !== 'None' ? '{{ exported_plugin}}' : null
-            }
-        };
-    </script>
-
     <div id="react-app"></div>
     {% render_bundle 'main' %}
 

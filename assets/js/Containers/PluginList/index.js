@@ -7,7 +7,7 @@ import {
 } from 'react-bootstrap'
 import FileTree from '../../Components/FileTree'
 import {fetchDir, closeDir, changeRoot} from '../../Components/FileTree/actions'
-import {exportPlugin} from './actions'
+import {exportPlugin, loadPlugins} from './actions'
 import _ from 'lodash';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 
@@ -20,6 +20,10 @@ class PluginList extends React.Component {
             value: '',
             searchValue: ''
         };
+    }
+
+    componentDidMount() {
+        this.props.dispatch(loadPlugins());
     }
 
     handleExport() {
