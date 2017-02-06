@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
-import {Row, Col, Button, ListGroup, ListGroupItem, Grid, Modal, ButtonGroup, Input,
-    FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
+import {
+    Row, Col, Button, ListGroup, ListGroupItem, Grid, Modal, ButtonGroup, Input,
+    FormGroup, ControlLabel, FormControl, InputGroup
+} from 'react-bootstrap'
 import FileTree from '../../Components/FileTree'
 import {fetchDir, closeDir, changeRoot} from '../../Components/FileTree/actions'
 import {exportPlugin} from './actions'
+import _ from 'lodash';
+import ActionSearch from 'material-ui/svg-icons/action/search';
 
 class PluginList extends React.Component {
 
@@ -13,12 +17,9 @@ class PluginList extends React.Component {
         super(props);
         this.state = {
             showModal: false,
-            value: ''
+            value: '',
+            searchValue: ''
         };
-    }
-
-    componentDidMount() {
-        this.props.dispatch(fetchDir(this.props.fileTree.root.path, 'py'))
     }
 
     handleExport() {
@@ -28,9 +29,17 @@ class PluginList extends React.Component {
 
     render() {
 
-        const {plugins, exported} = this.props.pluginList;
+        let {plugins, exported} = this.props.pluginList;
         const {nodes, root} = this.props.fileTree;
         const {currentUser} = this.props;
+
+        const {searchValue} = this.state;
+
+        plugins = _.filter(plugins, (p) => {
+            const title = _.includes(p[1].name.toLowerCase(), searchValue.toLowerCase());
+            const description = _.includes(p[1].description.toLowerCase(), searchValue.toLowerCase());
+            return title || description
+        });
 
         let childs = nodes.map(n =>
             <FileTree node={n}
@@ -46,13 +55,14 @@ class PluginList extends React.Component {
                 <Row>
                     <Col md={6}><h2>Plugins</h2></Col>
                     <Col md={6} style={{paddingTop: 10}}>
-                        <Button bsStyle="info" className="pull-right" onClick={() => exported ? this.props.dispatch(exportPlugin()) : this.setState({showModal: true})}>
+                        <Button bsStyle="info" className="pull-right"
+                                onClick={() => exported ? this.props.dispatch(exportPlugin()) : this.setState({showModal: true})}>
                             {exported ? 'Remove exported Plugin' : 'Plug-my-Plugin'}
                         </Button>
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={12}>
+                    <Col md={8}>
                         <ListGroup style={{marginTop: 20}}>
                             {plugins.map(val => {
                                 return (
@@ -67,11 +77,21 @@ class PluginList extends React.Component {
                             })}
                         </ListGroup>
                     </Col>
-
+                    <Col md={4}>
+                        <InputGroup style={{marginTop: 20}}>
+                            <FormControl type="text" ref="searchInput" value={this.state.searchValue}
+                                         onChange={() => this.setState({searchValue: ReactDOM.findDOMNode(this.refs.searchInput).value})}
+                                         placeholder="Search for plugins"/>
+                            <InputGroup.Addon style={{padding: 0, paddingLeft: 8, paddingRight: 8}}>
+                                <ActionSearch />
+                            </InputGroup.Addon>
+                        </InputGroup>
+                    </Col>
 
                 </Row>
 
-                <Modal show={this.state.showModal} onShow={() => this.props.dispatch(changeRoot({id: 'home', path: currentUser.home}, 'py'))}
+                <Modal show={this.state.showModal}
+                       onShow={() => this.props.dispatch(changeRoot({id: 'home', path: currentUser.home}, 'py'))}
                        onHide={() => this.setState({showModal: false})}>
                     <Modal.Header closeButton>
                         <Modal.Title>Plug-in your own plugin</Modal.Title>
@@ -81,11 +101,11 @@ class PluginList extends React.Component {
                         <p>Here you can plugin your own plugin</p>
                         <ButtonGroup style={{marginBottom: 10}}>
                             <Button bsStyle="primary" active={root.id === 'home'}
-                                onClick={() => this.props.dispatch(changeRoot({id: 'home', path: currentUser.home}, 'py'))}>
+                                    onClick={() => this.props.dispatch(changeRoot({id: 'home', path: currentUser.home}, 'py'))}>
                                 Home
                             </Button>
                             <Button bsStyle="primary" active={root.id === 'scratch'}
-                                onClick={() => this.props.dispatch(changeRoot({id: 'scratch', path: currentUser.scratch}, 'py'))}>
+                                    onClick={() => this.props.dispatch(changeRoot({id: 'scratch', path: currentUser.scratch}, 'py'))}>
                                 Scratch
                             </Button>
                         </ButtonGroup>
