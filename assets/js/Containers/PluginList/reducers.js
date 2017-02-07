@@ -13,6 +13,10 @@ const pluginListInitialState = {
     searchFilter: ''
 };
 
+function sortObject(o) {
+    return Object.keys(o).sort().reduce((r, k) => (r[k] = o[k], r), {});
+}
+
 const createCategories = plugins => {
     let categories = {};
     plugins.map(p => {
@@ -26,7 +30,7 @@ const createCategories = plugins => {
         }
         categories[newCat] = cat
     });
-    return categories
+    return sortObject(categories)
 };
 
 const createTags = plugins => {
@@ -35,7 +39,7 @@ const createTags = plugins => {
         if (p[1].tags)
             tags = tags.concat(p[1].tags)
     });
-    return _.uniq(tags)
+    return _.sortBy(_.uniq(tags))
 };
 
 const filterPlugins = (plugins, categoriesFilter, tagsFilter, searchFilter) => {
