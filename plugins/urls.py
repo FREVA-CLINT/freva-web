@@ -1,12 +1,12 @@
 from django.conf.urls import url, patterns, include
 
-
-
-
 urlpatterns = patterns(
     'plugins.views',
     url(r'^$', 'home', name='home'),
+    # react views
     url(r'^list/$', 'plugin_list', name='plugin_list'),
+    url(r'^(?P<plugin_name>\w+)/detailnew/$', 'plugin_detail', name='plugin_detail'),
+
     url(r'^about/$', 'list_docu', name='about'),
     url(r'^browse-files/$', 'dirlist', name='dirlist'),
     url(r'^browse-files-new/$', 'list_dir', name='list_dir'),

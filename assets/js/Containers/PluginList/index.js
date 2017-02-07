@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Link, browserHistory } from 'react-router'
 import {connect} from 'react-redux';
 import {
     Row, Col, Button, ListGroup, ListGroupItem, Grid, Modal, ButtonGroup, Input,
@@ -60,10 +61,11 @@ class PluginList extends React.Component {
                 <Row>
                     <Col md={6}><h2>Plugins</h2></Col>
                     <Col md={6} style={{paddingTop: 10}}>
+                        {!currentUser.isGuest ?
                         <Button bsStyle="info" className="pull-right"
                                 onClick={() => exported ? this.props.dispatch(exportPlugin()) : this.setState({showModal: true})}>
                             {exported ? 'Remove exported Plugin' : 'Plug-my-Plugin'}
-                        </Button>
+                        </Button> : null}
                     </Col>
                 </Row>
                 <Row>
@@ -71,7 +73,10 @@ class PluginList extends React.Component {
                         <ListGroup style={{marginTop: 20}}>
                             {filteredPlugins.map(val => {
                                 return (
-                                    <ListGroupItem header={val[1].name} href={`/plugins/${val[0]}/detail/`}
+
+                                    <ListGroupItem header={val[1].name}
+                                                   onClick={(e) => {e.preventDefault(); browserHistory.push(`/plugins/${val[0]}/detailnew/`)}}
+                                                   href={`/plugins/${val[0]}/detailnew/`}
                                                    key={val[0]}>
                                         {val[1].user_exported ?
                                             <span

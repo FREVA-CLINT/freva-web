@@ -54,30 +54,20 @@ def home(request):
 
 @login_required()
 def plugin_list(request):
-    """ Default view for the root """
-    user_can_submit = request.user.has_perm('history.history_submit_job')
+    """
+    New view for plugin list
+    TODO: As we use react now, we should use ONE default view for all react pages
+    """
+    return render(request, 'plugins/list.html', {})
 
-    if user_can_submit:
-        user = User(request.user.username, request.user.email)
-    else:
-        user = User()
-    home_dir = user.getUserHome()
-    scratch_dir = None
-    try:
-        scratch_dir = user.getUserScratch()
-    except:
-        pass
 
-    exported_plugin = os.environ.get("EVALUATION_SYSTEM_PLUGINS_%s" % request.user, None)
-
-    pm.reloadPlugins(request.user.username)
-    tools = pm.getPlugins(request.user.username)
-    import json
-    return render(request, 'plugins/list.html',
-                  {'tool_list': mark_safe(json.dumps(sorted(tools.iteritems()))),
-                   'home_dir': home_dir,
-                   'scratch_dir': scratch_dir,
-                   'exported_plugin': exported_plugin})
+@login_required()
+def plugin_detail(request, plugin_name):
+    """
+    New view for plugin list
+    TODO: As we use react now, we should use ONE default view for all react pages
+    """
+    return render(request, 'plugins/list.html', {})
 
 
 @login_required()

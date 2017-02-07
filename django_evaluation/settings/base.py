@@ -346,3 +346,10 @@ SEND_MAIL_AT_GUEST_LOGIN = True
 
 # result to show at guest tour
 GUEST_TOUR_RESULT = 17508
+
+# Django rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication'
+    ]
+}

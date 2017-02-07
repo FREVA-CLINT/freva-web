@@ -12,11 +12,16 @@ export const changeRoot = (dir, ext) => (dispatch) => {
         root: dir
     });
     return dispatch(fetchDir(dir.path, ext))
-}
+};
 
 export const fetchDir = (dir, ext) => (dispatch) => {
     let url = `/plugins/browse-files-new/?dir=${dir}&file_type=${ext}`;
-    return fetch(url)
+    return fetch(url, {
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }})
         .then(response => response.json())
         .then(json => {
             dispatch({

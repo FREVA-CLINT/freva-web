@@ -34,7 +34,13 @@ export const updateSearchFilter = (value) => dispatch => {
 
 export const exportPlugin = (path) => (dispatch) => {
     let url = `/api/plugins/export/?export_file=${path}`;
-    return fetch(url)
+    return fetch(url, {
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        })
         .then(response => response.json())
         .then(json => {
             dispatch({
@@ -48,7 +54,13 @@ export const exportPlugin = (path) => (dispatch) => {
 export const loadPlugins = () => (dispatch) => {
 
     let url = `/api/plugins/list/`;
-    return fetch(url)
+    return fetch(url, {
+        credentials: 'same-origin',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        })
         .then(response => response.json())
         .then(json => dispatch({
             type: constants.LOAD_PLUGINS,

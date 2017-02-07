@@ -4,7 +4,8 @@ import { Provider } from 'react-redux'
 import {createStore, applyMiddleware} from 'redux';
 import configureStore from './configureStore'
 import App from './Containers/App'
-import PluginList from './Containers/PluginList'
+import PluginList from './Containers/PluginList';
+import PluginDetail from './Containers/PluginDetail'
 import { Router, Route, browserHistory } from 'react-router'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 
@@ -22,6 +23,7 @@ ReactDOM.render(
         <Router history={history}>
           <Route path="/" component={App}>
              <Route path="plugins/list/" component={PluginList}/>
+             <Route path="plugins/:pluginName/detailnew/" component={PluginDetail}/>
           </Route>
         </Router>
     </Provider>,
