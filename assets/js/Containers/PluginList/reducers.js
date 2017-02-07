@@ -72,7 +72,7 @@ export const pluginListReducer = (state = pluginListInitialState, action) => {
     switch (action.type) {
         case constants.FILTER_PLUGINS:
             let filteredPlugins = filterPlugins([...state.plugins], state.categoriesFilter, state.tagsFilter, state.searchFilter);
-            return {...state, filteredPlugins, tags: createTags(filteredPlugins), categories: createCategories(filteredPlugins)};
+            return {...state, filteredPlugins, tags: createTags(filteredPlugins)};
         case constants.LOAD_PLUGINS:
             let exported = false;
             action.payload.map(v => {

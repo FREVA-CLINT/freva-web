@@ -66,3 +66,6 @@ django-model-utils
 pyPdf
 
 requests
+
+django-webpack-loader==0.4.1
+djangorestframework==3.5.3

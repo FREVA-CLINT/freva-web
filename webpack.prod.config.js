@@ -33,7 +33,7 @@ config.module.loaders.push(
     exclude: /node_modules/,
     loader: 'babel-loader',
     query: {
-      presets: ['es2015', 'react']
+      presets: ['es2015', 'react', 'stage-0']
     }
   } // to transform JSX into JS
 );

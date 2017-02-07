@@ -99,7 +99,8 @@ class PluginList extends React.Component {
                                     _.map(categories, (v, k) => {
                                         return <Checkbox label={`${k} (${v.length})`}
                                                          onCheck={() => dispatch(updateCategoryFilter(k))}
-                                                         checked={_.includes(categoriesFilter, k)}/>
+                                                         checked={_.includes(categoriesFilter, k)}
+                                                         key={k}/>
                                     })
                                 }
                             </div>
@@ -110,10 +111,11 @@ class PluginList extends React.Component {
                             <div>
                                 {
                                     tags.map(tag => {
-                                        return <Col md={4} style={{paddingLeft:0}}>
+                                        return <Col md={4} style={{paddingLeft:0}} key={tag}>
                                             <Label bsStyle={_.includes(tagsFilter, tag) ? "success" : 'default'}
                                                    style={styles.chip}
-                                                   onClick={() => dispatch(updateTagFilter(tag))}>
+                                                   onClick={() => dispatch(updateTagFilter(tag))}
+                                                   >
                                                 {tag}
                                             </Label></Col>
                                     })
