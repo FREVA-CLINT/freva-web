@@ -16,15 +16,15 @@ const pluginListInitialState = {
 const createCategories = plugins => {
     let categories = {};
     plugins.map(p => {
-        if (p[1].category) {
-            let cat = categories[p[1].category];
-            if (cat) {
-                cat.push(p[1].name)
-            } else {
-                cat = [p[1].name]
-            }
-            categories[p[1].category] = cat
+        const newCat = p[1].category ? p[1].category : 'Other';
+        p[1].category = newCat;
+        let cat = categories[newCat];
+        if (cat) {
+            cat.push(p[1].name)
+        } else {
+            cat = [p[1].name]
         }
+        categories[newCat] = cat
     });
     return categories
 };
