@@ -80,7 +80,7 @@ export const pluginListReducer = (state = pluginListInitialState, action) => {
                     exported = v[1].plugin_module;
             });
             return {...state, plugins: action.payload, exported, categories: createCategories(action.payload),
-                    tags: createTags(action.payload), filteredPlugins: action.payload};
+                    tags: createTags(action.payload), filteredPlugins: filterPlugins(action.payload, state.categoriesFilter, state.tagsFilter, state.searchFilter)};
         case constants.UPDATE_CATEGORY_FILTER:
             let {categoriesFilter} = state;
             if (_.includes(categoriesFilter, action.category)) {
