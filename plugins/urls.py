@@ -5,12 +5,11 @@ urlpatterns = patterns(
     url(r'^$', 'home', name='home'),
     # react views
     url(r'^list/$', 'plugin_list', name='plugin_list'),
-    url(r'^(?P<plugin_name>\w+)/detailnew/$', 'plugin_detail', name='plugin_detail'),
+    url(r'^(?P<plugin_name>\w+)/detail/$', 'detail', name='detail'),
 
     url(r'^about/$', 'list_docu', name='about'),
     url(r'^browse-files/$', 'dirlist', name='dirlist'),
     url(r'^browse-files-new/$', 'list_dir', name='list_dir'),
-    url(r'^(?P<plugin_name>\w+)/detail/$', 'detail', name='detail'),
     url(r'^(?P<plugin_name>\w+)/setup/$', 'setup', name='setup'),
     url(r'^(?P<plugin_name>\w+)/(?P<row_id>\d+)/setup/$', 'setup', name='setup'),
     url(r'^(?P<plugin_name>\w+)/similar-results/$', 'search_similar_results', name='similar'),

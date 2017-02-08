@@ -23,7 +23,7 @@ ReactDOM.render(
         <Router history={history} onUpdate={() => window.scrollTo(0, 0)}>
           <Route path="/" component={App}>
              <Route path="plugins/list/" component={PluginList}/>
-             <Route path="plugins/:pluginName/detailnew/" component={PluginDetail}/>
+             <Route path="plugins/:pluginName/detail/" component={PluginDetail}/>
           </Route>
         </Router>
     </Provider>,

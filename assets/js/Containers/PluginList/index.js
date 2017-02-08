@@ -75,8 +75,8 @@ class PluginList extends React.Component {
                                 return (
 
                                     <ListGroupItem header={val[1].name}
-                                                   onClick={(e) => {e.preventDefault(); browserHistory.push(`/plugins/${val[0]}/detailnew/`)}}
-                                                   href={`/plugins/${val[0]}/detailnew/`}
+                                                   onClick={(e) => {e.preventDefault(); browserHistory.push(`/plugins/${val[0]}/detail/`)}}
+                                                   href={`/plugins/${val[0]}/detail/`}
                                                    key={val[0]}>
                                         {val[1].user_exported ?
                                             <span

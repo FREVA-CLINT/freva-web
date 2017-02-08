@@ -62,25 +62,12 @@ def plugin_list(request):
 
 
 @login_required()
-def plugin_detail(request, plugin_name):
+def detail(request, plugin_name):
     """
     New view for plugin list
     TODO: As we use react now, we should use ONE default view for all react pages
     """
     return render(request, 'plugins/list.html', {})
-
-
-@login_required()
-def detail(request, plugin_name):
-    pm.reloadPlugins(request.user.username)
-    plugin = get_plugin_or_404(plugin_name, user_name=request.user.username)
-    plugin_web = PluginWeb(plugin)
-    try:
-        docu_flatpage = FlatPage.objects.get(title__iexact=plugin_name)
-    except FlatPage.DoesNotExist:
-        docu_flatpage = None
-    
-    return render(request, 'plugins/detail.html', {'plugin': plugin_web, 'docu': docu_flatpage})
 
 
 @login_required()
