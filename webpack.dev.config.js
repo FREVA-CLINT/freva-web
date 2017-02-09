@@ -26,7 +26,7 @@ config.module.loaders.push(
     exclude: /node_modules/,
     loader: 'babel-loader',
     query: {
-      presets: ['es2015', 'react', 'react-hmre', 'stage-0']
+      presets: ['es2015', 'react', 'react-hmre', 'stage-0', 'babel-polyfill']
     }
   } // to transform JSX into JS
 );
