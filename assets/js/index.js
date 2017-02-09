@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux'
 import {createStore, applyMiddleware} from 'redux';
 import configureStore from './configureStore'
-import App from './Containers/App'
-import PluginList from './Containers/PluginList';
-import PluginDetail from './Containers/PluginDetail'
 import { Router, Route, browserHistory } from 'react-router'
 import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+
+// Import containers
+import App from './Containers/App'
+import PluginList from './Containers/PluginList';
+import PluginDetail from './Containers/PluginDetail';
+import Databrowser from './Containers/Databrowser';
 
 const initialState = window.INITIAL_STATE || {};
 
@@ -24,6 +27,7 @@ ReactDOM.render(
           <Route path="/" component={App}>
              <Route path="plugins/list/" component={PluginList}/>
              <Route path="plugins/:pluginName/detail/" component={PluginDetail}/>
+             <Route path="solr/data-browser-new/" component={Databrowser}/>
           </Route>
         </Router>
     </Provider>,
