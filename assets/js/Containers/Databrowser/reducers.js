@@ -4,8 +4,10 @@ import _ from 'lodash';
 
 const databrowserInitialState = {
     facets: [],
+    files: [],
+    numFiles: 0,
     selectedFacets: {},
-    activeFacet: 'none',
+    activeFacet: 'files',
     metadata: {}
 };
 
@@ -29,6 +31,8 @@ export const databrowserReducer = (state = databrowserInitialState, action) => {
             return {...state, activeFacet: action.facet};
         case constants.SET_METADATA:
             return {...state, metadata: action.metadata};
+        case constants.LOAD_FILES:
+            return {...state, files: action.payload.data, numFiles: action.payload.metadata.numFound};
         default:
             return state
     }

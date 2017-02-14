@@ -43,5 +43,5 @@ export const sendDeveloperMail = (text, tool_name) => dispatch => {
             text,
             tool_name
         })
-    }).then(response => console.log(response))
+    })
 };

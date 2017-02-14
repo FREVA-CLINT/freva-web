@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel, FormControl, Tooltip, OverlayTrigger} from 'react-bootstrap';
-import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, setMetadata} from './actions';
+import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, setMetadata, loadFiles} from './actions';
 import _ from 'lodash'
 import $ from 'jquery';
 
@@ -89,8 +89,29 @@ class Databrowser extends React.Component {
         super(props);
     }
 
+    /**
+     * We use this because css break-word did not work inside of li tags
+     */
+    breakWord(word) {
+        let newWord = [];
+        let breakIndex = 0;
+        for(let i=0; i<word.length; i++){
+            if (word[i] === '-') {
+                breakIndex = i+1;
+            }
+            if (breakIndex > 0 && i > 120) {
+                newWord.push(word.substr(0, breakIndex));
+                newWord.push(<br/>);
+                newWord.push(word.substr(breakIndex, word.length));
+                return newWord
+            }
+        }
+
+    }
+
     componentDidMount() {
         this.props.dispatch(loadFacets());
+        this.props.dispatch(loadFiles());
         $.getScript({
             url: 'https://freva.met.fu-berlin.de/static/js/metadata.js',
             dataType: "script",
@@ -101,7 +122,7 @@ class Databrowser extends React.Component {
 
     render() {
 
-        const {facets, selectedFacets, activeFacet, metadata} = this.props.databrowser;
+        const {facets, selectedFacets, activeFacet, metadata, files, numFiles} = this.props.databrowser;
         const {dispatch} = this.props;
         const facetPanels = _.map(facets, (value, key) => {
             let panelHeader;
@@ -146,6 +167,22 @@ class Databrowser extends React.Component {
                             {_.map(selectedFacets, (value, key) => {
                                 return <span> {key}=<strong>{value}</strong></span>
                             })}
+                        </Panel>
+                        <Panel header={<a href="#" onClick={() => dispatch(setActiveFacet('files'))}>Files [{numFiles}]</a>} collapsible expanded={activeFacet === 'files'}>
+                          <div style={{maxHeight:500,overflow:'auto'}}>
+                            <ul className="jqueryFileTree">
+                              {_.map(files, (fn) => {
+                                  return (
+                                      <li className="file ext_nc">
+                                          <OverlayTrigger overlay={<Tooltip>Click to execute 'ncdump -h'<br/>and view metadata</Tooltip>}>
+                                            <span className="ncdump glyphicon glyphicon-info-sign"/>
+                                          </OverlayTrigger>
+                                          {` `}{this.breakWord(fn)}
+                                      </li>
+                                  )
+                              })}
+                          </ul>
+                              </div>
                         </Panel>
                     </Col>
                 </Row>

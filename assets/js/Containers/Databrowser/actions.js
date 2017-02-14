@@ -11,6 +11,7 @@ export const selectFacet = (facet, value) => dispatch => {
     });
     dispatch(setActiveFacet(facet));
     dispatch(loadFacets());
+    dispatch(loadFiles());
 };
 
 export const clearFacet = (facet) => dispatch => {
@@ -19,6 +20,7 @@ export const clearFacet = (facet) => dispatch => {
         facet
     });
     dispatch(loadFacets());
+    dispatch(loadFiles());
 };
 
 export const setMetadata = (metadata) => ({
@@ -32,6 +34,7 @@ export const clearAllFacets = (facet) => dispatch => {
         facet
     });
     dispatch(loadFacets());
+    dispatch(loadFiles());
 };
 
 export const setActiveFacet = (facet) => ({
@@ -59,6 +62,31 @@ export const loadFacets = () => (dispatch, getState) => {
         .then(json => {
             dispatch({
                 type: constants.LOAD_FACETS,
+                payload: json
+            });
+        })
+};
+
+export const loadFiles = () => (dispatch, getState) => {
+
+    const {selectedFacets} = getState().databrowserReducer;
+    let params = '';
+    _.map(selectedFacets, (value, key) => {
+        params += `&${key}=${value};`
+    });
+    let url = `/solr/solr-search/?start=0&rows=100${params}`;
+
+    return fetch(url, {
+        credentials: 'same-origin',
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }}
+        ).then(response => response.json())
+        .then(json => {
+            dispatch({
+                type: constants.LOAD_FILES,
                 payload: json
             });
         })
