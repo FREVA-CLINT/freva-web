@@ -113,7 +113,7 @@ class Databrowser extends React.Component {
         this.props.dispatch(loadFacets());
         this.props.dispatch(loadFiles());
         $.getScript({
-            url: 'https://freva.met.fu-berlin.de/static/js/metadata.js',
+            url: '/static/js/metadata.js',
             dataType: "script",
             success: (script, textStatus) => this.props.dispatch(setMetadata({variable: window.variable, model: window.model, institute: window.institute}))
 

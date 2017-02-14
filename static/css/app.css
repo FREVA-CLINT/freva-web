@@ -19,3 +19,5 @@
 .tooltip-inner{
  max-width: 400px;
 }
+
+html.wait, html.wait * { cursor: wait !important; }
