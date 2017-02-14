@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
-import {Grid, Row, Col, Accordion, Panel, FormControl} from 'react-bootstrap';
-import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet} from './actions';
+import {Grid, Row, Col, Accordion, Panel, FormControl, Tooltip, OverlayTrigger} from 'react-bootstrap';
+import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, setMetadata} from './actions';
 import _ from 'lodash'
+import $ from 'jquery';
 
 class OwnPanel extends Panel {
     constructor(props, context) {
@@ -36,11 +37,13 @@ class AccordionItemBody extends React.Component {
     }
 
     render() {
-        const {eventKey, value, facetClick} = this.props;
+        const {eventKey, value, facetClick, metadata} = this.props;
+        let {needle} = this.state;
+        needle = needle.toLowerCase()
         const filteredValues = [];
         value.map((val, i) => {
             if (i%2==0) {
-                if (val.indexOf(this.state.needle) !== -1) {
+                if (val.toLowerCase().indexOf(needle) !== -1 || (metadata[val] && metadata[val].toLowerCase().indexOf(needle) !== -1)) {
                     filteredValues.push(val);
                     filteredValues.push(value[i+1]);
                 }
@@ -55,6 +58,16 @@ class AccordionItemBody extends React.Component {
                 </Col>
                 {filteredValues.map((item, i) => {
                     if (i%2==0) {
+                        if (metadata && metadata[item]) {
+                            return (
+                                <Col md={3} xs={6} key={item}>
+                                    <OverlayTrigger overlay={<Tooltip>{metadata[item]}</Tooltip>}>
+                                        <a href="#" onClick={(e) => {e.preventDefault(); facetClick(eventKey, item)}}>{item}</a>
+                                    </OverlayTrigger>
+                                    {" "}[{filteredValues[i+1]}]
+                                </Col>
+                            )
+                        }
                         return (
                             <Col md={3} xs={6} key={item}>
                                 <a href="#" onClick={(e) => {e.preventDefault(); facetClick(eventKey, item)}}>{item}</a> [{filteredValues[i+1]}]
@@ -78,11 +91,17 @@ class Databrowser extends React.Component {
 
     componentDidMount() {
         this.props.dispatch(loadFacets());
+        $.getScript({
+            url: 'https://freva.met.fu-berlin.de/static/js/metadata.js',
+            dataType: "script",
+            success: (script, textStatus) => this.props.dispatch(setMetadata({variable: window.variable, model: window.model, institute: window.institute}))
+
+        })
     }
 
     render() {
 
-        const {facets, selectedFacets, activeFacet} = this.props.databrowser;
+        const {facets, selectedFacets, activeFacet, metadata} = this.props.databrowser;
         const {dispatch} = this.props;
         const facetPanels = _.map(facets, (value, key) => {
             let panelHeader;
@@ -96,7 +115,8 @@ class Databrowser extends React.Component {
             return (
                 <OwnPanel header={panelHeader} eventKey={key} key={key} removeFacet={() => dispatch(clearFacet(key))}
                     collapse={() => dispatch(setActiveFacet(key))}>
-                    <AccordionItemBody eventKey={key} value={value} facetClick={(key, item) => dispatch(selectFacet(key, item))}/>
+                    <AccordionItemBody eventKey={key} value={value} facetClick={(key, item) => dispatch(selectFacet(key, item))}
+                        metadata={metadata[key] ? metadata[key] : null}/>
                 </OwnPanel>
             )
         });

@@ -5,7 +5,8 @@ import _ from 'lodash';
 const databrowserInitialState = {
     facets: [],
     selectedFacets: {},
-    activeFacet: 'none'
+    activeFacet: 'none',
+    metadata: {}
 };
 
 export const databrowserReducer = (state = databrowserInitialState, action) => {
@@ -26,6 +27,8 @@ export const databrowserReducer = (state = databrowserInitialState, action) => {
             if (state.activeFacet === action.facet)
                 return {...state, activeFacet: databrowserInitialState.activeFacet};
             return {...state, activeFacet: action.facet};
+        case constants.SET_METADATA:
+            return {...state, metadata: action.metadata};
         default:
             return state
     }

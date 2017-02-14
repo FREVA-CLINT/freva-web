@@ -21,6 +21,11 @@ export const clearFacet = (facet) => dispatch => {
     dispatch(loadFacets());
 };
 
+export const setMetadata = (metadata) => ({
+    type: constants.SET_METADATA,
+    metadata
+});
+
 export const clearAllFacets = (facet) => dispatch => {
     dispatch({
         type: constants.CLEAR_ALL_FACETS,
