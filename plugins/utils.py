@@ -5,15 +5,17 @@ from django.http import Http404
 from django.conf import settings
 import paramiko
 import logging
-from os import stat
+from os import stat, path
 from pwd import getpwuid
 
 
 def find_owner(filename):
     """
-    Return the owner of a file or directory
+    Return the owner of a file or directory recursively
     """
-    return getpwuid(stat(filename).st_uid).pw_name
+    if path.exists(filename):
+        return getpwuid(stat(filename).st_uid).pw_name
+    return find_owner('/'.join(filename.split('/')[:-1]))
 
 
 def get_scheduler_hosts(user):
