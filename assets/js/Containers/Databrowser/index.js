@@ -60,7 +60,7 @@ class Databrowser extends React.Component {
                         {value.map((item, i) => {
                             if (i%2==0) {
                                 return (
-                                    <Col md={3} xs={6}>
+                                    <Col md={3} xs={6} key={item}>
                                         <a href="#" onClick={(e) => {e.preventDefault(); dispatch(selectFacet(key, item))}}>{item}</a> [{value[i+1]}]
                                     </Col>
                                 )
