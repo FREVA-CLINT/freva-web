@@ -2,32 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel} from 'react-bootstrap';
-import {loadFacets, selectFacet, clearFacet} from './actions';
+import {loadFacets, selectFacet, clearFacet, clearAllFacets} from './actions';
 import _ from 'lodash'
 
 class OwnPanel extends Panel {
     constructor(props, context) {
         super(props, context);
         this.handleClickTitle = this.handleClickTitle.bind(this);
-        this.renderBody = this.renderBody.bind(this);
     }
 
     /**
      * Override the method to allow different title click behaviour
      */
     handleClickTitle(e) {
-        console.log(this.props);
-        console.log(this.state)
         if (e.target.className.indexOf('remove') !== -1) {
             this.props.removeFacet();
         }else
             super.handleClickTitle(e);
     }
-
-    //renderBody(rawChildren, bsProps) {
-    //    if (this.state.expanded)
-    //        return super.renderBody(rawChildren, bsProps)
-    //}
 }
 
 
@@ -79,10 +71,24 @@ class Databrowser extends React.Component {
                     </Col>
                 </Row>
                 <Row>
+                    {Object.keys(selectedFacets).length !== 0 ?
+                    <Col md={12}>
+                        <Panel>
+                            <a href="#" onClick={(e) => {e.preventDefault(); dispatch(clearAllFacets())}}>Clear all</a>
+                        </Panel>
+                    </Col> : null}
+                </Row>
+                <Row>
                     <Col md={12}>
                         <Accordion>
                             {facetPanels}
                         </Accordion>
+                        <Panel style={{marginTop: 5}}>
+                            freva --databrowser
+                            {_.map(selectedFacets, (value, key) => {
+                                return <span> {key}=<strong>{value}</strong></span>
+                            })}
+                        </Panel>
                     </Col>
                 </Row>
             </Grid>

@@ -20,6 +20,14 @@ export const clearFacet = (facet) => dispatch => {
     dispatch(loadFacets());
 };
 
+export const clearAllFacets = (facet) => dispatch => {
+    dispatch({
+        type: constants.CLEAR_ALL_FACETS,
+        facet
+    });
+    dispatch(loadFacets());
+};
+
 export const loadFacets = () => (dispatch, getState) => {
 
     const {selectedFacets} = getState().databrowserReducer;

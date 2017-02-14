@@ -19,6 +19,8 @@ export const databrowserReducer = (state = databrowserInitialState, action) => {
             let newFacets = {...state.selectedFacets};
             newFacets = _.omit(newFacets, action.facet);
             return {...state, selectedFacets: newFacets};
+        case constants.CLEAR_ALL_FACETS:
+            return {...state, selectedFacets: {}};
         default:
             return state
     }
