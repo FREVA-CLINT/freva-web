@@ -31,6 +31,10 @@ export const clearFacet = (facet) => dispatch => {
     dispatch(loadFiles());
 };
 
+export const resetNcdump = () => ({
+    type: constants.RESET_NCDUMP
+})
+
 export const setMetadata = (metadata) => ({
     type: constants.SET_METADATA,
     metadata
@@ -100,4 +104,29 @@ export const loadFiles = () => (dispatch, getState) => {
                 payload: json
             });
         })
+};
+
+export const loadNcdump = (fn, pw) => dispatch => {
+    let url = `/api/solr/ncdump/`;
+    dispatch({type: constants.LOAD_NCDUMP, fn});
+    return fetch(url, {
+        credentials: 'same-origin',
+        method: 'POST',
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            pass: pw,
+            file: fn
+        })
+    }).then(resp => {
+
+        if (!resp.ok) {
+            throw Error([resp.status, resp.statusText]);
+        }
+        return resp.json();
+    }).then(json => dispatch({type: constants.LOAD_NCDUMP_SUCCESS, payload: json})
+    ).catch(error => dispatch({type: constants.LOAD_NCDUMP_ERROR}));
 };

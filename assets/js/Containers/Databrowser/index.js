@@ -1,10 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
-import {Grid, Row, Col, Accordion, Panel, FormControl, Tooltip, OverlayTrigger} from 'react-bootstrap';
-import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, setMetadata, loadFiles} from './actions';
+import {Grid, Row, Col, Accordion, Panel, FormControl, Tooltip, OverlayTrigger, Modal, Button} from 'react-bootstrap';
+import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, setMetadata, loadFiles,
+        loadNcdump, resetNcdump} from './actions';
 import _ from 'lodash'
 import $ from 'jquery';
+import NcdumpDialog from '../../Components/NcdumpDialog'
 
 class OwnPanel extends Panel {
     constructor(props, context) {
@@ -86,11 +88,11 @@ class AccordionItemBody extends React.Component {
 }
 
 
-
 class Databrowser extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {showDialog: true, fn: null}
     }
 
     /**
@@ -126,7 +128,8 @@ class Databrowser extends React.Component {
 
     render() {
 
-        const {facets, selectedFacets, activeFacet, metadata, files, numFiles} = this.props.databrowser;
+        const {facets, selectedFacets, activeFacet, metadata, files, numFiles, ncdumpStatus,
+            ncdumpOutput} = this.props.databrowser;
         const {dispatch} = this.props;
         const facetPanels = _.map(facets, (value, key) => {
             let panelHeader;
@@ -179,7 +182,9 @@ class Databrowser extends React.Component {
                                   return (
                                       <li className="file ext_nc">
                                           <OverlayTrigger overlay={<Tooltip>Click to execute 'ncdump -h'<br/>and view metadata</Tooltip>}>
-                                            <span className="ncdump glyphicon glyphicon-info-sign"/>
+                                            <span className="ncdump glyphicon glyphicon-info-sign"
+                                                  onClick={() => {this.setState({showDialog: true, fn: fn})}}
+                                                  style={{cursor: 'pointer'}} />
                                           </OverlayTrigger>
                                           {` `}{this.breakWord(fn)}
                                       </li>
@@ -188,6 +193,12 @@ class Databrowser extends React.Component {
                           </ul>
                               </div>
                         </Panel>
+                        <NcdumpDialog show={this.state.showDialog}
+                                      file={this.state.fn}
+                                      onClose={() => {this.setState({showDialog: false}); dispatch(resetNcdump())}}
+                                      submitNcdump={(fn, pw) => dispatch(loadNcdump(fn, pw))}
+                                      status={ncdumpStatus}
+                                      output={ncdumpOutput} />
                     </Col>
                 </Row>
             </Grid>
