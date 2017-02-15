@@ -103,7 +103,7 @@ class Databrowser extends React.Component {
                     <ul className="jqueryFileTree">
                       {_.map(files, (fn) => {
                           return (
-                              <li className="file ext_nc">
+                              <li className="file ext_nc" key={fn}>
                                   <OverlayTrigger overlay={<Tooltip>Click to execute 'ncdump -h'<br/>and view metadata</Tooltip>}>
                                     <span className="ncdump glyphicon glyphicon-info-sign"
                                           onClick={() => {this.setState({showDialog: true, fn: fn})}}
@@ -150,7 +150,7 @@ class Databrowser extends React.Component {
                         <Panel style={{marginTop: 5}}>
                             freva --databrowser
                             {_.map(selectedFacets, (value, key) => {
-                                return <span> {key}=<strong>{value}</strong></span>
+                                return <span key={`command-${key}`}> {key}=<strong>{value}</strong></span>
                             })}
                         </Panel>
 

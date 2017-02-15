@@ -27,7 +27,7 @@ ReactDOM.render(
           <Route path="/" component={App}>
              <Route path="plugins/list/" component={PluginList}/>
              <Route path="plugins/:pluginName/detail/" component={PluginDetail}/>
-             <Route path="solr/data-browser-new/" component={Databrowser}/>
+             <Route path="solr/data-browser/" component={Databrowser}/>
           </Route>
         </Router>
     </Provider>,
