@@ -7,6 +7,7 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 from base.views_api import UserViewSet, AuthenticatedUser
 from plugins.views_api import PluginsList, ExportPlugin, PluginDetail, SendMailToDeveloper
+from solr.views_api import ncdump
 from rest_framework import routers
 
 router = routers.SimpleRouter()
@@ -40,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^api/plugins/(?P<plugin_name>\w+)/$', PluginDetail.as_view(), name='api-plugin-detail'),
     url(r'^api/users/active/$', AuthenticatedUser.as_view(), name='api-active-user'),
     url(r'^api/utils/mail-to-developer/$', SendMailToDeveloper.as_view(), name='api-mail-to-developer'),
+    url(r'^api/solr/ncdump/$', ncdump, name='api-ncdump'),
     url(r'^api/', include(router.urls, namespace='api')),
 )
 
