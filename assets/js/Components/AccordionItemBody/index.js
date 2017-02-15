@@ -20,7 +20,7 @@ class AccordionItemBody extends React.Component {
     }
 
     renderFilteredItems(filteredValues) {
-        const {metadata} = this.props;
+        const {metadata, facetClick, eventKey} = this.props;
         return filteredValues.map((item, i) => {
             if (i%2==0) {
                 if (metadata && metadata[item]) {

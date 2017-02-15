@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel, FormControl, Tooltip, OverlayTrigger, Modal, Button} from 'react-bootstrap';
 import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, setMetadata, loadFiles,
@@ -54,6 +53,10 @@ class Databrowser extends React.Component {
 
     }
 
+    /**
+     * On mount we load all facets and files to display
+     * Also load the metadata.js script
+     */
     componentDidMount() {
         this.props.dispatch(loadFacets());
         this.props.dispatch(loadFiles());
@@ -65,12 +68,13 @@ class Databrowser extends React.Component {
         })
     }
 
-    render() {
-
-        const {facets, selectedFacets, activeFacet, metadata, files, numFiles, ncdumpStatus,
-            ncdumpOutput} = this.props.databrowser;
+    /**
+     * Loop all facets and render the panels
+     */
+    renderFacetPanels() {
+        const {facets, selectedFacets, activeFacet, metadata} = this.props.databrowser;
         const {dispatch} = this.props;
-        const facetPanels = _.map(facets, (value, key) => {
+        return _.map(facets, (value, key) => {
             let panelHeader;
             if (selectedFacets[key]) {
                 panelHeader = <span style={{cursor: 'pointer'}}>{key}: <strong>{selectedFacets[key]} <a href="#" onClick={(e) => e.preventDefault()}><span className="glyphicon glyphicon-remove-circle" onClick={(e) => e.preventDefault()}/></a></strong></span>
@@ -87,6 +91,40 @@ class Databrowser extends React.Component {
                 </OwnPanel>
             )
         });
+    }
+
+    renderFilesPanel() {
+        //TODO: This should be a separate component
+        const {activeFacet, files, numFiles,} = this.props.databrowser;
+        const {dispatch} = this.props;
+        return (
+            <Panel header={<a href="#" onClick={() => dispatch(setActiveFacet('files'))}>Files [{numFiles}]</a>} collapsible expanded={activeFacet === 'files'}>
+                <div style={{maxHeight:500,overflow:'auto'}}>
+                    <ul className="jqueryFileTree">
+                      {_.map(files, (fn) => {
+                          return (
+                              <li className="file ext_nc">
+                                  <OverlayTrigger overlay={<Tooltip>Click to execute 'ncdump -h'<br/>and view metadata</Tooltip>}>
+                                    <span className="ncdump glyphicon glyphicon-info-sign"
+                                          onClick={() => {this.setState({showDialog: true, fn: fn})}}
+                                          style={{cursor: 'pointer'}} />
+                                  </OverlayTrigger>
+                                  {` `}{this.breakWord(fn)}
+                              </li>
+                          )
+                      })}
+                    </ul>
+              </div>
+            </Panel>
+        )
+    }
+
+    render() {
+
+        const {selectedFacets, activeFacet, ncdumpStatus, ncdumpOutput} = this.props.databrowser;
+        const {dispatch} = this.props;
+
+        const facetPanels = this.renderFacetPanels();
 
         return (
             <Grid>
@@ -108,30 +146,16 @@ class Databrowser extends React.Component {
                         <Accordion activeKey={activeFacet}>
                             {facetPanels}
                         </Accordion>
+                        
                         <Panel style={{marginTop: 5}}>
                             freva --databrowser
                             {_.map(selectedFacets, (value, key) => {
                                 return <span> {key}=<strong>{value}</strong></span>
                             })}
                         </Panel>
-                        <Panel header={<a href="#" onClick={() => dispatch(setActiveFacet('files'))}>Files [{numFiles}]</a>} collapsible expanded={activeFacet === 'files'}>
-                          <div style={{maxHeight:500,overflow:'auto'}}>
-                            <ul className="jqueryFileTree">
-                              {_.map(files, (fn) => {
-                                  return (
-                                      <li className="file ext_nc">
-                                          <OverlayTrigger overlay={<Tooltip>Click to execute 'ncdump -h'<br/>and view metadata</Tooltip>}>
-                                            <span className="ncdump glyphicon glyphicon-info-sign"
-                                                  onClick={() => {this.setState({showDialog: true, fn: fn})}}
-                                                  style={{cursor: 'pointer'}} />
-                                          </OverlayTrigger>
-                                          {` `}{this.breakWord(fn)}
-                                      </li>
-                                  )
-                              })}
-                          </ul>
-                              </div>
-                        </Panel>
+
+                        {this.renderFilesPanel()}
+
                         <NcdumpDialog show={this.state.showDialog}
                                       file={this.state.fn}
                                       onClose={() => {this.setState({showDialog: false}); dispatch(resetNcdump())}}
