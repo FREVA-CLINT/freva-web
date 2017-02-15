@@ -36,14 +36,18 @@ class AccordionItemBody extends React.Component {
         this.setState({needle});
     }
 
+    shouldComponentUpdate(nextProps) {
+        return this.props.visible || nextProps.visible
+    }
+
     render() {
-        const {eventKey, value, facetClick, metadata} = this.props;
+        const {eventKey, value, facetClick, metadata, visible} = this.props;
         let {needle} = this.state;
-        needle = needle.toLowerCase()
+        needle = needle.toLowerCase();
         const filteredValues = [];
         value.map((val, i) => {
             if (i%2==0) {
-                if (val.toLowerCase().indexOf(needle) !== -1 || (metadata[val] && metadata[val].toLowerCase().indexOf(needle) !== -1)) {
+                if (val.toLowerCase().indexOf(needle) !== -1 || (metadata && metadata[val] && metadata[val].toLowerCase().indexOf(needle) !== -1)) {
                     filteredValues.push(val);
                     filteredValues.push(value[i+1]);
                 }
@@ -137,7 +141,7 @@ class Databrowser extends React.Component {
                 <OwnPanel header={panelHeader} eventKey={key} key={key} removeFacet={() => dispatch(clearFacet(key))}
                     collapse={() => dispatch(setActiveFacet(key))}>
                     <AccordionItemBody eventKey={key} value={value} facetClick={(key, item) => dispatch(selectFacet(key, item))}
-                        metadata={metadata[key] ? metadata[key] : null}/>
+                        metadata={metadata[key] ? metadata[key] : null} visible={key===activeFacet}/>
                 </OwnPanel>
             )
         });
