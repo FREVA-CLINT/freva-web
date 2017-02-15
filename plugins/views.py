@@ -58,7 +58,7 @@ def plugin_list(request):
     New view for plugin list
     TODO: As we use react now, we should use ONE default view for all react pages
     """
-    return render(request, 'plugins/list.html', {})
+    return render(request, 'plugins/list.html', {'title': 'Plugins'})
 
 
 @login_required()
@@ -67,7 +67,7 @@ def detail(request, plugin_name):
     New view for plugin list
     TODO: As we use react now, we should use ONE default view for all react pages
     """
-    return render(request, 'plugins/list.html', {})
+    return render(request, 'plugins/list.html', {'title': plugin_name})
 
 
 @login_required()
