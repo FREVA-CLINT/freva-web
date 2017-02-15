@@ -26,7 +26,6 @@ export const loadPlugin = pluginName => dispatch => {
             });
             return json;
         })
-        .then(json => dispatch(loadPlugins()))
 };
 
 export const sendDeveloperMail = (text, tool_name) => dispatch => {
