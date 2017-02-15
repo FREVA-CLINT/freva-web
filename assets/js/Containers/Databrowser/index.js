@@ -7,6 +7,7 @@ import {loadFacets, selectFacet, clearFacet, clearAllFacets, setActiveFacet, set
 import _ from 'lodash'
 import $ from 'jquery';
 import NcdumpDialog from '../../Components/NcdumpDialog'
+import AccordionItemBody from '../../Components/AccordionItemBody';
 
 class OwnPanel extends Panel {
     constructor(props, context) {
@@ -26,73 +27,11 @@ class OwnPanel extends Panel {
     }
 }
 
-class AccordionItemBody extends React.Component {
-
-    constructor(props, context) {
-        super(props, context);
-        this.state = {needle: ''};
-    }
-
-    handleChange() {
-        const needle = ReactDOM.findDOMNode(this.refs.searchInput).value;
-        this.setState({needle});
-    }
-
-    shouldComponentUpdate(nextProps) {
-        return this.props.visible || nextProps.visible
-    }
-
-    render() {
-        const {eventKey, value, facetClick, metadata, visible} = this.props;
-        let {needle} = this.state;
-        needle = needle.toLowerCase();
-        const filteredValues = [];
-        value.map((val, i) => {
-            if (i%2==0) {
-                if (val.toLowerCase().indexOf(needle) !== -1 || (metadata && metadata[val] && metadata[val].toLowerCase().indexOf(needle) !== -1)) {
-                    filteredValues.push(val);
-                    filteredValues.push(value[i+1]);
-                }
-
-            }
-        });
-        return (
-            <Row>
-                <Col md={12}>
-                    <FormControl id={`search`} type="text" placeholder={`Search ${eventKey} name`} ref={`searchInput`}
-                                 onChange={() => this.handleChange()}/>
-                </Col>
-                {filteredValues.map((item, i) => {
-                    if (i%2==0) {
-                        if (metadata && metadata[item]) {
-                            return (
-                                <Col md={3} xs={6} key={item}>
-                                    <OverlayTrigger overlay={<Tooltip>{metadata[item]}</Tooltip>}>
-                                        <a href="#" onClick={(e) => {e.preventDefault(); facetClick(eventKey, item)}}>{item}</a>
-                                    </OverlayTrigger>
-                                    {" "}[{filteredValues[i+1]}]
-                                </Col>
-                            )
-                        }
-                        return (
-                            <Col md={3} xs={6} key={item}>
-                                <a href="#" onClick={(e) => {e.preventDefault(); facetClick(eventKey, item)}}>{item}</a> [{filteredValues[i+1]}]
-                            </Col>
-                        )
-                    }
-                })}
-            </Row>
-        )
-
-    }
-}
-
-
 class Databrowser extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {showDialog: true, fn: null}
+        this.state = {showDialog: false, fn: null}
     }
 
     /**
