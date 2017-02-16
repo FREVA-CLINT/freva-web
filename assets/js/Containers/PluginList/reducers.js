@@ -66,7 +66,10 @@ const filterPlugins = (plugins, categoriesFilter, tagsFilter, searchFilter) => {
     plugins = _.filter(plugins, (p) => {
         const title = _.includes(p[1].name.toLowerCase(), searchFilter.toLowerCase());
         const description = _.includes(p[1].description.toLowerCase(), searchFilter.toLowerCase());
-        return title || description
+        let tags = false
+        if (p[1].tags)
+            tags = _.includes(p[1].tags.join().toLowerCase(), searchFilter.toLowerCase());
+        return title || description || tags
     });
     return plugins
 };
