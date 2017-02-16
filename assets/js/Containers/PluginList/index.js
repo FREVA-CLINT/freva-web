@@ -73,7 +73,7 @@ class PluginList extends React.Component {
             postproc: 'Post-Processing',
             support: 'Support Plugins',
             other: 'Others'
-        }
+        };
 
         let childs = nodes.map(n =>
             <FileTree node={n}

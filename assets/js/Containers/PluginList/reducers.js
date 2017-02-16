@@ -20,7 +20,7 @@ function sortObject(o) {
 const createCategories = plugins => {
     let categories = {};
     plugins.map(p => {
-        const newCat = p[1].category ? p[1].category : 'Other';
+        const newCat = p[1].category ? p[1].category : 'other';
         p[1].category = newCat;
         let cat = categories[newCat];
         if (cat) {
