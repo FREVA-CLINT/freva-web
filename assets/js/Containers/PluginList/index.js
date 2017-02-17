@@ -97,9 +97,9 @@ class PluginList extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col md={8}>
+                    <Col md={8}  style={{marginTop: 20}}>
                         {decadalPlugins.length > 0 ?
-                            <Panel header={<h2>Decadal Evaluation</h2>} style={{marginTop: 20}}>
+                            <Panel header={<h2>Decadal Evaluation</h2>}>
                                 <ListGroup fill>
                                     {decadalPlugins.map(val => {
                                         return (
