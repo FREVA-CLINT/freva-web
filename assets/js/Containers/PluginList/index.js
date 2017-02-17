@@ -12,6 +12,7 @@ import {exportPlugin, loadPlugins, updateCategoryFilter, updateTagFilter, update
 import _ from 'lodash';
 import ActionSearch from 'material-ui/svg-icons/action/search';
 import Checkbox from 'material-ui/Checkbox';
+import CircularProgress from 'material-ui/CircularProgress';
 
 const styles = {
     chip: {
@@ -43,7 +44,8 @@ class PluginList extends React.Component {
 
     render() {
 
-        let {plugins, exported, tags, categories, categoriesFilter, tagsFilter, filteredPlugins, searchFilter} = this.props.pluginList;
+        let {exported, tags, categories, categoriesFilter, tagsFilter, filteredPlugins, searchFilter,
+             pluginsLoaded} = this.props.pluginList;
         const {nodes, root} = this.props.fileTree;
         const {currentUser, dispatch} = this.props;
 
@@ -83,6 +85,14 @@ class PluginList extends React.Component {
                       handleClose={(e, path) => {e.preventDefault(); this.props.dispatch(closeDir(path))}}
                       handleFileClick={(e, path) => {e.preventDefault(); this.setState({value:path})}}/>
         );
+
+        if (!pluginsLoaded) {
+            return (
+                <Grid style={{textAlign: 'center'}}>
+                    <CircularProgress />
+                </Grid>
+            )
+        }
 
         return (
             <Grid>
