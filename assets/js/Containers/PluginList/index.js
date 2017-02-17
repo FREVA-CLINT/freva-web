@@ -99,7 +99,7 @@ class PluginList extends React.Component {
                 <Row>
                     <Col md={8}>
                         {decadalPlugins.length > 0 ?
-                            <Panel header={<h2>Decadal Evaluation</h2>}>
+                            <Panel header={<h2>Decadal Evaluation</h2>} style={{marginTop: 20}}>
                                 <ListGroup fill>
                                     {decadalPlugins.map(val => {
                                         return (
@@ -206,15 +206,32 @@ class PluginList extends React.Component {
                         <div style={{marginTop:10}}>
                             <ControlLabel>Categories:</ControlLabel>
                             <div>
-                                {
+                                {categories.decadal ?
+                                <Checkbox label={`${categoryTitle['decadal']} (${categories['decadal'].length})`}
+                                                         onCheck={() => dispatch(updateCategoryFilter('decadal'))}
+                                                         checked={_.includes(categoriesFilter, 'decadal')}
+                                                         key={'decadal-cat'}/> : null}
+                                {categories.statistical ?
+                                <Checkbox label={`${categoryTitle['statistical']} (${categories['statistical'].length})`}
+                                                         onCheck={() => dispatch(updateCategoryFilter('statistical'))}
+                                                         checked={_.includes(categoriesFilter, 'statistical')}
+                                                         key={'statistical-cat'}/> : null}
+                                {categories.postproc ?
+                                <Checkbox label={`${categoryTitle['postproc']} (${categories['postproc'].length})`}
+                                                         onCheck={() => dispatch(updateCategoryFilter('postproc'))}
+                                                         checked={_.includes(categoriesFilter, 'postproc')}
+                                                         key={'postproc-cat'}/> : null}
+                                {categories.support ?
+                                <Checkbox label={`${categoryTitle['support']} (${categories['support'].length})`}
+                                                         onCheck={() => dispatch(updateCategoryFilter('support'))}
+                                                         checked={_.includes(categoriesFilter, 'support')}
+                                                         key={'support-cat'}/> : null}
+                                {categories.other ?
+                                <Checkbox label={`${categoryTitle['other']} (${categories['other'].length})`}
+                                                         onCheck={() => dispatch(updateCategoryFilter('other'))}
+                                                         checked={_.includes(categoriesFilter, 'other')}
+                                                         key={'other-cat'}/> : null}
 
-                                    _.map(categories, (v, k) => {
-                                        return <Checkbox label={`${categoryTitle[k]} (${v.length})`}
-                                                         onCheck={() => dispatch(updateCategoryFilter(k))}
-                                                         checked={_.includes(categoriesFilter, k)}
-                                                         key={k}/>
-                                    })
-                                }
                             </div>
                         </div>
 
