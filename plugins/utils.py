@@ -15,6 +15,8 @@ def find_owner(filename):
     """
     if path.exists(filename):
         return getpwuid(stat(filename).st_uid).pw_name
+    if filename[0] != '/':
+        return True 
     return find_owner('/'.join(filename.split('/')[:-1]))
 
 
