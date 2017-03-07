@@ -1,0 +1,4 @@
+
+export const APP_STARTUP = 'APP_STARTUP';
+
+export const GET_CURRENT_USER_SUCCESS = 'GET_CURRENT_USER_SUCCESS';

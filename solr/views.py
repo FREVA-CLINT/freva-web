@@ -25,9 +25,19 @@ def data_browser(request):
     return render(request, 'solr/data_browser_new.html')
 
 
+@login_required()
+def databrowser(request):
+    """
+    New view for plugin list
+    TODO: As we use react now, we should use ONE default view for all react pages
+    """
+    return render(request, 'plugins/list.html', {'title': 'Databrowser'})
+
+
 @sensitive_post_parameters('pass')
 @login_required()
 def ncdump(request):
+    print request.POST
     fn = request.POST['file']
     user_pw = request.POST['pass']
     command = '%s -h %s' % (settings.NCDUMP_BINARY, fn,)

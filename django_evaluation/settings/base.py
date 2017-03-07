@@ -59,6 +59,8 @@ INSTALLED_APPS = (
     'compressor',
     'bootstrap3',
     'datatableview',
+    'webpack_loader',
+    'rest_framework',
 #    'debug_toolbar_user_panel',
 
     'base',
@@ -115,7 +117,10 @@ STATICFILES_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     ('preview', '/home/freva/ral-ces/misc4freva/db4freva/preview/'),
+    ('assets', os.path.join(PROJECT_ROOT, 'assets'))
 )
+
+print os.path.join(PROJECT_ROOT, 'assets')
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
@@ -341,3 +346,10 @@ SEND_MAIL_AT_GUEST_LOGIN = True
 
 # result to show at guest tour
 GUEST_TOUR_RESULT = 17508
+
+# Django rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication'
+    ]
+}

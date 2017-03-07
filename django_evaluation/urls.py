@@ -5,6 +5,14 @@ from django.conf.urls import include, patterns, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.views.generic import RedirectView
+from base.views_api import UserViewSet, AuthenticatedUser
+from plugins.views_api import PluginsList, ExportPlugin, PluginDetail, SendMailToDeveloper
+from solr.views_api import ncdump
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'users', UserViewSet)
+
 admin.autodiscover()
 
 
@@ -25,7 +33,16 @@ urlpatterns = patterns('',
     url(r'^bad/$', bad),
     url(r'', include('base.urls', namespace='base')),
     
-    url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/freva-favicon.png', permanent=True))
+    url(r'^favicon\.ico$', RedirectView.as_view(url=settings.STATIC_URL + 'img/freva-favicon.png', permanent=True)),
+
+    # API views
+    url(r'^api/plugins/list/$', PluginsList.as_view(), name='api-plugin-list'),
+    url(r'^api/plugins/export/$', ExportPlugin.as_view(), name='api-export-plugin'),
+    url(r'^api/plugins/(?P<plugin_name>\w+)/$', PluginDetail.as_view(), name='api-plugin-detail'),
+    url(r'^api/users/active/$', AuthenticatedUser.as_view(), name='api-active-user'),
+    url(r'^api/utils/mail-to-developer/$', SendMailToDeveloper.as_view(), name='api-mail-to-developer'),
+    url(r'^api/solr/ncdump/$', ncdump, name='api-ncdump'),
+    url(r'^api/', include(router.urls, namespace='api')),
 )
 
 if settings.DEBUG:

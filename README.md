@@ -1,3 +1,21 @@
-# https push test
-# to get the favicon:
-convert static/img/freva-favicon-black.png -fill '#A020F0' -opaque black -resize 64x64 static/img/freva-favicon.png 
+
+
+# React / Webpack usage:
+
+Install dependencies:
+
+    npm install
+
+Build project:
+
+    npm run build
+    npm run build-production   # optimized production build
+
+Development:
+
+    npm run dev   # starts webpack-dev-server including hot-reloading
+
+# Deploy a new version:
+
+    git pull
+    python manage.py collectstatic  # get new js files

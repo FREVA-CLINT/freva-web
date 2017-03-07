@@ -14,4 +14,14 @@
    
 #maincontent{
 	min-height:500px;
-}   
+}
+
+.tooltip-inner{
+ max-width: 400px;
+}
+
+html.wait, html.wait * { cursor: wait !important; }
+
+.ncdump-modal {
+    width: 80vw    /* Occupy the 90% of the screen width */
+}

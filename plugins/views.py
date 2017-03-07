@@ -7,6 +7,7 @@ from django.conf import settings
 from django.views.decorators.debug import sensitive_variables, sensitive_post_parameters
 from django.views.decorators.http import require_POST 
 from django.contrib.flatpages.models import FlatPage
+from django.utils.safestring import mark_safe
 
 import evaluation_system.api.plugin_manager as pm
 
@@ -44,7 +45,7 @@ def home(request):
     
     pm.reloadPlugins(request.user.username)
     tools = pm.getPlugins(request.user.username) 
-    return render(request, 'plugins/home.html', 
+    return render(request, 'plugins/home.html',
                   {'tool_list': sorted(tools.iteritems()),
                    'home_dir': home_dir,
                    'scratch_dir': scratch_dir,
@@ -52,16 +53,21 @@ def home(request):
 
 
 @login_required()
+def plugin_list(request):
+    """
+    New view for plugin list
+    TODO: As we use react now, we should use ONE default view for all react pages
+    """
+    return render(request, 'plugins/list.html', {'title': 'Plugins'})
+
+
+@login_required()
 def detail(request, plugin_name):
-    pm.reloadPlugins(request.user.username)
-    plugin = get_plugin_or_404(plugin_name, user_name=request.user.username)
-    plugin_web = PluginWeb(plugin)
-    try:
-        docu_flatpage = FlatPage.objects.get(title__iexact=plugin_name)
-    except FlatPage.DoesNotExist:
-        docu_flatpage = None
-    
-    return render(request, 'plugins/detail.html', {'plugin': plugin_web, 'docu': docu_flatpage})
+    """
+    New view for plugin list
+    TODO: As we use react now, we should use ONE default view for all react pages
+    """
+    return render(request, 'plugins/list.html', {'title': plugin_name})
 
 
 @login_required()
@@ -295,6 +301,42 @@ def dirlist(request):
         r.append('Could not load directory: %s' % str(e))
         r.append('</ul>')
     return HttpResponse(''.join(r))  
+
+
+@login_required()
+def list_dir(request):
+    files = list()
+    folders = list()
+    # we can specify an ending in GET request
+    file_type = request.GET.get('file_type', 'pdf')
+    try:
+        d = urllib.unquote(request.GET.get('dir'))
+        for f in sorted(os.listdir(d)):
+            if f[0] != '.':
+                ff = os.path.join(d, f)
+                if os.path.isdir(ff):
+                    folders.append(
+                        dict(
+                            type='folder',
+                            path=ff,
+                            name=f
+                        )
+                    )
+                else:
+                    e = os.path.splitext(f)[1][1:]  # get .ext and remove dot
+                    if e == file_type:
+                        files.append(
+                            dict(
+                                type='file',
+                                ext=e,
+                                path=ff,
+                                name=f
+                            )
+                        )
+        folders = folders+files
+    except Exception, e:
+        folders.append('Could not load directory: %s' % str(e))
+    return HttpResponse(json.dumps(folders))
 
 
 def list_docu(request):

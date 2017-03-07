@@ -1,0 +1,18 @@
+{% extends "_layouts/menu.html" %}
+
+{% load render_bundle from webpack_loader %}
+
+{% block page_title %}{{ title }} - Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+    <style>
+       html {
+         overflow-y: -moz-scrollbars-vertical;
+         overflow-y: scroll;
+       }
+    </style>
+    <div id="react-app"></div>
+    {% render_bundle 'main' %}
+
+{% endblock %}
