@@ -116,8 +116,8 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    ('preview', '/home/freva/ral-ces/misc4freva/db4freva/preview/'),
-    ('assets', os.path.join(PROJECT_ROOT, 'assets'))
+#    ('preview', '/home/freva/ral-ces/misc4freva/db4freva/preview/'),
+    os.path.join(PROJECT_ROOT, 'assets')
 )
 
 print os.path.join(PROJECT_ROOT, 'assets')
