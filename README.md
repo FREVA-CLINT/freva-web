@@ -14,3 +14,8 @@ Build project:
 Development:
 
     npm run dev   # starts webpack-dev-server including hot-reloading
+
+# Deploy a new version:
+
+    git pull
+    python manage.py collectstatic  # get new js files
