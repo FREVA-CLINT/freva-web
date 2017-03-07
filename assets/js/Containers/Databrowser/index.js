@@ -7,6 +7,8 @@ import _ from 'lodash'
 import $ from 'jquery';
 import NcdumpDialog from '../../Components/NcdumpDialog'
 import AccordionItemBody from '../../Components/AccordionItemBody';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import CircularProgress from 'material-ui/CircularProgress';
 
 class OwnPanel extends Panel {
     constructor(props, context) {
@@ -31,26 +33,6 @@ class Databrowser extends React.Component {
     constructor(props) {
         super(props);
         this.state = {showDialog: false, fn: null}
-    }
-
-    /**
-     * We use this because css break-word did not work inside of li tags
-     */
-    breakWord(word) {
-        let newWord = [];
-        let breakIndex = 0;
-        for(let i=0; i<word.length; i++){
-            if (word[i] === '-') {
-                breakIndex = i+1;
-            }
-            if (breakIndex > 0 && i > 120) {
-                newWord.push(word.substr(0, breakIndex));
-                newWord.push(<br/>);
-                newWord.push(word.substr(breakIndex, word.length));
-                return newWord
-            }
-        }
-
     }
 
     /**
@@ -103,13 +85,14 @@ class Databrowser extends React.Component {
                     <ul className="jqueryFileTree">
                       {_.map(files, (fn) => {
                           return (
-                              <li className="file ext_nc" key={fn}>
+
+                              <li className="file ext_nc" key={fn} style={{whiteSpace: 'normal'}}>
                                   <OverlayTrigger overlay={<Tooltip>Click to execute 'ncdump -h'<br/>and view metadata</Tooltip>}>
                                     <span className="ncdump glyphicon glyphicon-info-sign"
                                           onClick={() => {this.setState({showDialog: true, fn: fn})}}
                                           style={{cursor: 'pointer'}} />
                                   </OverlayTrigger>
-                                  {` `}{this.breakWord(fn)}
+                                  {` `}{fn}
                               </li>
                           )
                       })}
@@ -121,8 +104,19 @@ class Databrowser extends React.Component {
 
     render() {
 
-        const {selectedFacets, activeFacet, ncdumpStatus, ncdumpOutput} = this.props.databrowser;
+        const {files, facets, selectedFacets, activeFacet, ncdumpStatus, ncdumpOutput} = this.props.databrowser;
         const {dispatch} = this.props;
+
+        // Wait until facets are loaded
+        if (facets.length === 0){
+            return (
+                <MuiThemeProvider>
+                    <Grid style={{textAlign: 'center'}}>
+                        <CircularProgress />
+                    </Grid>
+                </MuiThemeProvider>
+            )
+        }
 
         const facetPanels = this.renderFacetPanels();
 
