@@ -13,6 +13,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'first_name', 'isGuest', 'home', 'scratch')
 
     def get_home(self, instance):
+        if instance.username == 'guest':
+            return 'Guest has no home'
         return pwd.getpwnam(instance.username).pw_dir
 
     def get_scratch(self, instance):
