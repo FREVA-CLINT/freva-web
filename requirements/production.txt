@@ -10,44 +10,21 @@ django_compressor
 
 # Security
 bleach
-#cef
-
-# Logging
-#raven
-
-# Celery: Message queue
-#celery
-#django-celery
-
-# L10n/i18n
-#Babel
-#-e git://github.com/clouserw/tower.git#egg=tower
 
 # Caching
 python-memcached
 
 # Admin
 django-debug-toolbar
-# There are useful panels for debug-toolbar, but have not quite been updated yet for 1.5
-#-e git://github.com/playfire/django-debug-toolbar-user-panel#egg=django_debug_toolbar_user_panel-dev
-
-# Migrations
-#South
-
-# Django-Nose
-#django_nose
-
-# Feature testing
-#django-waffle
 
 # Bootstrap layout
 django-bootstrap3
 
 # LDAP connection (installed version: 2.3.13)
-#python-ldap>=2.3.13
+python-ldap>=2.3.13
 
 # LDAP for Django (version 1.2.6)
-#django-auth-ldap==1.2.6
+django-auth-ldap==1.2.6
 
 # ssh client (installed version: 1.12.0, needs pycrypto 2.6 maybe)
 paramiko>=1.12.0
@@ -66,6 +43,8 @@ django-model-utils
 pyPdf
 
 requests
+
+pygtail
 
 django-webpack-loader==0.4.1
 djangorestframework==3.5.3
