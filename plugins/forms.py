@@ -84,9 +84,9 @@ class PasswordField(forms.CharField):
 
     def validate(self, value):
         password_type = getattr(settings, 'FORM_PASSWORD_CHECK', 'LDAP')
-        if password_type == 'ldap':
+        if password_type == 'LDAP':
             u = auth.authenticate(username=self._user, password=value)
-            if not u:
+            if u is None:
                 raise exceptions.ValidationError('Invalid password', code='invalid_password')
         elif password_type == 'ssh':
             try:

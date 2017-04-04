@@ -1,420 +1,429 @@
 {% extends "_layouts/menu.html" %}
 
-{% block page_title %}{{tool.name}} setup - Evaluation System{% endblock %}
+{% block page_title %}{{ tool.name }} setup - Evaluation System{% endblock %}
 {% block page_class %}home-page{% endblock %}
 {% block content %}
-{% load infotag %}
+    {% load infotag %}
 
-<script src="{{ STATIC_URL }}js/solr_search.js?{% now "U" %}"></script>
+    <script src="{{ STATIC_URL }}js/solr_search.js?{% now "U" %}"></script>
 
-{% load bootstrap3 %}
-{% load static %}
-<style>
-.files{
-	max-height: 500px;
-	overflow-y: scroll;
-}
+    {% load bootstrap3 %}
+    {% load static %}
+    <style>
+        .files {
+            max-height: 500px;
+            overflow-y: scroll;
+        }
 
-body .solr-modal{
-   width: 70%;
-   max-width:1000px;
-}
+        body .solr-modal {
+            width: 70%;
+            max-width: 1000px;
+        }
 
-#simAffix.affix {
-    position: fixed;
-    top: 10px;
-    width:220px;
-  }
+        #simAffix.affix {
+            position: fixed;
+            top: 10px;
+            width: 220px;
+        }
 
-html.wait, html.wait * { cursor: wait !important; }
+        html.wait, html.wait * {
+            cursor: wait !important;
+        }
 
-</style>
+    </style>
 
-{# Load CSS and JavaScript #}
+    {# Load CSS and JavaScript #}
 
 
-{% bootstrap_javascript %}
-      
+    {% bootstrap_javascript %}
+
 
     <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-9">
-        	<h1>{{tool.name}}</h1>
-          <p>{{tool.short_description}}</p>
-          <form action="" method="post" name="plugin_form" id="plugin_form">
-          	{% csrf_token %}		
-			
-			{% bootstrap_form form %}
-			
-	                <a class="btn-lg btn-primary btn-block btn" id="runButton">
-	                        Run
-	                </a>
-		  </form>
-        </div>
-	<div class="col-md-3 pull-right"  id="similarD22iv">
-          <div id="simAffix">
-	  {% if restricted_user %}
-             <p>As a full user you would see similar results here. The suggestions update in real-time while you fill out the from.</p>
-          {% endif %}
-          <div id="similarDiv"></div>
-	  </div>
-        </div>
+        <!-- Example row of columns -->
+        <div class="row">
+            <div class="col-md-9">
+                <h1>{{ tool.name }}</h1>
+                <p>{{ tool.short_description }}</p>
+                <form action="" method="post" name="plugin_form" id="plugin_form">
+                    {% csrf_token %}
 
+                    {% if show_pw_error %}
+                        <div class="alert alert-danger" role="alert">
+                            You've entered a <strong>wrong password</strong>! Please try again.
+                        </div>
+                    {% endif %}
 
-      </div>
-	</div>
-  <!-- Modal -->
-  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Select a file</h4>
-        </div>
-        <div class="modal-body">
-        <div class="btn-group" data-toggle="buttons" style='margin-bottom:20px'>
-            <label class="btn btn-primary active">
-                <input type="radio" name="browse_options" id="browse_home" value="home" checked>Home
-            </label>
-	    {% if user_scratch %}
-            <label class="btn btn-primary">
-                <input type="radio" name="browse_options" id="browse_scratch" value="scratch">Scratch
-            </label>
-	    {% endif %}
-        </div>       
-        <div id="browsefield">
-          ...
-	</div>
-        </div>
-        <div class="modal-footer">
-          <input type="hidden" name="senderField" id="senderField" value="">
-          <input type="hidden" name="fileExtension" id="fileExtension" value="nc">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Select file</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-  
-  
-  <!-- Modal Solr_search-->
-  <div class="modal fade" id="myModal_solr" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog solr-modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Search database</h4>
-        </div>
-        <div class="modal-body">
-          <div class="visual_search"></div>
-		
-			<div class="files"></div>
-			
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary" id="solr_select_file">Select file</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
- 
-  
-{% if restricted_user %} 
- <!-- Modal Guest Dialog-->
-  <div class="modal fade" id="guestModal" tabindex="-1" role="dialog" aria-labelledby="guestModal" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Guest login</h4>
-        </div>
-        <div class="modal-body" id="guest_text">
-          	
-        	<div class="form-group">
-        		<p class="help-block">Dear Guest,</p>
-        		<p class="help-block">you do not have the permissions to start any job.
-        		You will be automatically redirected to the history. There you can view
-        		example results of the tools available.
-        		</p>
-			</div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default tourbtn" data-dismiss="modal" onclick='window.location.href="/history";'>Ok</button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
- {% else %}	
- 
- 
-	
-  <!-- Modal Passwort Dialog-->
-  <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h4 class="modal-title">Enter password</h4>
-        </div>
-        <div class="modal-body" id="browsefield">
-          	
-        	<div class="form-group">
-        		<p class="help-block">To schedule the analysis you have to re-enter your password</p>
-				{% comment %}
-				This form is used to trigger the browsers "save password" function
-				It also requires a username field and a submit (method="post") button. 
-				The actual submit is supressed with "return false" in $('#submit_analysis').on('click')
-				{% endcomment %}
-				<form name="passForm" id="passForm" action="/" method="post">
-				<input id="username" type="text" name="username" style="display:none;">
-				<input id="password_temp" class="form-control" type="password" name="password_temp" style="width: 90%;">
-				
-			</div>
-                <div class="row">
-                        <div class="col-md-12" id="similarResults">
-                        	<center><p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" /></center>
-			</div>
+                    {% bootstrap_form form %}
+
+                    <a class="btn-lg btn-primary btn-block btn" id="runButton">
+                        Run
+                    </a>
+                </form>
+            </div>
+            <div class="col-md-3 pull-right" id="similarD22iv">
+                <div id="simAffix">
+                    {% if restricted_user %}
+                        <p>As a full user you would see similar results here. The suggestions update in real-time while
+                            you fill out the from.</p>
+                    {% endif %}
+                    <div id="similarDiv"></div>
                 </div>
-
+            </div>
 
 
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary" id="submit_analysis">Submit analysis</button>
-         </form>
-	 </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
-{% endif %}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Select a file</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="btn-group" data-toggle="buttons" style='margin-bottom:20px'>
+                        <label class="btn btn-primary active">
+                            <input type="radio" name="browse_options" id="browse_home" value="home" checked>Home
+                        </label>
+                        {% if user_scratch %}
+                            <label class="btn btn-primary">
+                                <input type="radio" name="browse_options" id="browse_scratch" value="scratch">Scratch
+                            </label>
+                        {% endif %}
+                    </div>
+                    <div id="browsefield">
+                        ...
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="hidden" name="senderField" id="senderField" value="">
+                    <input type="hidden" name="fileExtension" id="fileExtension" value="nc">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Select file</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
-{% if not restricted_user %} <!-- offer warnings and errors only operational -->
-{% error_warning_dialog tool.name %}
-{% endif %}
 
-<script>
+    <!-- Modal Solr_search-->
+    <div class="modal fade" id="myModal_solr" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog solr-modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Search database</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="visual_search"></div>
 
-//Script for serializing the solr form values
-function getActiveFacets(facet_to_look,facet_group)
-{
-    	//var form = $('#plugin_form');
-	
-	if(facet_group=='global'){
-		var solr_fields = $('input[data-group]');
-		var solr_fields_global = {};
-	}else{
-		var solr_fields = $('input[data-group="'+facet_group+'"]');
-		var solr_fields_global = $('input[data-group="global"]');
-		//var solr_fields = $.extend(solr_fields1, solr_fields2);
-	}
-	var search = '';
-	$.each(solr_fields, function(index,value){
-		search += facetToQuery(index,value, facet_to_look);	
-	});
-	$.each(solr_fields_global, function(index,value){
-			
-		search += facetToQuery(index,value, facet_to_look);
-		
-	});
+                    <div class="files"></div>
 
-	return search;
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="solr_select_file">Select file</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 
-}
 
-function facetToQuery(index, value, facet_to_look)
-{
-		var val = $(value).val();
-                var facet = $(value).attr('data-facet');
-                var multiple = $(value).attr('data-multiple');
-                if(val!='' && facet!= facet_to_look)
-                {
-                        if(multiple=='True')
-                        {	
-				var search = '';
-                                var values = val.split(',');
-                                $.each(values, function(i,v){
-                                        search += facet+'='+v+'&';
-                                });            
-				return search; 
-                        }else{  
-                                return facet+'='+val+'&';
-                        }
-                }
-		return '';
+    {% if restricted_user %}
+        <!-- Modal Guest Dialog-->
+        <div class="modal fade" id="guestModal" tabindex="-1" role="dialog" aria-labelledby="guestModal"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Guest login</h4>
+                    </div>
+                    <div class="modal-body" id="guest_text">
 
-}
-
-// Script for the password modal
-// set focus to pw-field
-$('#myModalPw').on('shown.bs.modal', function () {
-    $('#password_temp').focus();
-})
-
-// simulate click on submit when enter is pressed
-$('#password_temp').keypress(function (e) {
-	if (e.which == 13) {
-		$('#submit_analysis').click();
-		return false;
-  	}
-});
-
-function activate_browse(dir, file_extension) {
-	$('#browsefield').fileTree({
-		root : dir ? dir : '{{user_home}}',
-        script: '{% url 'plugins:dirlist' %}?file_type='+file_extension,
-        expandSpeed: 100,
-        collapseSpeed: 100,
-        multiFolder: false
-    }, function(file) {
-		var sender = $('#senderField').val();
-		$('#'+sender).val(file);
-        $('#myModal').modal('hide');
-
-    });
- }
-
-function searchResults(container){
-        var form_vals = $('#plugin_form').serializeArray();
-        var index_pw;
-        $.each(form_vals, function(index, value) {
-            if(value.name == 'password_hidden')
-                index_pw = index;
-        });
-        form_vals.splice(index_pw, 1);
-	$('#'+container).html('<p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" style="margin-left:50px;"/>');
-	$.ajax({
-	   url: '/plugins/{{tool.name}}/similar-results/',
-	   data: form_vals,
-	   type: 'GET',
-	   dataType: 'json',
-	   success: function(data){
-	      if(data.length == 0)
-		result = 'No similar results found';
-	      else{
-    	        result = '<table width="100%" style="text-align:center;" cellpadding="10"><tr>';
-	        var i = 0;
-	        data.forEach(function(val){
-		  i+=1;
-		  if(container=='similarResults'){
-		    result+=similarDialog(val,i);
-		    if(i==3)result+='</tr><tr>';
-		  }else
-		    result += similarHtml(val,i);
-	        });
-	        result += '</tr></table>';
-	        if(result.length > 0){
-	            if(container == 'similarResults')
-		      result = 'This analysis has already be done by other users. Here you can view their results. <br>' +result;
-	            else
-		      result = 'Similar results: <br>' + result;
-	        }
-	      }
-	      $('#'+container).html(result);
-	   },
-	   error: function(xhr,status,err){console.log(xhr.responseJSON);}
-	});
-
-}
-
-function similarHtml(res,i){
-	if(res['preview'] != '')
-	   img = '<a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{PREVIEW_URL}}'+res['preview']+'" width="200"/></a><br/>';
-	else
-	   img = '';
-	html = img+'<a href="/history/'+res['pk']+'/results/" target="_blank">'+res['tool']+' result #'+res['pk']+'</a> by '+res['uid']+'<br/><br/>';
-	return html;
-}
-
-function similarDialog(res,i){
-	if(res['preview'] != '')
-           img = '<a href="/history/'+res['pk']+'/results/" target="_blank"><img src="{{PREVIEW_URL}}'+res['preview']+'" width="130"/></a><br/>';
-        else
-           img = '';
-	html = '<td>'+img+'<a href="/history/'+res['pk']+'/results/" target="_blank">Result #'+res['pk']+'</a> by '+res['uid']+'</td>';
-        return html;
-}
-
-$(document).ready(function(){
-	getActiveFacets();	
-
-	activate_browse('{{user_home}}', $('#fileExtension').val());
-
-	$("input:radio[name='browse_options']").on('change', function () {
-		kind = $( "input:radio[name='browse_options']:checked" ).val();
-
- 		if(this.value==kind)
-		{
-            var file_extension = $('#fileExtension').val()
-			if(kind=='scratch'){
-				 activate_browse('{{user_scratch}}', file_extension);
-			}
-			else {
-				activate_browse('{{user_home}}', file_extension);
-			}
-		}
-	});
-   
-    {% if restricted_user %} 
-        $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
-
-        // actually the runbutton is a forwarding
-        $('#runButton').removeAttr('disabled');
-        $('.tourbtn').removeAttr('disabled');
-        $('#runButton').on('click', function(e){
-        	$('#guestModal').modal({show : true, backdrop : 'static'});
-        }); 
-    {% elif error_message %}
-        $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
-        $('#okBtn').removeAttr('disabled');
-    
+                        <div class="form-group">
+                            <p class="help-block">Dear Guest,</p>
+                            <p class="help-block">you do not have the permissions to start any job.
+                                You will be automatically redirected to the history. There you can view
+                                example results of the tools available.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default tourbtn" data-dismiss="modal"
+                                onclick='window.location.href="/history";'>Ok
+                        </button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
     {% else %}
-    
-        $('#runButton').on('click', function(e){
-            searchResults('similarResults'); //This triggers the search for similar results
-    	    $('#myModalPw').modal('show');
-        }); 
- 
-    
-        $('#submit_analysis').on('click', function(e){
-            $('#submit_analysis').button('loading');	
-    	    var pw = $('#password_temp').val();
-    	    $('html').addClass('wait');
-    	    $('#id_password_hidden').val(pw);
-    	
-    	    $('#plugin_form').submit();
-	    return false;    	
-    
+
+
+
+        <!-- Modal Passwort Dialog-->
+        <div class="modal fade" id="myModalPw" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title">Enter password</h4>
+                    </div>
+                    <div class="modal-body" id="browsefield">
+
+                        <div class="form-group">
+                            <p class="help-block">To schedule the analysis you have to re-enter your password</p>
+                            {% comment %}
+                                This form is used to trigger the browsers "save password" function
+                                It also requires a username field and a submit (method="post") button.
+                                The actual submit is supressed with "return false" in $('#submit_analysis').on('click')
+                            {% endcomment %}
+                            <form name="passForm" id="passForm" action="/" method="post">
+                                <input id="username" type="text" name="username" style="display:none;">
+                                <input id="password_temp" class="form-control" type="password" name="password_temp"
+                                       style="width: 90%;">
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" id="similarResults">
+                                <center><p>Loading similar results!</p><img src="{{ STATIC_URL }}img/ajax-loader.gif"/>
+                                </center>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="submit_analysis">Submit analysis</button>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    {% endif %}
+
+    {% if not restricted_user %} <!-- offer warnings and errors only operational -->
+        {% error_warning_dialog tool.name %}
+    {% endif %}
+
+    <script>
+
+        //Script for serializing the solr form values
+        function getActiveFacets(facet_to_look, facet_group) {
+            //var form = $('#plugin_form');
+
+            if (facet_group == 'global') {
+                var solr_fields = $('input[data-group]');
+                var solr_fields_global = {};
+            } else {
+                var solr_fields = $('input[data-group="' + facet_group + '"]');
+                var solr_fields_global = $('input[data-group="global"]');
+                //var solr_fields = $.extend(solr_fields1, solr_fields2);
+            }
+            var search = '';
+            $.each(solr_fields, function (index, value) {
+                search += facetToQuery(index, value, facet_to_look);
+            });
+            $.each(solr_fields_global, function (index, value) {
+
+                search += facetToQuery(index, value, facet_to_look);
+
+            });
+
+            return search;
+
+        }
+
+        function facetToQuery(index, value, facet_to_look) {
+            var val = $(value).val();
+            var facet = $(value).attr('data-facet');
+            var multiple = $(value).attr('data-multiple');
+            if (val != '' && facet != facet_to_look) {
+                if (multiple == 'True') {
+                    var search = '';
+                    var values = val.split(',');
+                    $.each(values, function (i, v) {
+                        search += facet + '=' + v + '&';
+                    });
+                    return search;
+                } else {
+                    return facet + '=' + val + '&';
+                }
+            }
+            return '';
+
+        }
+
+        // Script for the password modal
+        // set focus to pw-field
+        $('#myModalPw').on('shown.bs.modal', function () {
+            $('#password_temp').focus();
+        })
+
+        // simulate click on submit when enter is pressed
+        $('#password_temp').keypress(function (e) {
+            if (e.which == 13) {
+                $('#submit_analysis').click();
+                return false;
+            }
+        });
+
+        function activate_browse(dir, file_extension) {
+            $('#browsefield').fileTree({
+                root: dir ? dir : '{{user_home}}',
+                script: '{% url 'plugins:dirlist' %}?file_type=' + file_extension,
+                expandSpeed: 100,
+                collapseSpeed: 100,
+                multiFolder: false
+            }, function (file) {
+                var sender = $('#senderField').val();
+                $('#' + sender).val(file);
+                $('#myModal').modal('hide');
+
+            });
+        }
+
+        function searchResults(container) {
+            var form_vals = $('#plugin_form').serializeArray();
+            var index_pw;
+            $.each(form_vals, function (index, value) {
+                if (value.name == 'password_hidden')
+                    index_pw = index;
+            });
+            form_vals.splice(index_pw, 1);
+            $('#' + container).html('<p>Loading similar results!</p><img src="{{STATIC_URL}}img/ajax-loader.gif" style="margin-left:50px;"/>');
+            $.ajax({
+                url: '/plugins/{{tool.name}}/similar-results/',
+                data: form_vals,
+                type: 'GET',
+                dataType: 'json',
+                success: function (data) {
+                    if (data.length == 0)
+                        result = 'No similar results found';
+                    else {
+                        result = '<table width="100%" style="text-align:center;" cellpadding="10"><tr>';
+                        var i = 0;
+                        data.forEach(function (val) {
+                            i += 1;
+                            if (container == 'similarResults') {
+                                result += similarDialog(val, i);
+                                if (i == 3)result += '</tr><tr>';
+                            } else
+                                result += similarHtml(val, i);
+                        });
+                        result += '</tr></table>';
+                        if (result.length > 0) {
+                            if (container == 'similarResults')
+                                result = 'This analysis has already be done by other users. Here you can view their results. <br>' + result;
+                            else
+                                result = 'Similar results: <br>' + result;
+                        }
+                    }
+                    $('#' + container).html(result);
+                },
+                error: function (xhr, status, err) {
+                    console.log(xhr.responseJSON);
+                }
+            });
+
+        }
+
+        function similarHtml(res, i) {
+            if (res['preview'] != '')
+                img = '<a href="/history/' + res['pk'] + '/results/" target="_blank"><img src="{{PREVIEW_URL}}' + res['preview'] + '" width="200"/></a><br/>';
+            else
+                img = '';
+            html = img + '<a href="/history/' + res['pk'] + '/results/" target="_blank">' + res['tool'] + ' result #' + res['pk'] + '</a> by ' + res['uid'] + '<br/><br/>';
+            return html;
+        }
+
+        function similarDialog(res, i) {
+            if (res['preview'] != '')
+                img = '<a href="/history/' + res['pk'] + '/results/" target="_blank"><img src="{{PREVIEW_URL}}' + res['preview'] + '" width="130"/></a><br/>';
+            else
+                img = '';
+            html = '<td>' + img + '<a href="/history/' + res['pk'] + '/results/" target="_blank">Result #' + res['pk'] + '</a> by ' + res['uid'] + '</td>';
+            return html;
+        }
+
+        $(document).ready(function () {
+            getActiveFacets();
+
+            activate_browse('{{user_home}}', $('#fileExtension').val());
+
+            $("input:radio[name='browse_options']").on('change', function () {
+                kind = $("input:radio[name='browse_options']:checked").val();
+
+                if (this.value == kind) {
+                    var file_extension = $('#fileExtension').val()
+                    if (kind == 'scratch') {
+                        activate_browse('{{user_scratch}}', file_extension);
+                    }
+                    else {
+                        activate_browse('{{user_home}}', file_extension);
+                    }
+                }
+            });
+
+            {% if restricted_user %}
+                $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+
+                // actually the runbutton is a forwarding
+                $('#runButton').removeAttr('disabled');
+                $('.tourbtn').removeAttr('disabled');
+                $('#runButton').on('click', function (e) {
+                    $('#guestModal').modal({show: true, backdrop: 'static'});
+                });
+            {% elif error_message %}
+                $('.btn').attr('disabled', 'disabled'); // {{ disable_buttons }}
+                $('#okBtn').removeAttr('disabled');
+
+            {% else %}
+
+                $('#runButton').on('click', function (e) {
+                    searchResults('similarResults'); //This triggers the search for similar results
+                    $('#myModalPw').modal('show');
+                });
+
+
+                $('#submit_analysis').on('click', function (e) {
+                    $('#submit_analysis').button('loading');
+                    var pw = $('#password_temp').val();
+                    $('html').addClass('wait');
+                    $('#id_password_hidden').val(pw);
+
+                    $('#plugin_form').submit();
+                    return false;
+
+                });
+
+
+            {% endif %}
+
+            $('form :input').change(function () {
+                searchResults('similarDiv');
+            });
+            searchResults('similarDiv');
+
+
+            $('#simAffix').affix({
+                offset: {
+                    top: 200,
+                    bottom: function () {
+                        return (this.bottom = $('.footer').outerHeight(true))
+                    }
+                }
+            });
+
+
         });
 
 
-   {% endif %}
-
-    $('form :input').change(function(){
-        searchResults('similarDiv');
-    });
-    searchResults('similarDiv'); 
-    
-
-    $('#simAffix').affix({
-        offset: {
-            top: 200,
-            bottom: function () {
-                return (this.bottom = $('.footer').outerHeight(true))
-            }
-        }
-    });
-
-
-});
-
-
-
-
-
-</script>
+    </script>
 
 
 {% endblock %}
