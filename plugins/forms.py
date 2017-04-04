@@ -87,12 +87,12 @@ class PasswordField(forms.CharField):
         if password_type == 'LDAP':
             u = auth.authenticate(username=self._user, password=value)
             if u is None:
-                raise exceptions.ValidationError('Invalid password', code='invalid_password')
+                raise exceptions.ValidationError('You\'ve entered a wrong password!', code='invalid_password')
         elif password_type == 'ssh':
             try:
                 ssh_call(self._user, value, 'ls', settings.SCHEDULER_HOSTS)
             except:
-                raise exceptions.ValidationError('Invalid password', code='invalid_password')
+                raise exceptions.ValidationError('You\'ve entered a wrong password!', code='invalid_password')
         super(PasswordField, self).validate(value)
 
 

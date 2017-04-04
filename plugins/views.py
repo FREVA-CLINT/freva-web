@@ -274,7 +274,7 @@ def setup(request, plugin_name, row_id=None):
                                                   'user_scratch': scratch_dir,
                                                   'error_message': error_msg,
                                                   'restricted_user': not user_can_submit,
-                                                  'show_pw_error': 'password_hidden' in form.errors.keys(),
+                                                  #'show_pw_error': 'password_hidden' in form.errors.keys(),
                                                   'PREVIEW_URL': settings.PREVIEW_URL})
   
 

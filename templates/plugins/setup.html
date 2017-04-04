@@ -47,12 +47,6 @@
                 <form action="" method="post" name="plugin_form" id="plugin_form">
                     {% csrf_token %}
 
-                    {% if show_pw_error %}
-                        <div class="alert alert-danger" role="alert">
-                            You've entered a <strong>wrong password</strong>! Please try again.
-                        </div>
-                    {% endif %}
-
                     {% bootstrap_form form %}
 
                     <a class="btn-lg btn-primary btn-block btn" id="runButton">
