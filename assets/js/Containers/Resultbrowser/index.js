@@ -42,7 +42,7 @@ class Resultbrowser extends React.Component {
                                                                                                         onClick={(e) => e.preventDefault()}><span
                     className="glyphicon glyphicon-remove-circle"
                     onClick={(e) => e.preventDefault()}/></a></strong></span>
-            } else if (value.length == 2) {
+            } else if (value.length === 2) {
                 panelHeader = <span style={{cursor: 'pointer'}}>{key}: <strong>{value[0]}</strong></span>
             } else {
                 panelHeader = <span style={{cursor: 'pointer'}}>{key} ({value.length / 2})</span>
@@ -60,7 +60,7 @@ class Resultbrowser extends React.Component {
 
     renderFilesPanel() {
         //TODO: This should be a separate component
-        const {activeFacet,results, numResults} = this.props.resultbrowser
+        const {activeFacet,results, numResults} = this.props.resultbrowser;
         const {dispatch} = this.props;
 
         return (
