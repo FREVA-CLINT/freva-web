@@ -54,6 +54,8 @@ class ResultFacets(APIView, FilterAbstract):
         items_dic = [ast.literal_eval(item) for item in queryset]
 
         structure_temp = {}
+        # create a dictionary - tags: list of attributes
+        # counts tags: total number of attributes
         for fac in facets:
             structure[fac] = []
             structure_temp[fac] = []
@@ -64,9 +66,7 @@ class ResultFacets(APIView, FilterAbstract):
                 structure[fac].append(key)
                 structure[fac].append(num)
 
-        data = {'data': structure, 'metadata': None}
-
-        return Response(data)
+        return Response({'data': structure, 'metadata': None})
 
 
 class ResultFiles(APIView, FilterAbstract):
@@ -91,5 +91,4 @@ class ResultFiles(APIView, FilterAbstract):
                 }
             )
 
-        data = {'data': data, 'metadata': {'start': 0, 'numFound': len(data)}}
-        return Response(data)
+        return Response({'data': data, 'metadata': {'start': 0, 'numFound': len(data)}})
