@@ -74,7 +74,7 @@ class Resultbrowser extends React.Component {
                     <TableHeaderColumn dataField='namelist'>Namelist</TableHeaderColumn>
                     <TableHeaderColumn dataField='Timestamp'>Timestamp</TableHeaderColumn>
                     <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
-                            <a href={ `/${cell}` } onClick={ e => e.stopPropagation() }>{`Show`}</a>
+                            <a href={ cell } >{`Show`}</a>
                     )}> Results</TableHeaderColumn>
                 </BootstrapTable>
             </Panel>

@@ -59,7 +59,7 @@ export const loadResultFacets = () => (dispatch, getState) => {
     _.map(selectedFacets, (value, key) => {
         params += `&${key}=${value};`
     });
-    let url = `/api/history/resultbrowser/?${params}`;
+    let url = `/api/history/result-browser/?${params}`;
 
     return fetch(url, {
         credentials: 'same-origin',
@@ -86,7 +86,7 @@ export const loadResultFiles = () => (dispatch, getState) => {
         params += `&${key}=${value};`
     });
     // let url = `/solr/solr-search/?start=0&rows=100${params}`;
-    let url = `/api/history/resultbrowserfiles/?${params}`;
+    let url = `/api/history/result-browser-files/?${params}`;
     return fetch(url, {
         credentials: 'same-origin',
         headers: {

@@ -6,13 +6,10 @@ from history.models import History, Result
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 
 class FilterAbstract(object):
-    """
-    Base class for
-    """
-
     @property
     def filter_field(self):
         raise NotImplementedError, 'filter_field must be implemented'
@@ -90,7 +87,7 @@ class ResultFiles(APIView, FilterAbstract):
                     'ID': item[0],
                     'Timestamp': item[1],
                     'namelist': splitext(ast.literal_eval(item[2])['namelist'][0])[0],
-                    'link2results': '%s/%d/%s/' % ('history', item[0], 'results')
+                    'link2results': reverse('history:results', args=[item[0]])
                 }
             )
 

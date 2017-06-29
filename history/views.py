@@ -791,4 +791,4 @@ def count_notes(request, history_id, deleted):
 
 @login_required()
 def result_browser(request):
-    return render(request, 'plugins/list.html', {'title': 'Result Browser'})
+    return render(request, 'plugins/list.html', {'title': 'Result-Browser'})
