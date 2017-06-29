@@ -6,6 +6,7 @@ import {pluginListReducer} from './Containers/PluginList/reducers'
 import {fileTreeReducer} from './Components/FileTree/reducers'
 import {pluginDetailReducer} from './Containers/PluginDetail/reducers'
 import {databrowserReducer} from './Containers/Databrowser/reducers'
+import {resultbrowserReducer} from './Containers/Resultbrowser/reducers'
 
 const rootReducer = combineReducers({
     appReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     fileTreeReducer,
     pluginDetailReducer,
     databrowserReducer,
+    resultbrowserReducer,
     routing: routerReducer
 });
 

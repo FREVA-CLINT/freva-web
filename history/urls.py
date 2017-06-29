@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^(?P<history_id>\w+)/(?P<tag_id>\w+)/edit-historytag/$', views.edit_htag, name='edit-historytag'),
     url(r'^sendmail/$', views.send_share_email, name='sendMail'),
     url(r'^mail-to-developer/$', views.send_mail_to_developer, name='mail_to_developer'),
+    url(r'^result-browser/$', views.result_browser, name='result_browser'),
 ]
