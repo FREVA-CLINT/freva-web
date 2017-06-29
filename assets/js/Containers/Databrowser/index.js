@@ -9,24 +9,7 @@ import NcdumpDialog from '../../Components/NcdumpDialog'
 import AccordionItemBody from '../../Components/AccordionItemBody';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
-
-class OwnPanel extends Panel {
-    constructor(props, context) {
-        super(props, context);
-        this.handleClickTitle = this.handleClickTitle.bind(this);
-    }
-
-    /**
-     * Override the method to allow different title click behaviour
-     */
-    handleClickTitle(e) {
-        if (e.target.className.indexOf('remove') !== -1) {
-            this.props.removeFacet();
-        }else
-            this.props.collapse();
-            super.handleClickTitle(e);
-    }
-}
+import OwnPanel from '../../Components/OwnPanel'
 
 class Databrowser extends React.Component {
 
@@ -103,7 +86,6 @@ class Databrowser extends React.Component {
     }
 
     render() {
-
         const {files, facets, selectedFacets, activeFacet, ncdumpStatus, ncdumpOutput} = this.props.databrowser;
         const {dispatch} = this.props;
 
