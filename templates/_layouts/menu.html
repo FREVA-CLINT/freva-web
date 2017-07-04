@@ -51,18 +51,13 @@
 	            <span class="icon-bar"></span>
 	          </button>
 		  </div>
+            {% get_menu_entries 'MENU_ENTRIES' as menu_entries %}
           <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
             <!-- Navigation links starts here -->
 	          <ul class="nav navbar-nav ">
-	            <li><a id="plugin_menu" href="{% url 'plugins:home' %}">Plugins</a></li>
-	            <li><a id="history_menu" href="{% url 'history:history' %}">History</a></li>
-		        <li><a id="browser_menu"href="{% url 'solr:data_browser' %}">Data-Browser</a></li>
-		      {% shell_in_a_box as show_shell%}
-		        {% if show_shell %}
-		        <li><a id="shell_menu"href="{% url 'base:shell_in_a_box' %}">Shell</a></li>
-		        {%endif%}
-		        <li><a id="docu_menu"href="{% url 'plugins:about' %}">Help</a></li>
-	            <li><a id="contact_menu"href="{% url 'base:contact' %}">Contact</a></li>  
+                  {% for item in menu_entries %}
+	            <li><a id={{item.html_id}} href={{item.url}}>{{item.name}}</a></li>
+                  {% endfor %}
 	          </ul>
 
              {% if not request.user.is_authenticated %}
