@@ -21,10 +21,10 @@ def setting_to_list(value):
         result += '<li>%s</li>' % val
     return result
 
-
 @register.assignment_tag
-def shell_in_a_box():
-    return getattr(settings, 'SHELL_IN_A_BOX', None)
+def get_menu_entries(entry):
+    return getattr(settings,entry,None)
+
 
 
 @register.assignment_tag
