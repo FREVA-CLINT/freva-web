@@ -23,7 +23,7 @@ def setting_to_list(value):
 
 @register.assignment_tag
 def get_menu_entries(entry):
-    return getattr(settings,entry,None)
+    return getattr(settings, entry, None)
 
 
 
