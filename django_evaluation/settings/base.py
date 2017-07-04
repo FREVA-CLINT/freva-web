@@ -9,7 +9,7 @@ import logging
 # Normally you should not import ANYTHING from Django directly
 # into your settings, but ImproperlyConfigured is an exception.
 from django.core.exceptions import ImproperlyConfigured
-
+from django.core.urlresolvers import reverse_lazy
 import django.utils
 
 def get_env_setting(setting):
@@ -353,3 +353,12 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication'
     ]
 }
+
+MENU_ENTRIES = [
+    {'name':'Plugins','url': reverse_lazy('plugins:home'), 'html_id': 'plugin_menu'},
+    {'name':'History','url': reverse_lazy('history:history'), 'html_id': 'history_menu'},
+    {'name':'Data-Browser', 'url': reverse_lazy('solr:data_browser'), 'html_id': 'browser_menu'},
+    {'name':'Shell','url': reverse_lazy('base:shell_in_a_box'), 'html_id': 'shell_menu'},
+    {'name':'Help','url': reverse_lazy('plugins:about'), 'html_id': 'doc_menu'},
+    {'name':'Contact','url': reverse_lazy('base:contact'), 'html_id': 'contact_menu'}
+]
