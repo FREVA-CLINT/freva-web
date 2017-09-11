@@ -1,5 +1,5 @@
 import ast
-from collections import Counter
+from collections import Counter, OrderedDict
 from os.path import splitext
 
 from history.models import History, Result
@@ -39,7 +39,7 @@ class ResultFacets(APIView, FilterAbstract):
     filter_field = 'configuration'
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
-    predefined_filter = '"THEME"'
+    predefined_filter = '"namelist"'
 
     def get(self, request, format=None):
 
@@ -48,7 +48,7 @@ class ResultFacets(APIView, FilterAbstract):
 
         facets = settings.RESULT_BROWSER_FACETS
 
-        structure = {}
+        structure = OrderedDict()
 
         queryset = queryset.values_list('configuration', flat=True)
         items_dic = [ast.literal_eval(item) for item in queryset]
@@ -73,7 +73,7 @@ class ResultFiles(APIView, FilterAbstract):
     filter_field = 'configuration'
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
-    predefined_filter = '"THEME"'
+    predefined_filter = '"namelist"'
 
     def get(self, request, format=None):
         queryset = History.objects.all()
@@ -86,7 +86,7 @@ class ResultFiles(APIView, FilterAbstract):
                 {
                     'ID': item[0],
                     'Timestamp': item[1],
-                    'namelist': splitext(ast.literal_eval(item[2])['namelist'][0])[0],
+                    'namelist': splitext(ast.literal_eval(item[2])['ESMValTool namelists'][0])[0],
                     'link2results': reverse('history:results', args=[item[0]])
                 }
             )

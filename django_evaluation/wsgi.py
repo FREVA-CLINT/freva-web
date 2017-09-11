@@ -47,15 +47,15 @@ if "check_output" not in dir( subprocess ): # duck punch it in!
 prev_sys_path = list(sys.path)
 
 # Get the path to the env's site-packages directory
-site_packages = subprocess.check_output([
-                    settings.VENV_PYTHON_DIR,
-                    '-c',
-                    'from distutils.sysconfig import get_python_lib;'
-                    'print get_python_lib(),'
-]).strip()
+#site_packages = subprocess.check_output([
+#                    settings.VENV_PYTHON_DIR,
+#                    '-c',
+#                    'from distutils.sysconfig import get_python_lib;'
+#                    'print get_python_lib(),'
+#]).strip()
 
 # Add the virtualenv site-packages to the site packages
-site.addsitedir(site_packages)
+#site.addsitedir(site_packages)
 
 # Reorder sys.path so the new directories are at the front.
 new_sys_path = []

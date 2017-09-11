@@ -13,12 +13,13 @@
                     Mail successfully send
                 </div>
             {%endif%}
-            <p>If you have any questions or found a bug in the system, please write us a message:</p>
+            <p>If you have any questions or found a bug in the system, please write us a message or contact the
+                ESMValTool-FREVA core development team:</p>
             <form method="post">
                 {% csrf_token %}
                 <textarea id="text" class="form-control" rows="3" name="text"></textarea>
                 <br/>
-                <input type="submit" value="Send message to admins" class="btn btn-info col-md-12"/>
+                <input type="submit" value="Send message to the admins" class="btn btn-info col-md-12"/>
             </form>
         </div>
     </div>
