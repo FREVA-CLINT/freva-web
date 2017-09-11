@@ -3,3 +3,4 @@
 from .base import *
 #from .local_wwwdev import *
 #from .local_fu import *
+from .local_dicad import *

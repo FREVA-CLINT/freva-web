@@ -343,6 +343,8 @@ def list_dir(request):
 def list_docu(request):
     return render(request, 'plugins/list-docu.html')
 
+def terms(request):
+    return render(request, 'plugins/terms.html')
 
 @require_POST
 @login_required()

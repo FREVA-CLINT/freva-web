@@ -71,11 +71,11 @@ class Resultbrowser extends React.Component {
                                 options={ {noDataText: 'No namelists available' }}
                                 striped hover condensed>
                     <TableHeaderColumn dataField='ID' isKey>Id</TableHeaderColumn>
-                    <TableHeaderColumn dataField='namelist'>Namelist</TableHeaderColumn>
+                    <TableHeaderColumn dataField='namelist'>ESMVALTool namelist</TableHeaderColumn>
                     <TableHeaderColumn dataField='Timestamp'>Timestamp</TableHeaderColumn>
                     <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
                             <a href={ cell } >{`Show`}</a>
-                    )}> Results</TableHeaderColumn>
+                    )}>Results</TableHeaderColumn>
                 </BootstrapTable>
             </Panel>
         )
