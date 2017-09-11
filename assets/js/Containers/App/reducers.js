@@ -1,7 +1,7 @@
 import * as constants from './constants';
 
 const appReducerInitialState = {
-    currentUser: false
+    currentUser: undefined
 };
 
 export const appReducer = (state = appReducerInitialState, action) => {
