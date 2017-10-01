@@ -3,13 +3,15 @@ import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel} from 'react-bootstrap';
 import {loadResultFacets, selectResultFacet, clearResultFacet,
     clearAllResultFacets, setActiveResultFacet, loadResultFiles,
-    setMetadata } from './actions';
+    setMetadata, loadResultPictures } from './actions';
 import _ from 'lodash';
 import AccordionItemBody from '../../Components/AccordionItemBody';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
 import OwnPanel from '../../Components/OwnPanel'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import Gallery from '../../Components/Gallery/Gallery';
+
 
 class Resultbrowser extends React.Component {
 
@@ -23,9 +25,9 @@ class Resultbrowser extends React.Component {
      */
     componentDidMount() {
         this.props.dispatch(loadResultFacets());
-        this.props.dispatch(loadResultFiles());
+        // this.props.dispatch(loadResultFiles());
+        this.props.dispatch(loadResultPictures());
     }
-
 
 
     /**
@@ -60,24 +62,33 @@ class Resultbrowser extends React.Component {
 
     renderFilesPanel() {
         //TODO: This should be a separate component
-        const {activeFacet,results, numResults} = this.props.resultbrowser;
+
+        const {activeFacet, results, numResults } = this.props.resultbrowser;
         const {dispatch} = this.props;
 
         return (
-
             <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
                 Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'}>
-                <BootstrapTable data={results}
-                                options={ {noDataText: 'No namelists available' }}
-                                striped hover condensed>
-                    <TableHeaderColumn dataField='ID' isKey>Id</TableHeaderColumn>
-                    <TableHeaderColumn dataField='namelist'>ESMVALTool namelist</TableHeaderColumn>
-                    <TableHeaderColumn dataField='Timestamp'>Timestamp</TableHeaderColumn>
-                    <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
-                            <a href={ cell } >{`Show`}</a>
-                    )}>Results</TableHeaderColumn>
-                </BootstrapTable>
+                { numResults === null ?
+                    <MuiThemeProvider>
+                        <Grid style={{textAlign: 'center'}}>
+                            <CircularProgress />
+                        </Grid>
+                    </MuiThemeProvider>
+                    :
+                    <Gallery images={
+                        results.map((n, i) => ({
+                            src: n.preview_file,
+                            thumbnail: n.preview_file,
+                            caption: n.caption,
+                            useForDemo: true,
+                            history: n.link2results
+                        }))
+                    } showThumbnails
+                    />
+                }
             </Panel>
+
         )
     }
 

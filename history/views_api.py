@@ -1,12 +1,16 @@
 import ast
+import os
+import re
 from collections import Counter, OrderedDict
 from os.path import splitext
 
-from history.models import History, Result
+from history.models import History, Result, ResultTag
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.db.models import Q
+from history.utils import FileDict
 
 
 class FilterAbstract(object):
@@ -24,14 +28,18 @@ class FilterAbstract(object):
     def generate_filter(self, queryset, request):
 
         params = request.query_params
-
+        print params
         if hasattr(self, 'predefined_filter'):
             queryset = queryset.filter(**self.get_filter_field(self.predefined_filter))
 
         for fac in params.keys():
             if not hasattr(self, 'allowed_facets') or fac in self.allowed_facets:
-                queryset = queryset.filter(**self.get_filter_field(params[fac]))
+                print list(params[fac])
+                #queryset = queryset.filter(**self.get_filter_field(params[fac]))
 
+                queryset = queryset.filter(history_id__parameter_id__parameter_name=fac,
+                                                  history_id__value__icontains=' '+params[fac]+' ')
+        #print queryset
         return queryset
 
 
@@ -39,11 +47,10 @@ class ResultFacets(APIView, FilterAbstract):
     filter_field = 'configuration'
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
-    predefined_filter = '"namelist"'
+    #predefined_filter = '"ESMValTool namelists"'
 
     def get(self, request, format=None):
-
-        queryset = History.objects.all()
+        queryset = History.objects.filter(tool='EVC')
         queryset = self.generate_filter(queryset, request)
 
         facets = settings.RESULT_BROWSER_FACETS
@@ -61,7 +68,9 @@ class ResultFacets(APIView, FilterAbstract):
             structure_temp[fac] = []
             for item in items_dic:
                 if fac in item:
-                    structure_temp[fac].extend(item[fac])
+                    #itemList = item[fac]
+                    itemList = re.sub(' ','',item[fac]).split(',')
+                    structure_temp[fac].extend(itemList)
             for key, num in Counter(structure_temp[fac]).items():
                 structure[fac].append(key)
                 structure[fac].append(num)
@@ -73,10 +82,10 @@ class ResultFiles(APIView, FilterAbstract):
     filter_field = 'configuration'
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
-    predefined_filter = '"namelist"'
+    #predefined_filter = '"ESMValTool namelists"'
 
     def get(self, request, format=None):
-        queryset = History.objects.all()
+        queryset = History.objects.filter(tool='EVC')
         queryset = self.generate_filter(queryset, request)
 
         configuration = queryset.values_list('id', 'timestamp', 'configuration')
@@ -92,3 +101,36 @@ class ResultFiles(APIView, FilterAbstract):
             )
 
         return Response({'data': data, 'metadata': {'start': 0, 'numFound': len(data)}})
+
+class ResultPictures(APIView, FilterAbstract):
+    filter_field = 'configuration'
+    filter_method = 'icontains'
+    allowed_facets = settings.RESULT_BROWSER_FACETS
+    #predefined_filter = '"ESMValTool namelists"'
+
+
+    def get(self, request, format=None):
+        queryset = History.objects.filter(tool='EVC')
+        queryset = self.generate_filter(queryset, request)
+
+        rids = queryset.values_list('id', flat=True)
+        rids = list(rids)
+        result_object = Result.objects.filter(history_id__in=rids)#.prefetch_related('resulttag_set')
+
+
+        pictures = []
+        for r in result_object:
+            rID = r.history_id.id
+            caption = r.resulttag_set.first().text
+            pictures.append(
+                {
+                    'preview_file':os.path.join(settings.PREVIEW_URL,r.preview_file),
+                    'caption': caption if caption else None,
+                    'link2results': reverse('history:results', args=[rID])
+                }
+            )
+
+        result = {}
+        result['data'] = pictures
+        result.update({'metadata':{'numFound':len(pictures)}})
+        return Response(result)
