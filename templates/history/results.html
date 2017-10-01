@@ -54,7 +54,7 @@
 	 	 		{%endif%}
 	 	 		{% if request.user == history_object.uid %}
 	 			<a class="btn btn-info mybtn-sendmail" id="sendButton_{{h_item.id}}" onClick="$('#sendmail_modal').modal('show')">Share Results</a>
-	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
+{#	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>#}
 
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
@@ -113,12 +113,12 @@
                 </tr>
 		 	 	</table>
            </div> <!-- col-md-12 --> 
-		 	<div class="col-md-3">
-	 	 	<a class="btn btn-info" onClick="$('.additional').toggle()">Additional information</a>
-	 	 	</div>
-		 	<div class="col-md-3">
-            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
-            </div>
+{#		 	<div class="col-md-3">#}
+{#	 	 	<a class="btn btn-info" onClick="$('.additional').toggle()">Additional information</a>#}
+{#	 	 	</div>#}
+{#		 	<div class="col-md-3">#}
+{#            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>#}
+{#            </div>#}
 	 	 	
       </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
@@ -204,6 +204,7 @@
           Notes <span id='note_count'>(0)</span>
         </a>
       </h4>
+        {% if request.user == history_object.uid %}
     </div><!-- panel-heading -->
     <div id="collapseNotes" class="panel-collapse collapse">
       <div class="panel-body" id='loadComments'>
@@ -215,7 +216,7 @@
       {% comment_field request.user history_object.id note %}
       {% endfor %}
       {% endcomment %}
-
+        {%  endif %}
        </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
   </div><!-- panel panel-default-->

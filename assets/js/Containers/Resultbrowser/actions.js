@@ -3,6 +3,7 @@ import fetch from 'isomorphic-fetch'
 import {getCookie} from '../../utils'
 import _ from 'lodash';
 import $ from 'jquery';
+import axios from 'axios';
 
 export const selectResultFacet = (facet, value) => dispatch => {
     $('html').addClass('wait');
@@ -16,7 +17,8 @@ export const selectResultFacet = (facet, value) => dispatch => {
     });
     dispatch(setActiveResultFacet(facet));
     dispatch(loadResultFacets());
-    dispatch(loadResultFiles());
+    // dispatch(loadResultFiles());
+    dispatch(loadResultPictures());
     },50);
 
 };
@@ -28,7 +30,8 @@ export const clearResultFacet = (facet) => dispatch => {
         facet
     });
     dispatch(loadResultFacets());
-    dispatch(loadResultFiles());
+    dispatch(loadResultPictures());
+    // dispatch(loadResultFiles());
 };
 
 
@@ -44,7 +47,8 @@ export const clearAllResultFacets = (facet) => dispatch => {
         facet
     });
     dispatch(loadResultFacets());
-    dispatch(loadResultFiles());
+    dispatch(loadResultPictures());
+    // dispatch(loadResultFiles());
 };
 
 export const setActiveResultFacet = (facet) => ({
@@ -57,7 +61,7 @@ export const loadResultFacets = () => (dispatch, getState) => {
     const {selectedFacets} = getState().resultbrowserReducer;
     let params = '';
     _.map(selectedFacets, (value, key) => {
-        params += `&${key}=${value};`
+        params += `&${key}=${value}`;
     });
     let url = `/api/history/result-browser/?${params}`;
 
@@ -83,9 +87,8 @@ export const loadResultFiles = () => (dispatch, getState) => {
     const {selectedFacets} = getState().resultbrowserReducer;
     let params = '';
     _.map(selectedFacets, (value, key) => {
-        params += `&${key}=${value};`
+        params += `&${key}=${value}`
     });
-    // let url = `/solr/solr-search/?start=0&rows=100${params}`;
     let url = `/api/history/result-browser-files/?${params}`;
     return fetch(url, {
         credentials: 'same-origin',
@@ -103,7 +106,27 @@ export const loadResultFiles = () => (dispatch, getState) => {
         })
 };
 
+export const loadResultPictures = () => (dispatch, getState) => {
 
+    const {selectedFacets} = getState().resultbrowserReducer;
+    let params = '';
+    _.map(selectedFacets, (value, key) => {
+        params += `&${key}=${value}`;
+    });
+    let url = `/api/history/result-browser-pics/?${params}`
+    return fetch(url, {
+        credentials: 'same-origin',
+        headers: {
+            "X-CSRFToken": getCookie("csrftoken"),
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }}
+        ).then(response => response.json())
+        .then(json => {
+            dispatch({
+                type: constants.LOAD_RESULT_PICTURES,
+                payload: json
+            });
+        })
 
-
-
+};

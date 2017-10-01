@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 from base.views_api import UserViewSet, AuthenticatedUser
 from plugins.views_api import PluginsList, ExportPlugin, PluginDetail, SendMailToDeveloper
-from history.views_api import ResultFacets, ResultFiles
+from history.views_api import ResultFacets, ResultFiles, ResultPictures
 from solr.views_api import ncdump
 from rest_framework import routers
 
@@ -45,6 +45,7 @@ urlpatterns = patterns('',
     url(r'^api/solr/ncdump/$', ncdump, name='api-ncdump'),
     url(r'^api/history/result-browser/$', ResultFacets.as_view(), name='api-history-list'),
     url(r'^api/history/result-browser-files/$', ResultFiles.as_view(), name='api-history-files'),
+    url(r'^api/history/result-browser-pics/$', ResultPictures.as_view(), name='api-history-pics'),
     url(r'^api/', include(router.urls, namespace='api')),
 )
 
