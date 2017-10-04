@@ -35,7 +35,7 @@ class Resultbrowser extends React.Component {
      */
     renderFacetPanels() {
 
-        const {facets, selectedFacets, activeFacet, metadata, } = this.props.resultbrowser;
+        const {facets, selectedFacets, activeFacet, metadata } = this.props.resultbrowser;
         const {dispatch} = this.props;
         return _.map(facets, (value, key) => {
             let panelHeader;

@@ -17,16 +17,19 @@ export const resultbrowserReducer = (state = resultbrowserInitialState, action) 
         case constants.SELECT_RESULT_FACET:
             let selectedFacets = {...state.selectedFacets};
             selectedFacets[action.facet] = action.value;
-            return {...state, selectedFacets};
+            return {...state, selectedFacets, numResults: null};
         case constants.CLEAR_RESULT_FACET:
             let newFacets = {...state.selectedFacets};
             newFacets = _.omit(newFacets, action.facet);
-            return {...state, selectedFacets: newFacets};
+            return {...state, selectedFacets: newFacets, numResults: resultbrowserInitialState.numResults};
         case constants.CLEAR_ALL_RESULT_FACETS:
-            return {...state, selectedFacets: {}};
+            return {...state, selectedFacets: {},
+                numResults: resultbrowserInitialState.numResults
+            };
         case constants.SET_ACTIVE_RESULT_FACET:
             if (state.activeFacet === action.facet)
-                return {...state, activeFacet: resultbrowserInitialState.activeFacet};
+                return {...state, activeFacet: resultbrowserInitialState.activeFacet,
+                numResults: resultbrowserInitialState.numResults};
             return {...state, activeFacet: action.facet};
         case constants.SET_METADATA:
             return {...state, metadata: action.metadata};
