@@ -68,8 +68,9 @@ class ResultFacets(APIView, FilterAbstract):
             structure_temp[fac] = []
             for item in items_dic:
                 if fac in item:
-                    #itemList = item[fac]
-                    itemList = re.sub(' ','',item[fac]).split(',')
+                    itemList = item[fac]
+                    itemList = itemList.split(',')
+                    itemList = [item.lstrip().rstrip() for item in itemList]
                     structure_temp[fac].extend(itemList)
             for key, num in Counter(structure_temp[fac]).items():
                 structure[fac].append(key)
