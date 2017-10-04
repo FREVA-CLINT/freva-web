@@ -28,18 +28,16 @@ class FilterAbstract(object):
     def generate_filter(self, queryset, request):
 
         params = request.query_params
-        print params
         if hasattr(self, 'predefined_filter'):
             queryset = queryset.filter(**self.get_filter_field(self.predefined_filter))
 
         for fac in params.keys():
             if not hasattr(self, 'allowed_facets') or fac in self.allowed_facets:
-                print list(params[fac])
                 #queryset = queryset.filter(**self.get_filter_field(params[fac]))
 
                 queryset = queryset.filter(history_id__parameter_id__parameter_name=fac,
                                                   history_id__value__icontains=' '+params[fac]+' ')
-        #print queryset
+
         return queryset
 
 

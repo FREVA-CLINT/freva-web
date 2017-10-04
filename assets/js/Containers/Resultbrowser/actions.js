@@ -26,8 +26,7 @@ export const selectResultFacet = (facet, value) => dispatch => {
 export const clearResultFacet = (facet) => dispatch => {
     $('html').addClass('wait');
     dispatch({
-        type: constants.CLEAR_RESULT_FACET,
-        facet
+        type: constants.CLEAR_RESULT_FACET, facet
     });
     dispatch(loadResultFacets());
     dispatch(loadResultPictures());
@@ -52,8 +51,7 @@ export const clearAllResultFacets = (facet) => dispatch => {
 };
 
 export const setActiveResultFacet = (facet) => ({
-    type: constants.SET_ACTIVE_RESULT_FACET,
-    facet
+    type: constants.SET_ACTIVE_RESULT_FACET, facet
 });
 
 export const loadResultFacets = () => (dispatch, getState) => {
