@@ -9,8 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.urlresolvers import reverse
-from django.db.models import Q
-from history.utils import FileDict
+from django.core.cache import cache
+
 
 
 class FilterAbstract(object):
@@ -108,28 +108,36 @@ class ResultPictures(APIView, FilterAbstract):
     #predefined_filter = '"ESMValTool namelists"'
 
 
-    def get(self, request, format=None):
+    def prepare_query(self,request):
         queryset = History.objects.filter(tool='EVC')
         queryset = self.generate_filter(queryset, request)
 
         rids = queryset.values_list('id', flat=True)
         rids = list(rids)
-        result_object = Result.objects.filter(history_id__in=rids)#.prefetch_related('resulttag_set')
-
+        result_object = Result.objects.filter(history_id__in=rids)  # .prefetch_related('resulttag_set')
 
         pictures = []
+        result = {}
         for r in result_object:
             rID = r.history_id.id
             caption = r.resulttag_set.first().text
             pictures.append(
                 {
-                    'preview_file':os.path.join(settings.PREVIEW_URL,r.preview_file),
+                    'preview_file': os.path.join(settings.PREVIEW_URL, r.preview_file),
                     'caption': caption if caption else None,
                     'link2results': reverse('history:results', args=[rID])
                 }
             )
 
-        result = {}
+
         result['data'] = pictures
-        result.update({'metadata':{'numFound':len(pictures)}})
+        result.update({'metadata': {'numFound': len(pictures)}})
+        return result
+
+    def get(self, request, format=None):
+        print request.get_full_path()
+        result = cache.get(request.get_full_path())
+        if not result:
+            result = self.prepare_query(request)
+            cache.set(request.get_full_path(),result)
         return Response(result)
