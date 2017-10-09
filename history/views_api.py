@@ -139,5 +139,5 @@ class ResultPictures(APIView, FilterAbstract):
         result = cache.get(request.get_full_path())
         if not result:
             result = self.prepare_query(request)
-            cache.set(request.get_full_path(),result)
+            cache.set(request.get_full_path(),result,None)
         return Response(result)

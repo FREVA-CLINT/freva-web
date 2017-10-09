@@ -81,7 +81,7 @@ class Resultbrowser extends React.Component {
                             src: n.preview_file,
                             thumbnail: n.preview_file,
                             caption: n.caption,
-                            useForDemo: true,
+                            useForDemo: i < 100 ? true : false,
                             history: n.link2results
                         }))
                     } showThumbnails
