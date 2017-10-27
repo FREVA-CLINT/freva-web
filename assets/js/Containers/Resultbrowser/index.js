@@ -63,20 +63,33 @@ class Resultbrowser extends React.Component {
         const {activeFacet,results, numResults} = this.props.resultbrowser;
         const {dispatch} = this.props;
 
-        return (
 
+        return (
             <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
-                Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'}>
-                <BootstrapTable data={results}
-                                options={ {noDataText: 'No namelists available' }}
-                                striped hover condensed>
-                    <TableHeaderColumn dataField='ID' isKey>Id</TableHeaderColumn>
-                    <TableHeaderColumn dataField='namelist'>Namelist</TableHeaderColumn>
-                    <TableHeaderColumn dataField='Timestamp'>Timestamp</TableHeaderColumn>
-                    <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
-                            <a href={ cell } >{`Show`}</a>
-                    )}> Results</TableHeaderColumn>
-                </BootstrapTable>
+                Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'} id='test123'>
+                { numResults === null ?
+                    <MuiThemeProvider>
+                        <Grid style={{textAlign: 'center'}}>
+                            <CircularProgress />
+                        </Grid>
+                    </MuiThemeProvider>
+                    :
+                    <BootstrapTable data={results}
+                                    pagination
+                                    tableStyle = {{border:'none'}}
+                                    options={ {
+                                        noDataText: 'No results available',
+                                        sizePerPage: 25,
+                                        hideSizePerPage: true
+                                    }}
+                                    striped hover condensed>
+                        <TableHeaderColumn dataField='id' isKey hidden>ID</TableHeaderColumn>
+                        <TableHeaderColumn dataField='tool'>Plugin</TableHeaderColumn>
+                        <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
+                            <a href={ cell }>{`Show`}</a>
+                        )}>Link</TableHeaderColumn>
+                    </BootstrapTable>
+                }
             </Panel>
         )
     }

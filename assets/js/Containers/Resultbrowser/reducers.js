@@ -4,10 +4,11 @@ import _ from 'lodash';
 const resultbrowserInitialState = {
     facets: [],
     files: [],
-    numFiles: 0,
+    numResults: null,
     selectedFacets: {},
     activeFacet: 'results',
     metadata: {},
+    caption: []
 };
 
 export const resultbrowserReducer = (state = resultbrowserInitialState, action) => {

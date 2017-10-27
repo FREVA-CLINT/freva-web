@@ -57,7 +57,7 @@ export const loadResultFacets = () => (dispatch, getState) => {
     const {selectedFacets} = getState().resultbrowserReducer;
     let params = '';
     _.map(selectedFacets, (value, key) => {
-        params += `&${key}=${value};`
+        params += `&${key}=${value}`
     });
     let url = `/api/history/result-browser/?${params}`;
 
@@ -83,9 +83,8 @@ export const loadResultFiles = () => (dispatch, getState) => {
     const {selectedFacets} = getState().resultbrowserReducer;
     let params = '';
     _.map(selectedFacets, (value, key) => {
-        params += `&${key}=${value};`
+        params += `&${key}=${value}`
     });
-    // let url = `/solr/solr-search/?start=0&rows=100${params}`;
     let url = `/api/history/result-browser-files/?${params}`;
     return fetch(url, {
         credentials: 'same-origin',
