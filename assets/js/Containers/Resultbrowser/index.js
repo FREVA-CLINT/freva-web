@@ -66,7 +66,7 @@ class Resultbrowser extends React.Component {
 
         return (
             <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
-                Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'} id='test123'>
+                Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'} id='result-browser'>
                 { numResults === null ?
                     <MuiThemeProvider>
                         <Grid style={{textAlign: 'center'}}>

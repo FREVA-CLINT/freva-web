@@ -54,7 +54,7 @@ background: {{hover_color}} !important;
 }
 
 .dropdown-toggle{
-background: #fff !important;
+background: {{main_color}} !important;
 }
 
 

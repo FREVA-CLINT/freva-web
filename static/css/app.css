@@ -26,6 +26,6 @@ html.wait, html.wait * { cursor: wait !important; }
     width: 80vw    /* Occupy the 90% of the screen width */
 }
 
-#test123 > .panel-body {
+#result-browser > .panel-body {
 	padding: 0px
 }
