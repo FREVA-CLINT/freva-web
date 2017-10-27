@@ -1,6 +1,7 @@
 import ast
 import json
 import re
+import time
 from collections import Counter, OrderedDict
 from os.path import splitext
 
@@ -9,6 +10,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.cache import cache
 
 
 class FilterAbstract(object):
@@ -42,7 +44,7 @@ class ResultFacets(APIView, FilterAbstract):
     filter_method = 'iregex'
     filter_field= 'configuration'
 
-    def get(self, request, format=None):
+    def prepare_facets(self, request, format=None):
         queryset = History.objects.all()
         queryset = queryset.filter(flag__lt = 3, status__lt = 2)
         params = request.query_params
@@ -63,20 +65,23 @@ class ResultFacets(APIView, FilterAbstract):
         queryset = self.generate_filter(queryset, modRequest)
 
         structure = OrderedDict()
-
+        start = time.time()
         queryset = queryset.values_list('id','tool','configuration')
+        print 'DatenbankAbfrageFacets: %s ' %(time.time()-start)
         items_dic = []
 
+        start = time.time()
         for id,tool,item in queryset:
             newItem = json.loads(item)
             if len(set(newItem.keys()) & set(self.facets)) == 0: continue
             newItem.update({'plugin':tool})
             items_dic.append(newItem)
         structure_temp = {}
+        print 'PluginUpdate: %s' %(time.time() - start),
 
         # create a dictionary - tags: list of attributes
         # counts tags: total number of attributes
-
+        start = time.time()
         for fac in self.facets:
             structure[fac] = []
             structure_temp[fac] = []
@@ -98,9 +103,15 @@ class ResultFacets(APIView, FilterAbstract):
             for key, num in OrderedDict(sorted(Counter(structure_temp[fac]).items())).iteritems():
                 structure[fac].append(key)
                 structure[fac].append(num)
+        print 'ZähleFacets: %s ' %(time.time() - start)
+        return {'data': structure, 'metadata': None}
 
-        return Response({'data': structure, 'metadata': None})
-
+    def get(self, request, format=None):
+        result = cache.get(request.get_full_path())
+        if not result:
+            result = self.prepare_facets(request)
+            cache.set(request.get_full_path(),result,None)
+        return Response(result)
 
 class ResultFiles(APIView, FilterAbstract):
     filter_field = 'configuration'
@@ -108,7 +119,7 @@ class ResultFiles(APIView, FilterAbstract):
     facets = settings.RESULT_BROWSER_FACETS
 
 
-    def get(self, request, format=None):
+    def prepare_files(self, request, format=None):
         queryset = History.objects.all()
         queryset = queryset.filter(flag__lt=3, status__lt=2)
         params = request.query_params
@@ -127,8 +138,12 @@ class ResultFiles(APIView, FilterAbstract):
                 modRequest[key] = r'"%s([0-9]{0,1})": "%s"' % (key, value)
         queryset = self.generate_filter(queryset, modRequest)
 
+        start = time.time()
         configuration = queryset.values_list('id', 'tool','configuration' )
+        print 'DatenbankAbfrageFiles: %s ' %(time.time()-start)
         data = []
+
+        start = time.time()
         for item in configuration:
             newItem = json.loads(item[2])
             if len(set(newItem.keys()) & set(self.facets)) == 0: continue
@@ -140,4 +155,12 @@ class ResultFiles(APIView, FilterAbstract):
                 }
             )
         caption = ('Plugin','Link')
-        return Response({'data': data, 'metadata': {'start': 0, 'numFound': len(data)},'caption':caption})
+        print 'REST-API: %s ' % (time.time() - start)
+        return {'data': data, 'metadata': {'start': 0, 'numFound': len(data)},'caption':caption}
+
+    def get(self, request, format=None):
+        result = cache.get(request.get_full_path())
+        if not result:
+            result = self.prepare_files(request)
+            cache.set(request.get_full_path(),result,None)
+        return Response(result)
