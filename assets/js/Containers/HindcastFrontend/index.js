@@ -38,8 +38,8 @@ class HindcastFrontend extends React.Component {
         const data = timeseriesData.score;
         const data2 = timeseriesData.sign;
 
-        const obsDataset = variable && variable.value == 'tas' ? 'HadCrut4' : 'GPCC';
-        const evaTime = variable && variable.value == 'tas' ? '1968-2016' : '1968-2013';
+        const obsDataset = variable && variable.selected.value == 'tas' ? 'HadCrut4' : 'GPCC';
+        const evaTime = variable && variable.selected.value == 'tas' ? '1968-2016' : '1968-2013';
         let refText;
         if (reference.selected && metric.selected)
             refText = reference.selected.value === 'clim' && metric.selected.value === 'correlation' ? '' : ` with ${reference.selected.label} as reference`;
@@ -124,7 +124,7 @@ class HindcastFrontend extends React.Component {
                         <p>Map shows the ensemble mean {metric.selected.label} of {variable.selected.label} for leadyear {leadtimeVal}-{leadtimeVal+3}{" "}
                            for the hindcast-set {hindcastSet.selected.label}{refText}.
                             Observational dataset is {obsDataset} and the evaluation period {evaTime}.
-                           Crosses denote significance at the 95% level.</p> : null}
+                           Black circles denote significance at the 95% level.</p> : null}
 
                         {data ? <h2>{`${metric.selected.label} - ${region.selected.label} Mean - ${variable.selected.label}`}</h2> : null}
                         {data ?

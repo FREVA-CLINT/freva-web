@@ -3,30 +3,11 @@ import dummyData from '../../data/testmap.json'
 import { combineReducers } from 'redux'
 import _ from 'lodash'
 
-/*// Hardcoded options for select fields
-export const variableOptions = [
-    {value: 'pr', label: 'Precipitation (pr)'},
-    {value: 'tas', label: 'Temperature (tas)'}
-];
-export const hindcastSetOptions = [
-    {value: 'clim', label: 'Climatology'},
-    {value: 'b1-lr', label: 'Baseline1-LR'},
-    {value: 'b1-mr', label: 'Baseline1-MR'},
-    {value: 'preop-lr', label: 'Preop-LR'},
-    {value: 'preop-hr', label: 'Preop-HR'},
-    {value: 'unini', label: 'Uninitialized'}
-
-];
-export const metricOptions = [
-    {value: 'correlation', label: 'Correlation'},
-    {value: 'msss', label: 'MSESS'}
-];*/
-
 const selectMenuInitialState = {
-    variable: {selected: {value: 'tas', label: 'tas'}},
-    metric: {selected: {value: 'msss', label: 'msess'}},
-    hindcastSet: {selected: {value: 'b1-lr', label: 'b1-lr'}},
-    reference: {selected: {value: 'vs_clim', label: 'vs_clim'}},
+    variable: {},
+    metric: {},
+    hindcastSet: {},
+    reference: {},
     region: {},
     leadtime: {selected: 1}
 }
