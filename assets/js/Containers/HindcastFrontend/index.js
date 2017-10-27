@@ -38,8 +38,8 @@ class HindcastFrontend extends React.Component {
         const data = timeseriesData.score;
         const data2 = timeseriesData.sign;
 
-        const obsDataset = variable && variable.selected.value == 'tas' ? 'HadCrut4' : 'GPCC';
-        const evaTime = variable && variable.selected.value == 'tas' ? '1968-2016' : '1968-2013';
+        const obsDataset = variable.selected && variable.selected.value == 'tas' ? 'HadCrut4' : 'GPCC';
+        const evaTime = variable.selected && variable.selected.value == 'tas' ? '1968-2016' : '1968-2013';
         let refText;
         if (reference.selected && metric.selected)
             refText = reference.selected.value === 'clim' && metric.selected.value === 'correlation' ? '' : ` with ${reference.selected.label} as reference`;
