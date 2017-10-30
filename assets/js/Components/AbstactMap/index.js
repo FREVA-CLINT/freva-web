@@ -9,7 +9,7 @@ class AbstractMap extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.zoomLevel = 'Global';
         this.regionClick = this.regionClick.bind(this);
         this.renderChildAreas = this.renderChildAreas.bind(this);
     }
@@ -120,18 +120,17 @@ class AbstractMap extends React.Component {
         if (nextProps)
             mapData = nextProps.mapData;
 
-
         if (!isDrawed) {
             this.createMap(mapData);
         } else {
 
              // should we zoom?
-            if (nextProps && nextProps.region !== this.props.region) {
+            if (nextProps && (nextProps.region !== this.props.region || nextProps.region.label !== this.zoomLevel)) {
                 let lonlat = [-180,180,-90,90];
-
                 const zoomOffset = {
                     'Global': 200,
-                    'North Atlantic': 115
+                    'North Atlantic': 115,
+                    'Nino3.4': -340
                 };
 
                 if (nextProps.region)
@@ -164,13 +163,15 @@ class AbstractMap extends React.Component {
 
             let self = this;
             let mapSelection;
-            if (nextProps && nextProps.region !== this.props.region) {
+            if (nextProps && (nextProps.region !== this.props.region || nextProps.region.label !== this.zoomLevel)) {
                 // remove old values because of new grid
                 this.globalG.selectAll('.geojson').remove();
-                mapSelection = this.globalG.selectAll(".geojson").data(mapData).enter().insert('path', ':first-child')
+                mapSelection = this.globalG.selectAll(".geojson").data(mapData).enter().insert('path', ':first-child');
+                this.zoomLevel = nextProps.region.label
             }else {
                 mapSelection = this.globalG.selectAll(".geojson").data(mapData).transition().duration(500)
             }
+
 
             mapSelection
                 .attr("d", this.path)
@@ -182,7 +183,7 @@ class AbstractMap extends React.Component {
                     return self.getColorByValue(d)
                 });
 
-            if (nextProps && nextProps.region !== this.props.region) {
+            if (nextProps && (nextProps.region !== this.props.region || nextProps.region.label !== this.zoomLevel)) {
                 this.globalG.selectAll(".geojson").data(mapData).transition().duration(5)
                     .attr("d", this.path)
                     .attr('class', 'geojson')
@@ -200,6 +201,7 @@ class AbstractMap extends React.Component {
                 .attr('r', 1)
                 .attr('class', 'signCircles');
         }
+
     }
 
     getColorByValue(d) {
