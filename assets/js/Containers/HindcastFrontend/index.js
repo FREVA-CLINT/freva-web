@@ -21,6 +21,13 @@ import AbstractMap from '../../Components/AbstactMap'
 import Timeseries from '../../Components/Timeseries';
 import LabeledSlider from '../../Components/LabeledSlider'
 
+const observations = {
+    'tas': 'HadCrut4',
+    'pr': 'GPCC',
+    'hc700total': 'NODC',
+    'psl': '20CR'
+};
+
 class HindcastFrontend extends React.Component {
 
     constructor(props) {
@@ -31,14 +38,16 @@ class HindcastFrontend extends React.Component {
 
         const {mapData, timeseriesData} = this.props.hindcastFrontend.settingsReducer;
         const {variable, hindcastSet,metric, reference, leadtime, region} = this.props.hindcastFrontend.selectMenuReducer
-        const {changeParamAsync, getHindcastData, loadOptions} = this.props.actions;
+        const {changeParamAsync, loadOptions} = this.props.actions;
         const leadtimeVal = leadtime.selected;
 
 
         const data = timeseriesData.score;
         const data2 = timeseriesData.sign;
 
-        const obsDataset = variable.selected && variable.selected.value == 'tas' ? 'HadCrut4' : 'GPCC';
+
+
+        const obsDataset = variable.selected && variable.selected.value ? observations[variable.selected.value] : '';
         const evaTime = variable.selected && variable.selected.value == 'tas' ? '1968-2016' : '1968-2013';
         let refText;
         if (reference.selected && metric.selected)

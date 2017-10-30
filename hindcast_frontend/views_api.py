@@ -13,6 +13,8 @@ from operator import itemgetter
 display_names = {
     'pr': 'Precipitation (pr)',
     'tas': 'Temperature (tas)',
+    'psl': 'Sea Level Pressure (psl)',
+    'hc700total': 'Total Heat Content (hc700total)',
 
     'msss': 'MSESS',
     'correlation': 'Correlation',
@@ -31,9 +33,12 @@ display_names = {
     'vs_unini': 'Uninitialized',
     'vs_b0': 'Baseline0',
     'vs_clim': 'Climatology',
+    'vs_pr-gecco': 'Prototype-Gecco',
+    'vs_pr-ora': 'Prototype-OraS4',
 
     '-180_180_-90_90': 'Global',
     '-60_-10_50_65': 'North Atlantic',
+    '-170_-120_-5_5': 'Nino3.4',
 }
 
 
@@ -91,6 +96,7 @@ def get_hindcast_facets(request):
         result.append(dict(value=val, label=display_names.get(val) or val))
 
     return Response(sorted(result, key=itemgetter('label')))
+
 
 @api_view(['GET'])
 @login_required()
