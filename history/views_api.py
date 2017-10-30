@@ -103,7 +103,7 @@ class ResultFacets(APIView, FilterAbstract):
             for key, num in OrderedDict(sorted(Counter(structure_temp[fac]).items())).iteritems():
                 structure[fac].append(key)
                 structure[fac].append(num)
-        print 'ZähleFacets: %s ' %(time.time() - start)
+        print 'ZahleFacets: %s ' %(time.time() - start)
         return {'data': structure, 'metadata': None}
 
     def get(self, request, format=None):
