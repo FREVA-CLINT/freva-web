@@ -89,7 +89,7 @@ a.btn-inverse,a.btn-inverse:visited,a.btn-inverse:hover{
 }
 
 .container{
-	max-width:1000px;
+	max-width:1200px;
 }
 
 /* Header */
@@ -139,7 +139,7 @@ font-family:Tahoma, Verdana, Arial, Helvetica, sans-serif;
 }
 
 .navbar > .container{
-max-width:1000px;
+max-width:1200px;
 }
 
 .navbar{
