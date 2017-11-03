@@ -25,6 +25,8 @@ display_names = {
     'preop-lr': 'Preop-LR',
     'preop-hr': 'Preop-HR',
     'unini': 'Uninitialized',
+    'pr-gecco': 'Prototype-Gecco',
+    'pr-ora': 'Prototype-OraS4',
 
     'vs_b1-lr': 'Baseline1-LR',
     'vs_b1-mr': 'Baseline1-MR',
@@ -65,15 +67,27 @@ def register_hindcast(request):
     fn_list = fn.split('_')
     query_dict['score'] = fn_list[1]
     time_list = fn_list[2].split('-')
-    query_dict['eva_time_start'] = time_list[0]
-    query_dict['eva_time_end'] = time_list[1]
 
-    hindcast, created = HindcastEvaluation.objects.get_or_create(**query_dict)
+    exists = HindcastEvaluation.objects.filter(**query_dict).exists()
+
+    if exists:
+        hindcast = HindcastEvaluation.objects.get(**query_dict)
+    else:
+        hindcast = HindcastEvaluation.objects.create(
+            eva_time_start=time_list[0],
+            eva_time_end=time_list[1],
+            **query_dict
+        )
 
     if facet_list[-1] == 'map':
-        hindcast.path_map = path
+        if int(time_list[1]) >= int(hindcast.eva_time_end):
+            hindcast.path_map = path
+            hindcast.eva_time_end = time_list[1]
     else:
-        hindcast.path_fieldmean = path
+        if int(time_list[1]) >= int(hindcast.eva_time_end):
+            hindcast.path_fieldmean = path
+            hindcast.eva_time_end = time_list[1]
+
     hindcast.save()
     return Response(request.GET['path'])
 
