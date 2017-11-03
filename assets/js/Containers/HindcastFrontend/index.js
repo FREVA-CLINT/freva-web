@@ -15,7 +15,6 @@ import {
     FormControl,
 } from 'react-bootstrap';
 import Select from 'react-select';
-//import {variableOptions, hindcastSetOptions, metricOptions} from './reducers'
 import {changeParamAsync, getHindcastData, loadOptions} from './actions'
 import AbstractMap from '../../Components/AbstactMap'
 import Timeseries from '../../Components/Timeseries';
