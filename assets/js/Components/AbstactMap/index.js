@@ -167,7 +167,7 @@ class AbstractMap extends React.Component {
                 // remove old values because of new grid
                 this.globalG.selectAll('.geojson').remove();
                 mapSelection = this.globalG.selectAll(".geojson").data(mapData).enter().insert('path', ':first-child');
-                this.zoomLevel = nextProps.region.label
+                this.zoomLevel = nextProps.region ? nextProps.region.label : 'Global'
             }else {
                 mapSelection = this.globalG.selectAll(".geojson").data(mapData).transition().duration(500)
             }
