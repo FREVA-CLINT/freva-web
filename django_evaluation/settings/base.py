@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'history',
     'solr',
     'externaluser',
+    'hindcast_frontend'
 )
 
 # Place bcrypt first in the list, so it will be the default password hashing
@@ -259,7 +260,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
+    },
 }
 DEBUG = TEMPLATE_DEBUG = False
 DEV = False
