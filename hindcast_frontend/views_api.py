@@ -28,6 +28,12 @@ display_names = {
     'pr-gecco': 'Prototype-Gecco',
     'pr-ora': 'Prototype-OraS4',
 
+    'fai': 'FAI',
+    'mod': 'Modini',
+    'bv': 'Bred Vector',
+    'edf': 'EDF',
+    'enkf': 'ENKF',
+
     'vs_b1-lr': 'Baseline1-LR',
     'vs_b1-mr': 'Baseline1-MR',
     'vs_preop-lr': 'Preop-LR',
@@ -37,6 +43,12 @@ display_names = {
     'vs_clim': 'Climatology',
     'vs_pr-gecco': 'Prototype-Gecco',
     'vs_pr-ora': 'Prototype-OraS4',
+
+    'vs_fai': 'FAI',
+    'vs_mod': 'Modini',
+    'vs_bv': 'Bred Vector',
+    'vs_edf': 'EDF',
+    'vs_enkf': 'ENKF',
 
     '-180_180_-90_90': 'Global',
     '-60_-10_50_65': 'North Atlantic',
