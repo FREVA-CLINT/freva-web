@@ -194,7 +194,7 @@ class MiklipUserInformation(LdapUserInformation):
             
             if forward:
                 user_info.append((user,
-                                  ' '.join(res[0][1]['sn']),
+                                  #' '.join(res[0][1]['sn']),
                                   ' '.join(res[0][1].get('givenName', '')),
                                   forward[-1],))
             elif mail:
