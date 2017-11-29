@@ -1,6 +1,8 @@
 import ast
 import os
 import re
+import json
+
 from collections import Counter, OrderedDict
 from os.path import splitext
 
@@ -56,7 +58,7 @@ class ResultFacets(APIView, FilterAbstract):
         structure = OrderedDict()
 
         queryset = queryset.values_list('configuration', flat=True)
-        items_dic = [ast.literal_eval(item) for item in queryset]
+        items_dic = [json.loads(item) for item in queryset]
 
         structure_temp = {}
         # create a dictionary - tags: list of attributes
@@ -94,7 +96,7 @@ class ResultFiles(APIView, FilterAbstract):
                 {
                     'ID': item[0],
                     'Timestamp': item[1],
-                    'namelist': splitext(ast.literal_eval(item[2])['ESMValTool namelists'][0])[0],
+                    'namelist': splitext(json.loads(item[2])['ESMValTool namelists'][0])[0],
                     'link2results': reverse('history:results', args=[item[0]])
                 }
             )
