@@ -86,7 +86,7 @@
 		 	 	{% for key,value in history_object.config_dict.items %}
 		 	 		<tr>
 		 	 			<td>{{key}}:</td>
-		 	 			<td>{{value|mask_uid:request.user.isGuest}}</td>
+		 	 			<td>{{value|linebreaksbr|mask_uid:request.user.isGuest}}</td>
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	<tr class='additional' style='display:none;'>
