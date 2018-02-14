@@ -73,8 +73,9 @@ class Gallery extends Component {
 						</a>
 						<div style={{textAlign:'center'}}>
 							<a
-								href="#"
+								href={obj.src}
 								onClick={this.handleClickImage}
+								target="_blank"
 							>
 								{`Detail`}
 							</a>
