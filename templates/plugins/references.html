@@ -1,0 +1,35 @@
+{% extends "_layouts/menu.html" %}
+
+{% block page_title %}References - Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+
+
+<div class="container">
+  <div class="row">
+    {% load flatpages %}
+    {% get_flatpages '/about/' for request.user as flatpages %}
+    <div class="col-md-12">
+      <h2>ESMValTool References</h2>
+      <h4></h4>
+      <p align="justify">
+      </p>
+      <p align="justify">Please contact Prof. Veronika Eyring (veronika.eyring"at"dlr.de) and Dr. Axel Lauer
+        (axel.lauer"at"dlr.de) if you want, in addition to its use, join the Software Development Team or if you have any
+        questions on the Software. 
+      </p>
+    </div>
+        <!--<h2>Plugin documentation</h2>
+            <div class="list-group" style="margin-top:20px;">-->
+        {% for page in flatpages %}
+        <a href="{{page.url}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{ page.title }}</h4>
+
+        </a>
+        {% endfor %}
+  </div>
+</div>
+</div>
+</div>
+{% endblock %}

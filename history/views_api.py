@@ -50,7 +50,7 @@ class ResultFacets(APIView, FilterAbstract):
     #predefined_filter = '"ESMValTool namelists"'
 
     def get(self, request, format=None):
-        queryset = History.objects.filter(tool='EVC')
+        queryset = History.objects.filter(tool='EVC',status=0,flag=0)
         queryset = self.generate_filter(queryset, request)
 
         facets = settings.RESULT_BROWSER_FACETS
@@ -72,7 +72,7 @@ class ResultFacets(APIView, FilterAbstract):
                     itemList = itemList.split(',')
                     itemList = [item.lstrip().rstrip() for item in itemList]
                     structure_temp[fac].extend(itemList)
-            for key, num in Counter(structure_temp[fac]).items():
+            for key, num in OrderedDict(sorted(Counter(structure_temp[fac]).items())).iteritems():
                 structure[fac].append(key)
                 structure[fac].append(num)
 
@@ -111,7 +111,7 @@ class ResultPictures(APIView, FilterAbstract):
 
 
     def prepare_query(self,request):
-        queryset = History.objects.filter(tool='EVC')
+        queryset = History.objects.filter(tool='EVC',status=0,flag=0)
         queryset = self.generate_filter(queryset, request)
 
         rids = queryset.values_list('id', flat=True)

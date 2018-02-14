@@ -1,0 +1,57 @@
+{% extends "_layouts/menu.html" %}
+
+{% block page_title %}ESMValTool Information - Evaluation System{% endblock %}
+{% block page_class %}home-page{% endblock %}
+{% block content %}
+
+
+
+<div class="container">
+  <div class="row">
+    {% load flatpages %}
+    {% get_flatpages '/about/' for request.user as flatpages %}
+    <div class="col-md-12">
+      <h2>ESMValTool User’s and Developer’s Guide</h2>
+      <p align="justify">A detailed ESMValTool User’s and Developer’s Guide is available in the ESMValTool GitHub repository
+         at <a href=https://github.com/ESMValGroup/ESMValTool>https://github.com/ESMValGroup/ESMValTool</a> and on Read The Docs 
+         at <a href=http://esmvaltool.readthedocs.io/en/latest/>http://esmvaltool.readthedocs.io/en/latest/</a>. 
+      </p>
+      <p align="justify">Please contact Veronika Eyring (veronika.eyring"at"dlr.de) and Axel Lauer
+        (axel.lauer"at"dlr.de) if you want, in addition to its use, join the Software Development Team or if you have any
+        questions on the Software. 
+      </p>
+      <h2>Projects funding the ESMValTool Development</h2>
+      <p align="justify">The projects below fund the development of the ESMValTool. The acronym in bold is the acronym used
+         for the project in the ESMValTool. The search function in the results browser allows to search for namelists that
+         have been implemented by a specific project.
+      </p>
+      <ol>
+	<li>BMBF CMIP6-DICAD project that funds CMIP6 activities in Germany (cmip-dicad, <a href=http://cmip-esmvaltool.dkrz.de/>http://cmip-esmvaltool.dkrz.de/</a>)</li>
+	<li>Copernicus Climate Change Service (C3S) Lot 1 and Lot 2 Metrics and Access to Global Indices for Climate Projections projects 
+           (c3s-magic, <a href=http://portal.c3s-magic.eu/#/>http://portal.c3s-magic.eu</a>)</li>
+        <li>DFG TRR181 – Energy transfers in Atmosphere and Ocean (trr181, <a href=https://www.trr-energytransfers.de/>https://www.trr-energytransfers.de</a>)</li>
+	<li>DLR Project Earth System Model Evaluation until 2015 (esmval)</li>
+	<li>DLR &ldquo;Klimarelevanz von atmosphärischen Spurengasen, Aerosolen und Wolken: Auf dem Weg zu EarthCARE und MERLIN&rdquo; project (klisaw)</li>
+	<li>ESA Climate Change Initiative Climate Model User Group (ESA CCI CMUG) project (cmug <a href=http://www.esa-cmug-cci.org/>http://www.esa-cmug-cci.org</a>)</li>
+	<li>EU Horizon 2020 Advanced Prediction in Polar regions and beyond: Modelling, observing system design and LInkages associated with a Changing
+            Arctic climate project (applicate <a href=https://applicate.eu/>https://applicate.eu</a> )</li>
+	<li>EU Horizon 2020 Coordinated Research in Earth Systems and Climate: Experiments, kNowledge, Dissemination and Outreach project 
+            (crescendo <a href=https://www.crescendoproject.eu/>https://www.crescendoproject.eu</a>)</li>
+	<li>EU FP7 Project Earth system Model Bias Reduction and assessing Abrupt Climate change until 2016 (embrace <a href=http://www.embrace-project.eu/>http://www.embrace-project.eu</a>)</li>
+	<li>EU Horizon 2020 PRocess-based climate sIMulation: AdVances in high-resolution modelling and European climate Risk Assessment project 
+           (primavera <a href=https://www.primavera-h2020.eu/>https://www.primavera-h2020.eu</a>)</li>
+      </ol>
+    </div>
+        <!--<h2>Plugin documentation</h2>
+            <div class="list-group" style="margin-top:20px;">-->
+        {% for page in flatpages %}
+        <a href="{{page.url}}" class="list-group-item">
+          <h4 class="list-group-item-heading">{{ page.title }}</h4>
+
+        </a>
+        {% endfor %}
+  </div>
+</div>
+</div>
+</div>
+{% endblock %}

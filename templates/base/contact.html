@@ -13,9 +13,10 @@
                     Mail successfully send
                 </div>
             {%endif%}
-            <p>We encourage all CMIP6 modelling groups to quality control the results for their models and to comment on 
-               individual plots or namelists by using the “NOTES” button. Alternatively you can send an email or use the
-                box below to contact the ESMValTool PI and Core Developer:</p>
+            <p>We encourage all CMIP6 modelling groups to quality control the results for their models. 
+               Please provide your feedback on individual plots or namelists by using the "NOTES" button (login at DKRZ required)
+               or by sending an email to the ESMValTool PI and Core Developer either directly (see email addresses at the bottom
+               of this page) or by using the box below.</p>
             <form method="post">
                 {% csrf_token %}
                 <textarea id="text" class="form-control" rows="3" name="text"></textarea>

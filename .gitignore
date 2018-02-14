@@ -4,3 +4,4 @@ virt
 db
 node_modules
 .*
+*.*~
