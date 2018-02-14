@@ -92,7 +92,6 @@ def shell_in_a_box(request):
                   {'shell_url': shell_url})
 
 
-@login_required()
 def contact(request):
     """
     View rendering the iFrame for the wiki page.

@@ -346,6 +346,12 @@ def list_docu(request):
 def terms(request):
     return render(request, 'plugins/terms.html')
 
+def esmval(request):
+    return render(request, 'plugins/esmval.html')
+
+def references(request):
+    return render(request, 'plugins/references.html')
+
 @require_POST
 @login_required()
 def export_plugin(request):
