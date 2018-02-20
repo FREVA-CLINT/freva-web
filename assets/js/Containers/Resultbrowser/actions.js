@@ -79,7 +79,7 @@ export const loadResultFacets = () => (dispatch, getState) => {
 };
 
 export const loadResultFiles = () => (dispatch, getState) => {
-
+    $('html').addClass('wait');
     const {selectedFacets, page, limit, sortName, sortOrder, searchText} = getState().resultbrowserReducer;
     let params = '';
     _.map(selectedFacets, (value, key) => {
@@ -104,6 +104,7 @@ export const loadResultFiles = () => (dispatch, getState) => {
                 type: constants.LOAD_RESULT_FILES,
                 payload: json
             });
+            $('html').removeClass('wait');
         })
 };
 
@@ -128,7 +129,6 @@ export const sortActivePage = (sortName,sortOrder) => dispatch => {
 };
 
 export const searchInText = (searchText) => dispatch => {
-
     dispatch({
         type: constants.ON_SEARCH,
         searchText

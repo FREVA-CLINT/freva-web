@@ -17,6 +17,10 @@ class Resultbrowser extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            searchtext : ''
+        }
+        this._searchInText = this._searchInText.bind(this)
     }
 
     /**
@@ -27,6 +31,16 @@ class Resultbrowser extends React.Component {
         this.props.dispatch(loadResultFacets());
         this.props.dispatch(loadResultFiles());
     }
+
+
+     _searchInText(searchText) {
+            this.setState({searchtext:searchText})
+            if (this.state.searchtext.length > 2 || this.state.searchtext.length == 0)
+                setTimeout(() => {
+                    if (this.state.searchtext.length === searchText.length)
+                        this.props.dispatch(searchInText(searchText))
+         }, 500)
+        }
 
     /**
      * Loop all facets and render the panels
@@ -87,7 +101,7 @@ class Resultbrowser extends React.Component {
                                        page: page,
                                        onPageChange: (page) => dispatch(selectActivePage(page)),
                                        onSortChange: (sortName,sortOrder) => dispatch(sortActivePage(sortName,sortOrder)),
-                                       onSearchChange: (searchText) => dispatch(searchInText(searchText)),
+                                       onSearchChange: this._searchInText,
                                        clearSearch: true
                                    } }
                    >
