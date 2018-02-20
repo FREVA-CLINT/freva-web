@@ -12,6 +12,7 @@ import PluginList from './Containers/PluginList';
 import PluginDetail from './Containers/PluginDetail';
 import Databrowser from './Containers/Databrowser';
 import Resultbrowser from './Containers/Resultbrowser';
+import HindcastFrontend from './Containers/HindcastFrontend';
 
 const initialState = window.INITIAL_STATE || {};
 
@@ -30,6 +31,7 @@ ReactDOM.render(
                 <Route path="plugins/:pluginName/detail/" component={PluginDetail}/>
                 <Route path="solr/data-browser/" component={Databrowser}/>
                 <Route path="history/result-browser/" component={Resultbrowser}/>
+                <Route path="hindcast-frontend/" component={HindcastFrontend} />
             </Route>
         </Router>
     </Provider>,
