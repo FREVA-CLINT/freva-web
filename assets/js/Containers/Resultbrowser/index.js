@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel} from 'react-bootstrap';
 import {loadResultFacets, selectResultFacet, clearResultFacet,
     clearAllResultFacets, setActiveResultFacet, loadResultFiles,
+    selectActivePage, sortActivePage, searchInText,
     setMetadata } from './actions';
 import _ from 'lodash';
 import AccordionItemBody from '../../Components/AccordionItemBody';
@@ -10,6 +11,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
 import OwnPanel from '../../Components/OwnPanel'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import { dateformatter } from '../../utils'
 
 class Resultbrowser extends React.Component {
 
@@ -25,8 +27,6 @@ class Resultbrowser extends React.Component {
         this.props.dispatch(loadResultFacets());
         this.props.dispatch(loadResultFiles());
     }
-
-
 
     /**
      * Loop all facets and render the panels
@@ -60,9 +60,8 @@ class Resultbrowser extends React.Component {
 
     renderFilesPanel() {
         //TODO: This should be a separate component
-        const {activeFacet,results, numResults} = this.props.resultbrowser;
+        const {activeFacet,results, numResults, page, limit } = this.props.resultbrowser;
         const {dispatch} = this.props;
-
 
         return (
             <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
@@ -74,21 +73,33 @@ class Resultbrowser extends React.Component {
                         </Grid>
                     </MuiThemeProvider>
                     :
-                    <BootstrapTable data={results}
-                                    pagination
-                                    tableStyle = {{border:'none'}}
-                                    options={ {
-                                        noDataText: 'No results available',
-                                        sizePerPage: 25,
-                                        hideSizePerPage: true
-                                    }}
-                                    striped hover condensed>
-                        <TableHeaderColumn dataField='id' isKey hidden>ID</TableHeaderColumn>
-                        <TableHeaderColumn dataField='tool'>Plugin</TableHeaderColumn>
-                        <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
-                            <a href={ cell }>{`Show`}</a>
-                        )}>Link</TableHeaderColumn>
-                    </BootstrapTable>
+                   <BootstrapTable data={results}
+                                   remote = { true }
+                                   search = { true }
+                                   multiColumnSearch={ true }
+                                   pagination = { true }
+                                   fetchInfo={ { dataTotalSize: numResults } }
+                                   tableStyle = {{border:'none'}}
+                                   options={ {
+                                       noDataText: 'No results available',
+                                       sizePerPage: limit,
+                                       hideSizePerPage: true,
+                                       page: page,
+                                       onPageChange: (page) => dispatch(selectActivePage(page)),
+                                       onSortChange: (sortName,sortOrder) => dispatch(sortActivePage(sortName,sortOrder)),
+                                       onSearchChange: (searchText) => dispatch(searchInText(searchText)),
+                                       clearSearch: true
+                                   } }
+                   >
+                       <TableHeaderColumn dataField='id' isKey hidden>ID</TableHeaderColumn>
+                       <TableHeaderColumn dataField='timestamp' dataSort={ true } dataFormat={dateformatter}>Timestamp</TableHeaderColumn>
+                       <TableHeaderColumn dataField='tool' dataSort={ true }>Plugin</TableHeaderColumn>
+                       <TableHeaderColumn dataField='caption' dataSort={ true }>Caption</TableHeaderColumn>
+                       <TableHeaderColumn dataField='uid' dataSort={ true }>User</TableHeaderColumn>
+                       <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
+                           <a href={ cell }>{`Show`}</a>
+                       )}>Link</TableHeaderColumn>
+                   </BootstrapTable>
                 }
             </Panel>
         )

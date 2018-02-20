@@ -1,9 +1,9 @@
-import ast
 import json
 import re
 import time
+
 from collections import Counter, OrderedDict
-from os.path import splitext
+from operator import itemgetter
 
 from history.models import History, Result
 from rest_framework.views import APIView
@@ -11,7 +11,6 @@ from rest_framework.response import Response
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
-
 
 class FilterAbstract(object):
     @property
@@ -103,7 +102,7 @@ class ResultFacets(APIView, FilterAbstract):
             for key, num in OrderedDict(sorted(Counter(structure_temp[fac]).items())).iteritems():
                 structure[fac].append(key)
                 structure[fac].append(num)
-        print 'ZähleFacets: %s ' %(time.time() - start)
+        print 'ZaehleFacets: %s ' %(time.time() - start)
         return {'data': structure, 'metadata': None}
 
     def get(self, request, format=None):
@@ -118,13 +117,42 @@ class ResultFiles(APIView, FilterAbstract):
     filter_method = 'iregex'
     facets = settings.RESULT_BROWSER_FACETS
 
+    def get_data(self,configuration):
+        data = []
+        for item in configuration:
+            newItem = json.loads(item['configuration'])
+            if len(set(newItem.keys()) & set(self.facets)) == 0: continue
+            data.append(
+                {
+                    'id' : item['id'],
+                    'tool': item['tool'],
+                    'configuration': item['configuration'],
+                    'uid': item['uid'],
+                    'timestamp': item['timestamp'].isoformat(),
+                    'link2results': reverse('history:results', args=[item['id']]),
+                    'caption' : item['caption']
+                }
+            )
 
-    def prepare_files(self, request, format=None):
-        queryset = History.objects.all()
-        queryset = queryset.filter(flag__lt=3, status__lt=2)
+        return data
+
+    def get(self, request, format=None):
+        queryset = History.objects.all().order_by('-timestamp')
+        full_path = request.get_full_path()
         params = request.query_params
+
+
+        options = ['limit','offset','sortName','sortOrder','searchText']
+        queries = {}
+        for item in options:
+            queries[item] = params[item]
+            full_path = re.sub(r'&%s=(\d+|\w+)' % item, '', full_path)
+
+        max_id = queryset.filter(flag__lt=3,status__lt=2).order_by('id').last().id
+        cache_max_id = cache.get('{}_{}'.format(full_path,max_id),0)
+
         modRequest = {}
-        for key,value in params.iteritems():
+        for key, value in params.iteritems():
             if key == 'plugin':
                 queryset = queryset.filter(tool=value)
             else:
@@ -136,31 +164,30 @@ class ResultFiles(APIView, FilterAbstract):
                 if value == '\*' or value == '\\\\\\\\\*':
                     value = '(\*|\\\\\\\\\*)'
                 modRequest[key] = r'"%s([0-9]{0,1})": "%s"' % (key, value)
-        queryset = self.generate_filter(queryset, modRequest)
 
-        start = time.time()
-        configuration = queryset.values_list('id', 'tool','configuration' )
-        print 'DatenbankAbfrageFiles: %s ' %(time.time()-start)
-        data = []
+        data = cache.get(full_path,list())
+        if max_id > cache_max_id or not data:
+            cache.set('{}_{}'.format(full_path,max_id),max_id,None)
+            queryset = queryset.filter(flag__lt=3, status__lt=2, id__gt=cache_max_id)
+            queryset = self.generate_filter(queryset, modRequest)
+            configuration = queryset.values('id', 'tool', 'configuration', 'uid', 'timestamp', 'caption')
+            data.extend(self.get_data(configuration))
+            cache.set(full_path,data,None)
 
-        start = time.time()
-        for item in configuration:
-            newItem = json.loads(item[2])
-            if len(set(newItem.keys()) & set(self.facets)) == 0: continue
-            data.append(
-                {
-                    'id' : item[0],
-                    'tool': item[1],
-                    'link2results': reverse('history:results', args=[item[0]])
-                }
-            )
-        caption = ('Plugin','Link')
-        print 'REST-API: %s ' % (time.time() - start)
-        return {'data': data, 'metadata': {'start': 0, 'numFound': len(data)},'caption':caption}
+        if len(queries['searchText']) > 0:
+            #pattern = r'{.*?zykpak.*?\d+}'
+            pattern = r'{.*?%s.*?"id": \d+}' % queries['searchText']
+            data = [json.loads(re.findall(r'{.*?"id": \d+}', regex).pop())
+                    for regex in re.findall(pattern,json.dumps(data))]
 
-    def get(self, request, format=None):
-        result = cache.get(request.get_full_path())
-        if not result:
-            result = self.prepare_files(request)
-            cache.set(request.get_full_path(),result,None)
+
+
+        reverseOrder = False
+        if queries['sortOrder'] == 'asc': reverseOrder=True
+        data = sorted(data, key=itemgetter(queries['sortName']), reverse=reverseOrder)
+
+        result = {'data': data[int(queries['offset']):int(queries['offset'])+int(queries['limit'])],
+                  'metadata': {'start': 0, 'numFound': len(data)}}#,
+                  #'caption':('Plugin','Link')}
         return Response(result)
+
