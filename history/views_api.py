@@ -186,16 +186,22 @@ class ResultFiles(APIView, FilterAbstract):
             data.extend(self.get_data(configuration))
             cache.set(full_path, data, None)
 
+
         # looking for searchText in configurations
         if len(queries['searchText']) > 0:
             # pattern = r'{.*?zykpak.*?\d+}' # alternative for re.findall - see below
-            pattern = r'{.*?%s.*?"id": \d+}' % queries['searchText']
-            data = [json.loads(re.findall(r'{.*?"id": \d+}', regex).pop())
-                    for regex in re.findall(pattern, json.dumps(data))]
+            pattern = re.compile(r'{.*?%s.*?"id": \d+}' % queries['searchText'])
+            # for findall we need a fake entry
+            json_data = json.dumps(data)[:-1]+', {"fake" : "%s", "id": 0}' % queries['searchText']+']'
+            first_findall = pattern.findall(json_data)
+            data = [json.loads(re.findall(r'{.*?"id": \d+}', regex).pop()) for regex in first_findall]
+            # remove fake entry
+            data.pop()
+
 
         # sort entries
         reverse_order = False
-        if queries['sortOrder'] == 'asc': reverse_order = True
+        if queries['sortOrder'] == 'desc': reverse_order = True
         data = sorted(data, key=itemgetter(queries['sortName']), reverse=reverse_order)
 
         result = {'data': data[int(queries['offset']):int(queries['offset']) + int(queries['limit'])],
