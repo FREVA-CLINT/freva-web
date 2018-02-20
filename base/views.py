@@ -9,7 +9,7 @@ from django_evaluation.monitor import _restart
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from subprocess import Popen, STDOUT, PIPE
-
+from django.core.exceptions import PermissionDenied
 from evaluation_system.misc import config
 
 
@@ -150,6 +150,16 @@ def restart(request):
         return render(request, 'base/restart.html')
 
     return render(request, 'base/home.html')
+
+
+@login_required()
+def forecast_frontend(request):
+    """
+    Forecast frontend
+    """
+    if request.user.isGuest():
+        raise PermissionDenied
+    return render(request, 'base/forecast_frontend.html')
 
 
 def ncdump(request):
