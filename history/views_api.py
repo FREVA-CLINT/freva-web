@@ -4,6 +4,7 @@ import time
 
 from collections import Counter, OrderedDict
 from operator import itemgetter
+from datetime import datetime
 
 from history.models import History, Result
 from rest_framework.views import APIView
@@ -198,11 +199,16 @@ class ResultFiles(APIView, FilterAbstract):
             # remove fake entry
             data.pop()
 
-
         # sort entries
         reverse_order = False
+
         if queries['sortOrder'] == 'desc': reverse_order = True
-        data = sorted(data, key=itemgetter(queries['sortName']), reverse=reverse_order)
+        if queries['sortName'] == 'timestamp':
+            data = sorted(data, key= lambda x : datetime.strptime(x['timestamp'][:19], '%Y-%m-%dT%H:%M:%S' ),
+                          reverse=reverse_order)
+
+        else:
+            data = sorted(data, key=itemgetter(queries['sortName']), reverse=reverse_order)
 
         result = {'data': data[int(queries['offset']):int(queries['offset']) + int(queries['limit'])],
                   'metadata': {'start': 0, 'numFound': len(data)}}
