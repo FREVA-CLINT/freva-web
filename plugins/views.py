@@ -349,8 +349,9 @@ def terms(request):
 def esmval(request):
     return render(request, 'plugins/esmval.html')
 
-def references(request):
-    return render(request, 'plugins/references.html')
+@login_required()
+def cmip6(request):
+    return render(request, 'plugins/cmip6.html')
 
 @require_POST
 @login_required()

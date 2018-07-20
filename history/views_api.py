@@ -116,13 +116,13 @@ class ResultPictures(APIView, FilterAbstract):
 
         rids = queryset.values_list('id', flat=True)
         rids = list(rids)
-        result_object = Result.objects.filter(history_id__in=rids)  # .prefetch_related('resulttag_set')
+        result_object = Result.objects.filter(history_id__in=rids).prefetch_related('resulttag_set')
 
         pictures = []
         result = {}
         for r in result_object:
             rID = r.history_id.id
-            caption = r.resulttag_set.first().text
+            caption = r.resulttag_set.all()[0].text
             pictures.append(
                 {
                     'preview_file': os.path.join(settings.PREVIEW_URL, r.preview_file),
