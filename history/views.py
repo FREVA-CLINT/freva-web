@@ -34,6 +34,7 @@ from history.models import HistoryTag
 
 from templatetags.resulttags import mask_uid
 
+from django_evaluation.utils import settings_login_required
 
 class HistoryTable(XEditableDatatableView):
     model = History
@@ -314,7 +315,6 @@ def unfollow_result(request, history_id):
 @login_required
 def jobinfo(request, id):
     return results(request, id, True)
-
 
 def results(request, id, show_output_only=False):
     from history.utils import pygtailwrapper
@@ -788,5 +788,6 @@ def count_notes(request, history_id, deleted):
 
     return HttpResponse(str(count), content_type="text/plain")    
 
+@settings_login_required('/history/result-browser/')
 def result_browser(request):
     return render(request, 'plugins/list.html', {'title': 'Result-Browser'})
