@@ -3,7 +3,6 @@ import fetch from 'isomorphic-fetch'
 import {getCookie} from '../../utils'
 import _ from 'lodash';
 import $ from 'jquery';
-import axios from 'axios';
 
 export const selectResultFacet = (facet, value) => dispatch => {
     $('html').addClass('wait');
