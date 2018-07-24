@@ -93,7 +93,6 @@ def preview_tree(value, autoescape=None):
                                   + '"><a class="pdf_download" target="_blank" href="'+settings.PREVIEW_URL+fn+'">'\
                                   + key + '</a></li></ul>')
                 else:
-                    print caption
                     output.append(render_to_string('history/templatetags/preview-img.html',
                                                    {'imgname': caption, 'preview': value['preview_file'],
                                                     'PREVIEW_URL': settings.PREVIEW_URL, 'visible': visible}))

@@ -343,9 +343,9 @@ def list_dir(request):
 def list_docu(request):
     return render(request, 'plugins/list-docu.html')
 
-@login_required()
-def cmip6(request):
-    return render(request, 'plugins/cmip6.html')
+#@login_required()
+#def cmip6(request):
+#    return render(request, 'plugins/cmip6.html')
 
 @require_POST
 @login_required()
