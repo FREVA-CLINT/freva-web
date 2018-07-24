@@ -3,7 +3,11 @@ from django.conf import settings
 
 def settings_login_required(url):
     """
-    
+    Return a new login_required method depends on entries in settings local_....py under 
+    section MENU_ENTRIES with key required
+    filtered out the key required with given url/reverse(url)
+    input: relative url path e.g. /contact
+    default: login_required()
     """
     def _method_wrapper(function):
         def _wrapper(request, *args, **kwargs):
