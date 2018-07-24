@@ -8,8 +8,6 @@ urlpatterns = patterns(
     url(r'^(?P<plugin_name>\w+)/detail/$', 'detail', name='detail'),
 
     url(r'^about/$', 'list_docu', name='about'),
-    url(r'^terms/$', 'terms', name='terms'),
-    url(r'^esmval/$', 'esmval', name='esmval'),
     url(r'^cmip6/$', 'cmip6', name='cmip6'),
     url(r'^browse-files/$', 'dirlist', name='dirlist'),
     url(r'^browse-files-new/$', 'list_dir', name='list_dir'),

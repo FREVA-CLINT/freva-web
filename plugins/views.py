@@ -343,12 +343,6 @@ def list_dir(request):
 def list_docu(request):
     return render(request, 'plugins/list-docu.html')
 
-def terms(request):
-    return render(request, 'plugins/terms.html')
-
-def esmval(request):
-    return render(request, 'plugins/esmval.html')
-
 @login_required()
 def cmip6(request):
     return render(request, 'plugins/cmip6.html')
