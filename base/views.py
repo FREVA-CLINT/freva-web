@@ -9,6 +9,7 @@ from django_evaluation.monitor import _restart
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from subprocess import Popen, STDOUT, PIPE
+from django_evaluation.utils import settings_login_required
 
 from evaluation_system.misc import config
 
@@ -91,8 +92,7 @@ def shell_in_a_box(request):
     return render(request, 'base/shell-in-a-box.html',
                   {'shell_url': shell_url})
 
-
-@login_required()
+@settings_login_required('/contact')
 def contact(request):
     """
     View rendering the iFrame for the wiki page.
