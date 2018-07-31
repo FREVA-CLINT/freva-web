@@ -47,11 +47,10 @@ class HindcastFrontend extends React.Component {
 
 
         const obsDataset = variable.selected && variable.selected.value ? observations[variable.selected.value] : '';
-        const evaTime = variable.selected && variable.selected.value == 'tas' ? '1968-2016' : '1968-2013';
+        const evaTime = variable.selected && variable.selected.value == 'tas' ? '1962-2016' : '1968-2013';
         let refText;
         if (reference.selected && metric.selected)
-            refText = reference.selected.value === 'clim' && metric.selected.value === 'correlation' ? '' : ` with ${reference.selected.label} as reference`;
-
+            refText = reference.selected.value === 'vs_clim' && metric.selected.value === 'correlation' ? '' : ` with ${reference.selected.label} as reference`;
         return (
             <Grid>
 
@@ -114,7 +113,7 @@ class HindcastFrontend extends React.Component {
 
                         </FormGroup>
 
-                        <LabeledSlider disabled={data === undefined ? true : false} step={1} min={1} max={7} value={leadtime.selected} label="Leadtime" onChange={(e,v) => changeParamAsync({leadtime: v})}/>
+                        <LabeledSlider disabled={data === undefined ? true : false} step={1} min={1} max={data ? data.length : 7} value={leadtime.selected} label="Leadtime" onChange={(e,v) => changeParamAsync({leadtime: v})}/>
 
                     </Col>
 

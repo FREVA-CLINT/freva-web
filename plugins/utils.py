@@ -28,6 +28,8 @@ def get_scheduler_hosts(user):
             return settings.SCHEDULER_HOSTS_EXTERNAL
         except AttributeError:
             return settings.SCHEDULER_HOSTS
+    #elif user.groups.filter(name='frevastud').exists():
+    #    return ['poincare']
     else:
         return settings.SCHEDULER_HOSTS
 

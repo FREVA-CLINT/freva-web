@@ -22,10 +22,8 @@ import sys
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
 
-os.environ['PYTHON_EGG_CACHE'] = '/tmp/.python-eggs'
-
-# This is a quite nasty hack to overcome the troubles with python 2.6 on
-# the local machines.
+## This is a quite nasty hack to overcome the troubles with python 2.6 on
+## the local machines.
 #if "check_output" not in dir( subprocess ): # duck punch it in!
 #    def f(*popenargs, **kwargs):
 #        if 'stdout' in kwargs:
@@ -49,14 +47,12 @@ os.environ['PYTHON_EGG_CACHE'] = '/tmp/.python-eggs'
 prev_sys_path = list(sys.path)
 
 # Get the path to the env's site-packages directory
-#print settings.VENV_PYTHON_DIR
 #site_packages = subprocess.check_output([
 #                    settings.VENV_PYTHON_DIR,
 #                    '-c',
 #                    'from distutils.sysconfig import get_python_lib;'
 #                    'print get_python_lib(),'
 #]).strip()
-#print settings.VENV_PYTHON_DIR
 
 # Add the virtualenv site-packages to the site packages
 #site.addsitedir(site_packages)
