@@ -159,7 +159,9 @@ def forecast_frontend(request):
     """
     if request.user.isGuest():
         raise PermissionDenied
-    return render(request, 'base/forecast_frontend.html')
+    lang = request.GET.get('lang', 'en')
+    return render(request, 'base/forecast_frontend.html', {'lang': lang}) 
+
 
 
 def ncdump(request):

@@ -2,7 +2,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth.decorators import login_required
-from scipy.io import netcdf
+#from scipy.io import netcdf
+#from netCDF4 import Dataset
+import numpy as np
 from django.core.cache import cache
 from .models import HindcastEvaluation
 from django.db import IntegrityError
@@ -115,6 +117,7 @@ def get_hindcast_facets(request):
 @api_view(['GET'])
 @login_required()
 def get_hindcast_data(request):
+    from netCDF4 import Dataset
     data = request.GET
     hindcast = HindcastEvaluation.objects.get(
         hindcast_set=data['hindcastset'],
@@ -137,12 +140,12 @@ def get_hindcast_data(request):
     if data['type'] == 'map':
 
         leadtime = int(data['leadtime'])
-        f = netcdf.netcdf_file(fn, 'r')
-        score = f.variables[data['metric']+'_' + ref_var].data.copy().squeeze()
-        score_sign = f.variables[data['metric']+'_'+ ref_var + '_sign'].data.copy().squeeze()
+        f = Dataset(fn, 'r')#netcdf.netcdf_file(fn, 'r')
+        score = np.array(f.variables[data['metric']+'_' + ref_var])#.data.copy().squeeze()
+        score_sign = np.array(f.variables[data['metric']+'_'+ ref_var + '_sign'])#.data.copy().squeeze()
 
-        lon = f.variables['lon'].data.copy()
-        lat = f.variables['lat'].data.copy()
+        lon = np.array(f.variables['lon'])#.data.copy()
+        lat = np.array(f.variables['lat'])#.data.copy()
         step = lon[10] - lon[9]
 
         lat = lat - step
@@ -166,9 +169,9 @@ def get_hindcast_data(request):
                     )
 
     else:
-        f = netcdf.netcdf_file(fn, 'r')
-        score = f.variables[data['metric'] + '_' + ref_var].data.copy().squeeze()
-        score_sign = f.variables[data['metric'] + '_' + ref_var + '_sign'].data.copy().squeeze()
+        f = Dataset(fn, 'r')#netcdf.netcdf_file(fn, 'r')
+        score = np.array(f.variables[data['metric']+'_' + ref_var])#f.variables[data['metric'] + '_' + ref_var].data.copy().squeeze()
+        score_sign = np.array(f.variables[data['metric']+'_'+ ref_var + '_sign'])#f.variables[data['metric'] + '_' + ref_var + '_sign'].data.copy().squeeze()
 
         score_result = []
         sign = []
