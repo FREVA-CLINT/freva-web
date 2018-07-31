@@ -79,12 +79,17 @@ export const loadResultFacets = () => (dispatch, getState) => {
 };
 
 export const loadResultFiles = () => (dispatch, getState) => {
-
-    const {selectedFacets} = getState().resultbrowserReducer;
+    $('html').addClass('wait');
+    const {selectedFacets, page, limit, sortName, sortOrder, searchText} = getState().resultbrowserReducer;
     let params = '';
     _.map(selectedFacets, (value, key) => {
         params += `&${key}=${value}`
     });
+    let offset = (page-1)*limit;
+    params +=`&limit=${limit}&offset=${offset}`;
+    params +=`&sortName=${sortName}&sortOrder=${sortOrder}`;
+    params +=`&searchText=${searchText}`;
+
     let url = `/api/history/result-browser-files/?${params}`;
     return fetch(url, {
         credentials: 'same-origin',
@@ -99,10 +104,36 @@ export const loadResultFiles = () => (dispatch, getState) => {
                 type: constants.LOAD_RESULT_FILES,
                 payload: json
             });
+            $('html').removeClass('wait');
         })
 };
 
+export const selectActivePage = (page) => dispatch => {
 
+    dispatch({
+        type: constants.SELECT_ACTIVE_PAGE,
+        page
+    });
+    dispatch(loadResultFiles());
 
+};
+export const sortActivePage = (sortName,sortOrder) => dispatch => {
+
+    dispatch({
+        type: constants.SORT_ACTIVE_PAGE,
+        sortName,
+        sortOrder
+    });
+    dispatch(loadResultFiles());
+
+};
+
+export const searchInText = (searchText) => dispatch => {
+    dispatch({
+        type: constants.ON_SEARCH,
+        searchText
+    });
+    dispatch(loadResultFiles());
+};
 
 

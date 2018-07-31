@@ -285,7 +285,7 @@
 	$(document).ready(function() {
 
 		doCount();
-		inter_counter = setInterval(doCount, 4000);
+		//inter_counter = setInterval(doCount, 4000);
 
 		$('#collapseNotes').on('show.bs.collapse', function() {
 			var url='{% url 'history:result-comments' history_object.id %}';
