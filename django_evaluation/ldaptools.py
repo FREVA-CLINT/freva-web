@@ -189,19 +189,21 @@ class MiklipUserInformation(LdapUserInformation):
                               attrlist=self.ldap_keys,
                               filterstr='uid=%s' % user)
             
-            mail = res[0][1].get('mail', None)
-            forward = res[0][1].get('mailForwardingAddress', None)
+            if len(res) > 0:
+                
+                mail = res[0][1].get('mail', None)
+                forward = res[0][1].get('mailForwardingAddress', None)
             
-            if forward:
-                user_info.append((user,
-                                  ' '.join(res[0][1]['sn']),
-                                  ' '.join(res[0][1].get('givenName', '')),
-                                  forward[-1],))
-            elif mail:
-                user_info.append((user,
-                                  ' '.join(res[0][1]['sn']),
-                                  ' '.join(res[0][1].get('givenName', '')),
-                                  mail[-1],))
+                if forward:
+                    user_info.append((user,
+                                      ' '.join(res[0][1].get('sn','')),
+                                      ' '.join(res[0][1].get('givenName', '')),
+                                      forward[-1],))
+                elif mail:
+                    user_info.append((user,
+                                      ' '.join(res[0][1].get('sn','')),
+                                      ' '.join(res[0][1].get('givenName', '')),
+                                      mail[-1],))
         self.user_info = sorted(user_info, key=lambda tup: tup[1])
         return self.user_info
 
