@@ -196,8 +196,14 @@ def setup(request, plugin_name, row_id=None):
                     os.makedirs(log_path)
                     os.chmod(log_path, 0o777)
                 log_file = '%s/nohup-%s.out' % (log_path, time.time())
-            load_module = settings.LOAD_MODULE
-            
+
+            # Get modules and files to source
+            # TODO: remove if claus when FU Operating system is fully migrated
+            if request.user.groups.filter(name='frevastud').exists():
+                load_module = settings.LOAD_MODULE #'source /etc/bash.bashrc > /dev/null; source /net/opt/system/modules/default/init/bash > /dev/null; module load modules_jessie > /dev/null; module load freva > /dev/null;' 
+            else:
+                load_module = settings.LOAD_MODULE            
+
             if "EVALUATION_SYSTEM_PLUGINS_%s" % request.user in os.environ:
                 plugin_str = os.environ['EVALUATION_SYSTEM_PLUGINS_%s' % request.user] 
                 export_user_plugin = 'export EVALUATION_SYSTEM_PLUGINS=%s;'\
@@ -218,7 +224,7 @@ def setup(request, plugin_name, row_id=None):
                               password=password,
                               # we use "bash -c because users with other login shells can't use "export"
                               # not clear why we removed this in the first place...
-                              command='bash -c "%s"' % (load_module + export_user_plugin + command),
+                              command='bash -c "source /etc/bash.bashrc; %s"' % (load_module + export_user_plugin + command),
                               hostnames=hostnames)
                         
             # get the text form stdout
@@ -237,7 +243,7 @@ def setup(request, plugin_name, row_id=None):
                 if scheduler_output:
                     row_id = int(scheduler_output.split(' ')[-1])
                 else:
-                    raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]" % (out, err)
+                    raise Exception, "Unexpected output of analyze:\n[%s]\n[%s]\n%s" % (out, err, command)
 
             else:
                 # IF WE SEND USING NOHUP WE DON'T GET ANY FEEDBACK ABOUT THE ID

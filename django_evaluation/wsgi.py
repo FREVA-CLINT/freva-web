@@ -22,22 +22,22 @@ from django_evaluation import monitor, settings
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
 
-# This is a quite nasty hack to overcome the troubles with python 2.6 on
-# the local machines.
-if "check_output" not in dir( subprocess ): # duck punch it in!
-    def f(*popenargs, **kwargs):
-        if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get("args")
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd)
-        return output
-    subprocess.check_output = f
+## This is a quite nasty hack to overcome the troubles with python 2.6 on
+## the local machines.
+#if "check_output" not in dir( subprocess ): # duck punch it in!
+#    def f(*popenargs, **kwargs):
+#        if 'stdout' in kwargs:
+#            raise ValueError('stdout argument not allowed, it will be overridden.')
+#        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+#        output, unused_err = process.communicate()
+#        retcode = process.poll()
+#        if retcode:
+#            cmd = kwargs.get("args")
+#            if cmd is None:
+#                cmd = popenargs[0]
+#            raise subprocess.CalledProcessError(retcode, cmd)
+#        return output
+#    subprocess.check_output = f
 
 
 # Add the virtualenv packages to the site directory. This uses the technique
@@ -47,15 +47,15 @@ if "check_output" not in dir( subprocess ): # duck punch it in!
 prev_sys_path = list(sys.path)
 
 # Get the path to the env's site-packages directory
-site_packages = subprocess.check_output([
-                    settings.VENV_PYTHON_DIR,
-                    '-c',
-                    'from distutils.sysconfig import get_python_lib;'
-                    'print get_python_lib(),'
-]).strip()
+#site_packages = subprocess.check_output([
+#                    settings.VENV_PYTHON_DIR,
+#                    '-c',
+#                    'from distutils.sysconfig import get_python_lib;'
+#                    'print get_python_lib(),'
+#]).strip()
 
 # Add the virtualenv site-packages to the site packages
-site.addsitedir(site_packages)
+#site.addsitedir(site_packages)
 
 # Reorder sys.path so the new directories are at the front.
 new_sys_path = []
@@ -82,4 +82,4 @@ application = get_wsgi_application()
 # application = HelloWorldApplication(application)
 
 # this is vor auto reloading after code changes
-monitor.start(interval=1.0)
+#monitor.start(interval=1.0)
