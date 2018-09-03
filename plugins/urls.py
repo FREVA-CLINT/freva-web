@@ -9,7 +9,6 @@ urlpatterns = patterns(
     url(r'^$', 'plugin_list', name='home'),
     url(r'^(?P<plugin_name>\w+)/detail/$', 'detail', name='detail'),
     url(r'^about/$', 'list_docu', name='about'),
-    url(r'^cmip6/$', login_required(TemplateView.as_view(template_name='plugins/cmip6.html')), name='cmip6'),
     url(r'^browse-files/$', 'dirlist', name='dirlist'),
     url(r'^browse-files-new/$', 'list_dir', name='list_dir'),
     url(r'^(?P<plugin_name>\w+)/setup/$', 'setup', name='setup'),
