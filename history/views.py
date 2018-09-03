@@ -791,3 +791,7 @@ def count_notes(request, history_id, deleted):
 @settings_login_required('/history/result-browser/')
 def result_browser(request):
     return render(request, 'plugins/list.html', {'title': 'Result-Browser'})
+
+@settings_login_required('/history/cmip6-results/')
+def cmip6_result_browser(request):
+    return render(request, 'plugins/list.html', {'title': 'CMIP6 Results'})
