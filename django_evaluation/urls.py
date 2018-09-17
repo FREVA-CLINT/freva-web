@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 from base.views_api import UserViewSet, AuthenticatedUser
 from plugins.views_api import PluginsList, ExportPlugin, PluginDetail, SendMailToDeveloper
-from history.views_api import ResultFacets, ResultFiles, ResultPictures, ResultFacetsCMIP6, ResultPicturesCMIP6
+from history.views_api import ResultFacets, ResultFiles, ResultPictures
 from solr.views_api import ncdump
 from rest_framework import routers
 
@@ -46,8 +46,8 @@ urlpatterns = patterns('',
     url(r'^api/history/result-browser/$', ResultFacets.as_view(), name='api-history-list'),
     url(r'^api/history/result-browser-files/$', ResultFiles.as_view(), name='api-history-files'),
     url(r'^api/history/result-browser-pics/$', ResultPictures.as_view(), name='api-history-pics'),
-    url(r'^api/history/result-browser-cmip6/$', ResultFacetsCMIP6.as_view(), name='api-history-cmip6'),
-    url(r'^api/history/result-browser-pics-cmip6/$', ResultPicturesCMIP6.as_view(), name='api-history-pics-cmip6'),
+    url(r'^api/history/result-browser-cmip6/$', ResultFacets.as_view(), name='api-history-cmip6'),
+    url(r'^api/history/result-browser-pics-cmip6/$', ResultPictures.as_view(), name='api-history-pics-cmip6'),
     url(r'^api/', include(router.urls, namespace='api')),
 )
 
