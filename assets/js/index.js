@@ -30,6 +30,7 @@ ReactDOM.render(
                 <Route path="plugins/:pluginName/detail/" component={PluginDetail}/>
                 <Route path="solr/data-browser/" component={Databrowser}/>
                 <Route path="history/result-browser/" component={Resultbrowser}/>
+                <Route path="history/cmip6-results/" component={Resultbrowser}/>
             </Route>
         </Router>
     </Provider>,
