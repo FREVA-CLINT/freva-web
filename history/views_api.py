@@ -28,12 +28,16 @@ class FilterAbstract(object):
         return {'%s__%s' % (self.filter_field, self.filter_method,): value}
 
     def generate_filter(self, queryset, request):
+        if (settings.CMIP_FLAG):
+            self.allowed_facets += ['product']
+            request.GET._mutable = True
+            request.GET['product'] = 'cmip6' if '/history/cmip6-results/' in request.META['HTTP_REFERER'] else 'cmip5'
+            request.GET._mutable = False
 
         params = request.query_params
+
         if hasattr(self, 'predefined_filter'):
             queryset = queryset.filter(**self.get_filter_field(self.predefined_filter))
-        if hasattr(self, 'exclude'):
-            queryset = queryset.exclude(**self.get_filter_field(self.exclude))
     
         for fac in params.keys():
             if not hasattr(self, 'allowed_facets') or fac in self.allowed_facets:
