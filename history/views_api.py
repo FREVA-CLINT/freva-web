@@ -91,7 +91,6 @@ class ResultFiles(APIView, FilterAbstract):
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
     #predefined_filter = '"ESMValTool namelists"'
-    exclude = 'CMIP6'
 
     def get(self, request, format=None):
         queryset = History.objects.filter(tool='EVC')
@@ -116,7 +115,6 @@ class ResultPictures(APIView, FilterAbstract):
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
     #predefined_filter = '"ESMValTool namelists"'
-    #exclude = 'CMIP6'
 
     def prepare_query(self,request):
         queryset = History.objects.filter(tool='EVC',status=0,flag=0)
