@@ -5,6 +5,7 @@ import json
 
 from collections import Counter, OrderedDict
 from os.path import splitext
+from copy import copy
 
 from history.models import History, Result, ResultTag
 from rest_framework.views import APIView
@@ -24,18 +25,20 @@ class FilterAbstract(object):
     def filter_method(self):
         raise NotImplementedError, 'filter_method must be implemented'
 
+    def set_request(self,request):        
+        request.GET._mutable = True
+        if hasattr(settings,'CMIP6_PATH') and settings.CMIP6_PATH:
+            request.GET['product'] = 'cmip6' if settings.CMIP6_PATH in request.META['HTTP_REFERER'] else 'cmip5'
+        request.GET._mutable = False
+        return request
+
     def get_filter_field(self, value):
         return {'%s__%s' % (self.filter_field, self.filter_method,): value}
 
     def generate_filter(self, queryset, request):
-        if (settings.CMIP_FLAG):
-            self.allowed_facets += ['product']
-            request.GET._mutable = True
-            request.GET['product'] = 'cmip6' if '/history/cmip6-results/' in request.META['HTTP_REFERER'] else 'cmip5'
-            request.GET._mutable = False
-
+        self.allowed_facets += ['product'] if hasattr(settings,'CMIP6_PATH') and settings.CMIP6_PATH else []
         params = request.query_params
-
+        
         if hasattr(self, 'predefined_filter'):
             queryset = queryset.filter(**self.get_filter_field(self.predefined_filter))
     
@@ -46,6 +49,8 @@ class FilterAbstract(object):
                 queryset = queryset.filter(history_id__parameter_id__parameter_name=fac,
                                                   history_id__value__icontains=' '+params[fac]+' ')
 
+        self.allowed_facets.remove('product') if hasattr(settings,'CMIP6_PATH') and settings.CMIP6_PATH else None
+
         return queryset
 
 
@@ -54,9 +59,10 @@ class ResultFacets(APIView, FilterAbstract):
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
     #predefined_filter = '"ESMValTool namelists"'
-    #exclude = 'CMIP6'
+    
 
     def get(self, request, format=None):
+        request = self.set_request(request)
         queryset = History.objects.filter(tool='EVC',status=0,flag=0)
         queryset = self.generate_filter(queryset, request)
 
@@ -115,6 +121,8 @@ class ResultPictures(APIView, FilterAbstract):
     filter_method = 'icontains'
     allowed_facets = settings.RESULT_BROWSER_FACETS
     #predefined_filter = '"ESMValTool namelists"'
+    #exclude = 'CMIP6'
+
 
     def prepare_query(self,request):
         queryset = History.objects.filter(tool='EVC',status=0,flag=0)
@@ -143,10 +151,12 @@ class ResultPictures(APIView, FilterAbstract):
         return result
 
     def get(self, request, format=None):
-        result = cache.get(request.get_full_path())
+        request = self.set_request(request)
+        request_json =  json.dumps(OrderedDict(sorted(request.GET.items(), key = lambda t: t[0])))
+        result = cache.get(request_json)
         if not result:
             result = self.prepare_query(request)
-            cache.set(request.get_full_path(),result,43200)
+            cache.set(request_json,result,43200)
         return Response(result)
 
 
