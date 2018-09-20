@@ -10,8 +10,7 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
 import OwnPanel from '../../Components/OwnPanel'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import Gallery from '../../Components/Gallery/Gallery';
-
+import Resulttype from '../Resulttype'
 
 class Resultbrowser extends React.Component {
 
@@ -26,7 +25,7 @@ class Resultbrowser extends React.Component {
     componentDidMount() {
         this.props.dispatch(loadResultFacets());
         // this.props.dispatch(loadResultFiles());
-        this.props.dispatch(loadResultPictures());
+        // this.props.dispatch(loadResultPictures());
     }
 
 
@@ -60,37 +59,7 @@ class Resultbrowser extends React.Component {
         });
     }
 
-    renderFilesPanel() {
-        //TODO: This should be a separate component
 
-        const {activeFacet, results, numResults } = this.props.resultbrowser;
-        const {dispatch} = this.props;
-
-        return (
-            <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
-                Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'}>
-                { numResults === null ?
-                    <MuiThemeProvider>
-                        <Grid style={{textAlign: 'center'}}>
-                            <CircularProgress />
-                        </Grid>
-                    </MuiThemeProvider>
-                    :
-                    <Gallery images={
-                        results.map((n, i) => ({
-                            src: n.preview_file,
-                            thumbnail: n.preview_file,
-                            caption: n.caption,
-                            useForDemo: i < 100 ? true : false,
-                            history: n.link2results
-                        }))
-                    } showThumbnails
-                    />
-                }
-            </Panel>
-
-        )
-    }
 
     render() {
         const {facets, selectedFacets, activeFacet} = this.props.resultbrowser;
@@ -129,7 +98,7 @@ class Resultbrowser extends React.Component {
                         <Accordion activeKey={activeFacet}>
                             {facetPanels}
                         </Accordion>
-                        {this.renderFilesPanel()}
+                        <Resulttype/>
                     </Col>
                 </Row>
             </Grid>
@@ -137,8 +106,10 @@ class Resultbrowser extends React.Component {
     }
 }
 
+
 const mapStateToProps = (state) => ({
-    resultbrowser: state.resultbrowserReducer
+    resultbrowser: state.resultbrowserReducer,
 });
+
 
 export default connect(mapStateToProps) (Resultbrowser)
