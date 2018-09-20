@@ -1,7 +1,9 @@
 import * as constants from './constants';
 
+
 const appReducerInitialState = {
-    currentUser: undefined
+    currentUser: undefined,
+    table : window.table
 };
 
 export const appReducer = (state = appReducerInitialState, action) => {
