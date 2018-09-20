@@ -38,7 +38,7 @@ $('document').ready(function() {
 // assig next parameter
 {% if next %}
 $("#next_page").val("{{next}}");
-{% elif guest_login %}
+{% elif guest_login and user.get_username == 'guest' %}
 restartTour();
 {% endif %}
 });
