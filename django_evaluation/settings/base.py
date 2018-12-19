@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'history',
     'solr',
     'externaluser',
+    'hindcast_frontend'
 )
 
 # Place bcrypt first in the list, so it will be the default password hashing
@@ -174,6 +175,7 @@ TEMPLATE_CONTEXT_PROCESSORS = [
     'django.core.context_processors.csrf',
     'django.core.context_processors.tz',
     'django.contrib.messages.context_processors.messages',
+    'django_settings_export.settings_export',
 ]
 
 TEMPLATE_DIRS = (
@@ -259,7 +261,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-    }
+    },
 }
 DEBUG = TEMPLATE_DEBUG = False
 DEV = False
@@ -362,3 +364,11 @@ MENU_ENTRIES = [
     {'name':'Help','url': reverse_lazy('plugins:about'), 'html_id': 'doc_menu'},
     {'name':'Contact','url': reverse_lazy('base:contact'), 'html_id': 'contact_menu'}
 ]
+
+#Freva for CMIP6DICAD? Set evc to true
+EVC = False
+
+SETTINGS_EXPORT = [
+    'EVC',
+]
+

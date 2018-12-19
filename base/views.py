@@ -11,6 +11,7 @@ from django.core.urlresolvers import reverse
 from subprocess import Popen, STDOUT, PIPE
 from django_evaluation.utils import settings_login_required
 
+from django.core.exceptions import PermissionDenied
 from evaluation_system.misc import config
 
 
@@ -150,6 +151,18 @@ def restart(request):
         return render(request, 'base/restart.html')
 
     return render(request, 'base/home.html')
+
+
+@login_required()
+def forecast_frontend(request):
+    """
+    Forecast frontend
+    """
+    if request.user.isGuest():
+        raise PermissionDenied
+    lang = request.GET.get('lang', 'en')
+    return render(request, 'base/forecast_frontend.html', {'lang': lang}) 
+
 
 
 def ncdump(request):

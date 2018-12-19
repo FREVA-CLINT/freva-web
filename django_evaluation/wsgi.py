@@ -15,29 +15,29 @@ framework.
 """
 import os
 import sys
-import site
-import subprocess
-from django_evaluation import monitor, settings
-
+#import site
+#import subprocess
+#from django_evaluation import monitor, settings
+#from django_evaluation import settings
 
 PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__) + "../../")
 
-# This is a quite nasty hack to overcome the troubles with python 2.6 on
-# the local machines.
-if "check_output" not in dir( subprocess ): # duck punch it in!
-    def f(*popenargs, **kwargs):
-        if 'stdout' in kwargs:
-            raise ValueError('stdout argument not allowed, it will be overridden.')
-        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
-        output, unused_err = process.communicate()
-        retcode = process.poll()
-        if retcode:
-            cmd = kwargs.get("args")
-            if cmd is None:
-                cmd = popenargs[0]
-            raise subprocess.CalledProcessError(retcode, cmd)
-        return output
-    subprocess.check_output = f
+## This is a quite nasty hack to overcome the troubles with python 2.6 on
+## the local machines.
+#if "check_output" not in dir( subprocess ): # duck punch it in!
+#    def f(*popenargs, **kwargs):
+#        if 'stdout' in kwargs:
+#            raise ValueError('stdout argument not allowed, it will be overridden.')
+#        process = subprocess.Popen(stdout=subprocess.PIPE, *popenargs, **kwargs)
+#        output, unused_err = process.communicate()
+#        retcode = process.poll()
+#        if retcode:
+#            cmd = kwargs.get("args")
+#            if cmd is None:
+#                cmd = popenargs[0]
+#            raise subprocess.CalledProcessError(retcode, cmd)
+#        return output
+#    subprocess.check_output = f
 
 
 # Add the virtualenv packages to the site directory. This uses the technique
@@ -68,7 +68,7 @@ sys.path[:0] = new_sys_path
 # Add the app code to the path
 sys.path.append(PROJECT_ROOT)
 
-os.environ['CELERY_LOADER'] = 'django'
+#os.environ['CELERY_LOADER'] = 'django'
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "django_evaluation.settings")
 
 # This application object is used by any WSGI server configured to use this
@@ -82,4 +82,4 @@ application = get_wsgi_application()
 # application = HelloWorldApplication(application)
 
 # this is vor auto reloading after code changes
-monitor.start(interval=1.0)
+#monitor.start(interval=1.0)

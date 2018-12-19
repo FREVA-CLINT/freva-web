@@ -2,7 +2,8 @@
 import React, { Component } from 'react';
 import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel} from 'react-bootstrap';
-import { setActiveResultFacet,loadResultPictures,loadResultFacets, loadResultFiles } from '../Resultbrowser/actions';
+import { setActiveResultFacet,loadResultPictures,loadResultFacets, loadResultFiles,
+         selectActivePage, sortActivePage, searchInText,} from '../Resultbrowser/actions';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
@@ -10,20 +11,39 @@ import Gallery from '../../Components/Gallery/Gallery';
 import { dateformatter } from '../../utils'
 
 class Resulttype extends React.Component{
+
+    constructor(props) {
+        super(props);
+        this.state = {
+            searchtext : ''
+        }
+        this._searchInText = this._searchInText.bind(this)
+    }
+
     componentDidMount()
         {
             this.props.dispatch(loadResultFacets());
-            this.props.dispatch(loadResultFiles());
-            this.props.dispatch(loadResultPictures());
+            if (this.props.app.table) {
+                this.props.dispatch(loadResultPictures());
+            } else {
+                this.props.dispatch(loadResultFiles());
+            }
         }
+
+    _searchInText(searchText) {
+        this.setState({searchtext:searchText})
+        if (this.state.searchtext.length > 2 || this.state.searchtext.length == 0)
+            setTimeout(() => {
+                if (this.state.searchtext.length === searchText.length)
+                    this.props.dispatch(searchInText(searchText))
+     }, 500)
+    }
 
     render(){
         const {table} = this.props.app;
         const {activeFacet, results, numResults, page, limit } = this.props.resultbrowser;
         const {dispatch} = this.props;
-
-
-        if (table) {
+        if (!table) {
             return (
             <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
                 Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'} id='result-browser'>
