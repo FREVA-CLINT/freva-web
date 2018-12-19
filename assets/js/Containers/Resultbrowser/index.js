@@ -1,16 +1,17 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel} from 'react-bootstrap';
-import {loadResultFacets, selectResultFacet, clearResultFacet,
-    clearAllResultFacets, setActiveResultFacet, loadResultFiles,
-    setMetadata, loadResultPictures } from './actions';
+import {selectResultFacet, clearResultFacet, clearAllResultFacets, setActiveResultFacet,
+    setMetadata, loadResultFacets } from './actions';
 import _ from 'lodash';
 import AccordionItemBody from '../../Components/AccordionItemBody';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
 import OwnPanel from '../../Components/OwnPanel'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
-import Resulttype from '../Resulttype'
+import Resulttype from '../Resulttype';
+
+
 
 class Resultbrowser extends React.Component {
 
@@ -27,6 +28,9 @@ class Resultbrowser extends React.Component {
         // this.props.dispatch(loadResultFiles());
         // this.props.dispatch(loadResultPictures());
     }
+
+
+
 
 
     /**
@@ -58,8 +62,6 @@ class Resultbrowser extends React.Component {
             )
         });
     }
-
-
 
     render() {
         const {facets, selectedFacets, activeFacet} = this.props.resultbrowser;

@@ -17,7 +17,7 @@
 <header style="padding-top:0px;">
    <div class="container">
       <div class="row">
-         <div class="col-md-6 col-sm-6">
+         <div class="col-md-4 col-sm-6">
             <!-- Logo and site link -->
             <div class="logo">
                <!-- <h1><a href="{% url 'base:home' %}"><img src="{{ STATIC_URL }}img/miklip-logo.png" style="width:100%;"/></a></h1> -->
@@ -61,7 +61,7 @@
 	          </ul>
 
              {% if not request.user.is_authenticated %}
-		<div class="navbar-right  navbar-nav col-md-6">
+		<div class="navbar-right  navbar-nav col-md-5">
 			  <form class="navbar-form navbar-right  navbar-nav" method="post" action="{% url 'base:home' %}">
  				{% csrf_token %}
 	            <div class="form-group col-md-5" style="padding-left:0px;">
@@ -146,7 +146,7 @@
          <div class="widget">
             <h4>Contact</h4>
 			<ul>
-			     {% setting_to_list 'CONTACTS' %}
+			     {% setting_to_list 'CONTACTS' %} (Also for password reset)
 			</ul>
 			
          </div>

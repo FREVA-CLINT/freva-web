@@ -3,11 +3,19 @@ import _ from 'lodash';
 
 const resultbrowserInitialState = {
     facets: [],
+    files: [],
     numResults: null,
     selectedFacets: {},
     activeFacet: 'results',
     metadata: {},
-    results: []
+    results: [],
+    caption: [],
+    page: 1,
+    limit: 25,
+    sortName: 'timestamp',
+    sortOrder:'desc',
+    searchText: ''
+
 };
 
 export const resultbrowserReducer = (state = resultbrowserInitialState, action) => {
@@ -39,6 +47,12 @@ export const resultbrowserReducer = (state = resultbrowserInitialState, action) 
         case constants.LOAD_RESULT_PICTURES:
             return {...state, results: action.payload.data,
                 numResults: action.payload.metadata.numFound};
+        case constants.SELECT_ACTIVE_PAGE:
+            return {...state, page: action.page};
+        case constants.SORT_ACTIVE_PAGE:
+            return {...state, sortName: action.sortName, sortOrder: action.sortOrder};
+        case constants.ON_SEARCH:
+            return {...state, searchText: action.searchText}
         default:
             return state
     }

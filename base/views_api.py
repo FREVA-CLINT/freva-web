@@ -18,4 +18,4 @@ class AuthenticatedUser(APIView):
 
         if request.user.is_authenticated():
             return Response(self.serializer_class(request.user).data)
-        return Response(False)
+        return Response({})#False)

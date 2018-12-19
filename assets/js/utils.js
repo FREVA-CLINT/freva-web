@@ -17,3 +17,10 @@ export function getCookie(name) {
   }
   return cookieValue;
 }
+
+export const dateformatter = (isodate) => {
+    let newdate = new Date(Date.parse(isodate));
+    let d = newdate.getDate();
+    let m = newdate.getMonth()+1;
+    return `${d<=9 ? '0'+d : d}.${m<=9 ? '0'+m : m}.${newdate.getFullYear()}`
+}
