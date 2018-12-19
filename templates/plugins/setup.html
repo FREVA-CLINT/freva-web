@@ -268,7 +268,7 @@
 
         function activate_browse(dir, file_extension) {
             $('#browsefield').fileTree({
-                root: dir ? dir : '{{user_home}}',
+                root: dir ? dir : $('#browse_home').parent().hasClass('active') ? '{{user_home}}' : '{{user_scratch}}',
                 script: '{% url 'plugins:dirlist' %}?file_type=' + file_extension,
                 expandSpeed: 100,
                 collapseSpeed: 100,

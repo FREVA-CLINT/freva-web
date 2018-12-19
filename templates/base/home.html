@@ -38,7 +38,7 @@ $('document').ready(function() {
 // assig next parameter
 {% if next %}
 $("#next_page").val("{{next}}");
-{% elif guest_login %}
+{% elif guest_login and user.get_username == 'guest' %}
 restartTour();
 {% endif %}
 });
@@ -60,22 +60,46 @@ restartTour();
        <div class="row">
          <div class="col-md-12">     
             <div id="da-slider" class="da-slider">
-				<div class="da-slide">
-					<h2>Start analyses</h2>
-					<p>You can easily start all analysis in the evaluation system online. Just fill out the form a click "Run".</p>
-					<div class="da-img"><img src="{{ STATIC_URL }}img/parallax/1.png" alt="image01" /></div>
-				</div>
-				<div class="da-slide">
-					<h2>View results</h2>
-					<p>When the results are ready, you can click through the plots directly on the webpage. </p>
-					<div class="da-img"><img src="{{ STATIC_URL }}img/parallax/2.png" alt="image01" /></div>
-				</div>
-				<div class="da-slide">
-					<h2>View history</h2>
-					<p>In the history section you can see all analysis you have done. You can also view and edit the configuration.</p>
-					<div class="da-img"><img src="{{ STATIC_URL }}img/parallax/3.png" alt="image01" /></div>
-				</div>
-
+                <div class="da-slide">
+                    <p class="info">
+                      <strong>The website</strong> shows CMIP evaluation results produced with the Earth System Model Evaluation Tool
+                      (ESMValTool, http://www.esmvaltool.org/). The ESMValTool includes a large collection of diagnostics and performance
+                      metrics for variables across atmosphere, ocean, and land, focusing on the mean-state, trends, variability, as well
+                      as important processes and emergent constraints. It also includes targeted analysis packages such as the NCAR Climate
+                      Variability Diagnostics Package. A set of standard namelists for each scientific topic reproduces specific sets of
+                      diagnostics or performance metrics that have demonstrated their importance in ESM evaluation in the peer-reviewed
+                      literature. The ESMValTool results are visualized with the Freie University evaluation system (FREVA).
+                    </p>
+                </div>
+                <div class="da-slide">
+                    <p class="info">
+                        <strong>The CMIP6 evaluation</strong> results produced with the ESMValTool are made publically available on this
+                        website without password restriction. Initially this website shows CMIP5 results that are already published. Newly
+                        produced results for CMIP6 will initially be water-marked and will only be made available without water-mark once
+                        quality control has happened and possible papers have been written. This strategy has been supported, encouraged,
+                        and approved by the WCRP Working Group of Coupled Modelling (WGCM). Therefore, all CMIP6 results presented on this
+                        website are strictly confidential as long as they are water-marked and should not be used in publications. We
+                        encourage all CMIP6 modelling groups to quality control the results for their models. Please follow the CMIP6 
+                        Terms of Use.
+                    </p>
+                </div>
+		<div class="da-slide">
+		  <p class="info">
+                    <strong>View Results</strong><br>
+		    … in the Results-Browser. The result browser includes a search function that allows you to sort the 
+                    ESMValTool by (a) ESMValTool namelist, (b) Projects, (c) CMIP6 Realms, (d) Themes, (e) Domain, (f) Plot Type, 
+                    (g) Statistics, (h) References, (i) Variables, (j) Models (including the multi-model mean and observations),
+                    and (k) Results. Each figure includes a figure caption that is displayed alongside with the figure, and also
+                    includes metadata that are displayed when you click on the figure. These metadata include the ESMValTool
+                    configuration used to calculate and plot the figure, Program's output, Notes, and Results. </p>
+		</div>
+		<div class="da-slide">
+		  <p class="info">
+                    <strong>View Data</strong><br>
+		    … in the Data-Browser. All CMIP5 datasets available on the DKRZ are scanned and indexed in a special server (SOLR). 
+                      This allows us to query the server which responds almost immediately. <br><br>Currently, access to the Data-Browser
+                      is only available for logged in users. </p>
+		</div>
 				<nav class="da-arrows">
 					<span class="da-arrows-prev"></span>
 					<span class="da-arrows-next"></span>

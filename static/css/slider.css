@@ -67,6 +67,20 @@
 	font-weight: 400;
 	font-style: italic;
 }
+.da-slide p.info{
+	width: 80%;
+    top: 10%;
+	color: #888;
+    font-size: 15px;
+    line-height: 26px;
+    height: 90%;
+    overflow: hidden;
+    font-weight: 400;
+    font-style: italic;
+    text-align: justify;
+}
+
+
 .da-slide .da-img{
 	text-align: center;
 	width: 30%;

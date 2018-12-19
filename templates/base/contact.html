@@ -13,12 +13,25 @@
                     Mail successfully send
                 </div>
             {%endif%}
-            <p>If you have any questions or found a bug in the system, please write us a message:</p>
+            <p>We encourage all CMIP6 modelling groups to quality control the results for their models. 
+               Please provide your feedback on individual plots or namelists by using the "NOTES" button (login at DKRZ required)
+               or by sending an email to the ESMValTool PI and Core Developer either directly (see email addresses at the bottom
+               of this page) or by using the box below.</p>
             <form method="post">
                 {% csrf_token %}
                 <textarea id="text" class="form-control" rows="3" name="text"></textarea>
                 <br/>
-                <input type="submit" value="Send message to admins" class="btn btn-info col-md-12"/>
+                <input type="submit" value="Send message to the ESMValTool PI (Veronika Eyring) and Core Developer (Axel Lauer)" 
+                       class="btn btn-info col-md-12"/>
+            </form>
+            <br><br>
+            <p>If you have any questions regarding freva, please write us an email or use the box below to contact the FREVA 
+               development team</p>
+            <form method="post">
+                {% csrf_token %}
+                <textarea id="text" class="form-control" rows="3" name="text"></textarea>
+                <br/>
+                <input type="submit" value="Send message to the freva development team" class="btn btn-info col-md-12"/>
             </form>
         </div>
     </div>
