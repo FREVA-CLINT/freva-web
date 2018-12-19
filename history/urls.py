@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^sendmail/$', views.send_share_email, name='sendMail'),
     url(r'^mail-to-developer/$', views.send_mail_to_developer, name='mail_to_developer'),
     url(r'^result-browser/$', views.result_browser, name='result_browser'),
+    url(r'^cmip6-results/$', views.cmip6_result_browser, name='cmip6_result_browser'),
 ]

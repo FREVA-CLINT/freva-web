@@ -82,7 +82,8 @@ def preview_tree(value, autoescape=None):
                     caption = value.get('caption', None)
                 
                 if caption:
-                    caption = '<br>'.join([key, caption])
+                    caption = caption
+                    #caption = '<br>'.join([key, caption])
                 else:
                     caption = key
                 fn = value['preview_file']

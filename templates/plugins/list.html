@@ -4,14 +4,17 @@
 
 {% block page_title %}{{ title }} - Evaluation System{% endblock %}
 {% block page_class %}home-page{% endblock %}
-{% block content %}
 
+{% block content %}
     <style>
        html {
          overflow-y: -moz-scrollbars-vertical;
          overflow-y: scroll;
        }
     </style>
+    <script type="text/javascript">
+    var table = '{{ settings.EVC }}';
+    </script>
     <div id="react-app"></div>
     {% render_bundle 'main' %}
 

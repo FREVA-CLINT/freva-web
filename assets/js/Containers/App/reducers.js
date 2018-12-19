@@ -1,7 +1,9 @@
 import * as constants from './constants';
 
+
 const appReducerInitialState = {
-    currentUser: false
+    currentUser: undefined,
+    table : window.table.toLowerCase() == 'true' ? true : false
 };
 
 export const appReducer = (state = appReducerInitialState, action) => {

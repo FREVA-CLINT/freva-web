@@ -14,7 +14,7 @@
       <div class="row">
 	      <div class="col-md-12">
 	      	<h1 id='result_caption'>{{ result_caption }}</h1>
-	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' history_object.uid %}">{{history_object.uid}}</a></p>
+{#	      	<p>Analysis from {{ history_object.timestamp|date:"d.m.y H:i:s" }} done by <a href="{% url 'history:history' history_object.uid %}">{{history_object.uid}}</a></p>#}
 	      </div>
       </div>
        <div class="row">
@@ -42,7 +42,7 @@
        </div> <!-- row -->
        <div class="row">
 	 	 	<div class="col-md-12">
-	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>
+{#	 	 		<a class="btn btn-primary" href="{% url 'plugins:setup' history_object.tool history_object.id%}" id="config_button">Edit configuration</a>#}
 	 	 		{% if documentation %}
 	 	 			<a class="btn btn-success" href="{{documentation.url}}">Documentation</a>
 	 	 		{%endif%}
@@ -52,14 +52,15 @@
 				{# Render a Bootstrap password/cancel dialog #}
 	 			{% cancel_dialog %} 	 		
 	 	 		{%endif%}
-	 	 		
+	 	 		{% if request.user == history_object.uid %}
 	 			<a class="btn btn-info mybtn-sendmail" id="sendButton_{{h_item.id}}" onClick="$('#sendmail_modal').modal('show')">Share Results</a>
-	 		
-	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>
+{#	 			<a class="btn btn-info mybtn-caption" id="captionButton_{{h_item.id}}" onClick="$('#caption_modal').modal('show')">Set Caption</a>#}
+
 				{# Render a Bootstrap caption dialog #}
 	 			{% caption_dialog result_caption default_caption history_object request.user %}
 	 		
 		                <a class="btn btn-info" id="followButton"><span id='followText'>{{follow}}</span></a>
+            {% endif %}
 		        {%if developer %}
 			{% mail_to_developer history_object.tool %}
 			{%endif%}	
@@ -80,12 +81,12 @@
    	 	 	<div class="col-md-12">
 		 	 	<table class="table col-md-12" id="config_table" style="margin-top:10px;">
 		 	 	<tr>
-		 	 	<th colspan="2">Tool configuration</th>
+		 	 	<th colspan="2">ESMValTool configuration</th>
 		 	 	</tr>
 		 	 	{% for key,value in history_object.config_dict.items %}
 		 	 		<tr>
 		 	 			<td>{{key}}:</td>
-		 	 			<td>{{value|mask_uid:request.user.isGuest}}</td>
+		 	 			<td>{{value|linebreaksbr|mask_uid:request.user.isGuest}}</td>
 		 	 		</tr>
 		 	 	{% endfor %}
 		 	 	<tr class='additional' style='display:none;'>
@@ -112,12 +113,12 @@
                 </tr>
 		 	 	</table>
            </div> <!-- col-md-12 --> 
-		 	<div class="col-md-3">
-	 	 	<a class="btn btn-info" onClick="$('.additional').toggle()">Additional information</a>
-	 	 	</div>
-		 	<div class="col-md-3">
-            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>
-            </div>
+{#		 	<div class="col-md-3">#}
+{#	 	 	<a class="btn btn-info" onClick="$('.additional').toggle()">Additional information</a>#}
+{#	 	 	</div>#}
+{#		 	<div class="col-md-3">#}
+{#            <a class="btn btn-info" onClick="window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}');" id="copy_button" style="margin-bottom:10px;">Copy analyze command</a>#}
+{#            </div>#}
 	 	 	
       </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
@@ -196,13 +197,19 @@
   </div><!-- panel panel-default-->
 
 <!-- Notes -->
+
 <div class="panel panel-default" style="margin-top:10px;">
     <div class="panel-heading">
       <h4 class="panel-title">
+          {% if user.is_authenticated %}
         <a data-toggle="collapse" href="#collapseNotes">
           Notes <span id='note_count'>(0)</span>
         </a>
+              {% else %}
+          Notes <span id='note_count'>(0)</span> - Login required!
+          {%  endif %}
       </h4>
+
     </div><!-- panel-heading -->
     <div id="collapseNotes" class="panel-collapse collapse">
       <div class="panel-body" id='loadComments'>
@@ -218,7 +225,7 @@
        </div><!-- panel-body -->
     </div><!-- panel-collapse collapse-->
   </div><!-- panel panel-default-->
-	  
+
 	  	  
 <!-- Results -->
 <div class="panel panel-default">
@@ -285,7 +292,7 @@
 	$(document).ready(function() {
 
 		doCount();
-		inter_counter = setInterval(doCount, 4000);
+		//inter_counter = setInterval(doCount, 4000);
 
 		$('#collapseNotes').on('show.bs.collapse', function() {
 			var url='{% url 'history:result-comments' history_object.id %}';

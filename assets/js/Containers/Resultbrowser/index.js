@@ -1,15 +1,17 @@
 import React from 'react';
 import {connect} from 'react-redux';
 import {Grid, Row, Col, Accordion, Panel} from 'react-bootstrap';
-import {loadResultFacets, selectResultFacet, clearResultFacet,
-    clearAllResultFacets, setActiveResultFacet, loadResultFiles,
-    setMetadata } from './actions';
+import {selectResultFacet, clearResultFacet, clearAllResultFacets, setActiveResultFacet,
+    setMetadata, loadResultFacets } from './actions';
 import _ from 'lodash';
 import AccordionItemBody from '../../Components/AccordionItemBody';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import CircularProgress from 'material-ui/CircularProgress';
 import OwnPanel from '../../Components/OwnPanel'
 import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import Resulttype from '../Resulttype';
+
+
 
 class Resultbrowser extends React.Component {
 
@@ -23,8 +25,11 @@ class Resultbrowser extends React.Component {
      */
     componentDidMount() {
         this.props.dispatch(loadResultFacets());
-        this.props.dispatch(loadResultFiles());
+        // this.props.dispatch(loadResultFiles());
+        // this.props.dispatch(loadResultPictures());
     }
+
+
 
 
 
@@ -33,7 +38,7 @@ class Resultbrowser extends React.Component {
      */
     renderFacetPanels() {
 
-        const {facets, selectedFacets, activeFacet, metadata, } = this.props.resultbrowser;
+        const {facets, selectedFacets, activeFacet, metadata } = this.props.resultbrowser;
         const {dispatch} = this.props;
         return _.map(facets, (value, key) => {
             let panelHeader;
@@ -56,29 +61,6 @@ class Resultbrowser extends React.Component {
                 </OwnPanel>
             )
         });
-    }
-
-    renderFilesPanel() {
-        //TODO: This should be a separate component
-        const {activeFacet,results, numResults} = this.props.resultbrowser;
-        const {dispatch} = this.props;
-
-        return (
-
-            <Panel header={<a href="#" onClick={() => dispatch(setActiveResultFacet('results'))}>
-                Results [{numResults}]</a>} collapsible expanded={activeFacet === 'results'}>
-                <BootstrapTable data={results}
-                                options={ {noDataText: 'No namelists available' }}
-                                striped hover condensed>
-                    <TableHeaderColumn dataField='ID' isKey>Id</TableHeaderColumn>
-                    <TableHeaderColumn dataField='namelist'>Namelist</TableHeaderColumn>
-                    <TableHeaderColumn dataField='Timestamp'>Timestamp</TableHeaderColumn>
-                    <TableHeaderColumn dataField='link2results' dataFormat={ cell => (
-                            <a href={ cell } >{`Show`}</a>
-                    )}> Results</TableHeaderColumn>
-                </BootstrapTable>
-            </Panel>
-        )
     }
 
     render() {
@@ -118,7 +100,7 @@ class Resultbrowser extends React.Component {
                         <Accordion activeKey={activeFacet}>
                             {facetPanels}
                         </Accordion>
-                        {this.renderFilesPanel()}
+                        <Resulttype/>
                     </Col>
                 </Row>
             </Grid>
@@ -126,8 +108,10 @@ class Resultbrowser extends React.Component {
     }
 }
 
+
 const mapStateToProps = (state) => ({
-    resultbrowser: state.resultbrowserReducer
+    resultbrowser: state.resultbrowserReducer,
 });
+
 
 export default connect(mapStateToProps) (Resultbrowser)
