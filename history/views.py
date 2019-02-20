@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.debug import sensitive_post_parameters
 from django.contrib.flatpages.models import FlatPage
 from django.utils.html import escape
@@ -792,6 +792,10 @@ def count_notes(request, history_id, deleted):
 def result_browser(request):
     return render(request, 'plugins/list.html', {'title': 'Result-Browser'})
 
+def user_is(user):
+    return user.username.filter(name='ESMValTool4CMIP6').count()
+
 @settings_login_required('/history/cmip6-results/')
+@user_passes_test(lambda u: u.username=='ESMValTool4CMIP6')
 def cmip6_result_browser(request):
     return render(request, 'plugins/list.html', {'title': 'CMIP6 Results'})
