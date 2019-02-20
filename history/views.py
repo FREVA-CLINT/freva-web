@@ -796,6 +796,7 @@ def user_is(user):
     return user.username.filter(name='ESMValTool4CMIP6').count()
 
 @settings_login_required('/history/cmip6-results/')
-@user_passes_test(lambda u: u.username=='ESMValTool4CMIP6')
+@user_passes_test(lambda u: (u.username=='ESMValTool4CMIP6') | (u.username=='b324031') | (u.username=='b309143') | (u.username=='b309070') | (u.username=='b380103') | (u.username=='b309008') | (u.username=='b309141'))
+#@user_passes_test(lambda u: u.username=='ESMValTool4CMIP6')
 def cmip6_result_browser(request):
     return render(request, 'plugins/list.html', {'title': 'CMIP6 Results'})
