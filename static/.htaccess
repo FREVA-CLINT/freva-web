@@ -33,3 +33,5 @@ BrowserMatch \bMSIE !no-gzip !gzip-only-text/html
 <files *.json>
 SetOutputFilter DEFLATE
 </files>
+
+Header always unset X-Frame-Options
