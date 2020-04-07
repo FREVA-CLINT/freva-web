@@ -39,7 +39,7 @@ $('document').ready(function() {
 {% if next %}
 $("#next_page").val("{{next}}");
 {% elif guest_login and user.get_username == 'guest' %}
-restartTour();
+#restartTour();
 {% endif %}
 });
 {% endif %}
