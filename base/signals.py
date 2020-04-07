@@ -19,7 +19,6 @@ def send_mail_after_guest_login(sender, user, request, **kwargs):
     is_guest = user.groups.filter(name='Guest')
 
     if is_guest and settings.SEND_MAIL_AT_GUEST_LOGIN:
-        '''
         try:
             ip = get_real_ip(request)
         # TODO: Exception too broad!
@@ -32,7 +31,7 @@ def send_mail_after_guest_login(sender, user, request, **kwargs):
             # TODO: Exception too broad!
             except:
                 ip = ''
-
+        '''
         try: 
             api_key = '28e6f13bda7c619201630b904b36a3c53b02a49b'
             url = 'http://api.db-ip.com/addrinfo?addr=%s&api_key=%s' % (ip, api_key,)
@@ -43,12 +42,12 @@ def send_mail_after_guest_login(sender, user, request, **kwargs):
         except:
             val = ''
         '''
-        message = "Guest login at %s" % datetime.now().isoformat()
+        message = "Guest login from %s at %s" % (ip,datetime.now().isoformat())
 
         # message += '\n\n%s\n\nMore information https://db-ip.com/%s' % (val, ip)
         print "Send: ", message, " to ", admin_mail_addresses
 
-        send_mail('[miklip-guest] Guest Login',
+        send_mail('[cmip-guest] Guest Login',
                   message,
                   settings.DEFAULT_FROM_EMAIL,
                   admin_mail_addresses,
