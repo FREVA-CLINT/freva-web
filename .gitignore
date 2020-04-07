@@ -5,3 +5,5 @@ db
 node_modules
 .*
 *.*~
+vepy/
+*/report.html
