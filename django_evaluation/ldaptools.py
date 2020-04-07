@@ -36,6 +36,7 @@ class LdapUserInformation(object):
         while SERVER:
             try:
                 con = ldap.initialize(SERVER)
+                con.start_tls_s()
                 connected_to = SERVER
                 SERVER = None
             except:
@@ -175,11 +176,11 @@ class MiklipUserInformation(LdapUserInformation):
         con = self.connection
         res = con.search_s(settings.LDAP_GROUP_BASE,
                           ldap.SCOPE_SUBTREE,
-                          attrlist=['memberUid'],
+                          attrlist=['member'],
                           filterstr=settings.LDAP_MIKLIP_GROUP_FILTER)
         self.miklip_user = []
         user_info = []
-        user_list = res[0][1]['memberUid']
+        user_list = res[0][1]['member']
 
         # fill the users list
         for user in user_list:
