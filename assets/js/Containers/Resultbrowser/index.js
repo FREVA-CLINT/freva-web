@@ -84,7 +84,7 @@ class Resultbrowser extends React.Component {
             <Grid>
                 <Row>
                     <Col md={12}>
-                        <h2>Resultbrowser</h2>
+                        <h2>Result-Browser</h2>
                     </Col>
                 </Row>
                 <Row>
