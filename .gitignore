@@ -6,4 +6,5 @@ node_modules
 .*
 *.*~
 vepy/
+venv/
 */report.html
