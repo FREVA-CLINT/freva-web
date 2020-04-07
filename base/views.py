@@ -189,3 +189,9 @@ def ncdump(request):
                                                 'ncd_err': stderr,
                                                 'ncd_exc': exception,
                                                 'ncd_cmd': command})
+
+@login_required()
+@user_passes_test(lambda u: u.is_superuser)
+def monitoring(request):
+    content = open("/home/freva/cmip6-dicad/freva_web/templates/report.html","r").read()
+    return render(request, 'view_report.html', {'content': content})
