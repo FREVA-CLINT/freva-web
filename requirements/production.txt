@@ -15,7 +15,7 @@ bleach
 python-memcached
 
 # Admin
-django-debug-toolbar
+django-debug-toolbar==1.3.0
 
 # Bootstrap layout
 django-bootstrap3
@@ -27,12 +27,12 @@ python-ldap>=2.3.13
 django-auth-ldap==1.2.6
 
 # ssh client (installed version: 1.12.0, needs pycrypto 2.6 maybe)
-paramiko=1.16.0
+paramiko==1.16.0
 
 django-ipware
 
 #installed version 0.8.3
-django-datatable-view
+django-datatable-view==0.8.3
 
 #send templated mails
 #django-templated-email
