@@ -4,7 +4,7 @@ from rest_framework import status
 from django.contrib.auth.decorators import login_required
 #from scipy.io import netcdf
 #from netCDF4 import Dataset
-import numpy as np
+#import numpy as np
 from django.core.cache import cache
 from .models import HindcastEvaluation
 from django.db import IntegrityError
