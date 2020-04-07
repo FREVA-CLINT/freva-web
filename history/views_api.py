@@ -36,9 +36,12 @@ class FilterAbstract(object):
 
     def set_request(self,request):        
         request.GET._mutable = True
-        if hasattr(settings,'CMIP6_PATH') and settings.CMIP6_PATH:
-            request.GET['product'] = 'cmip6' if settings.CMIP6_PATH in request.META['HTTP_REFERER'] else 'cmip5'
+        if 'HTTP_REFERER' in request.META:
+            if hasattr(settings,'CMIP6_PATH') and settings.CMIP6_PATH:
+                request.GET['product'] = 'cmip6' if settings.CMIP6_PATH in request.META['HTTP_REFERER'] else 'cmip5'
         request.GET._mutable = False
+        print request.META
+        print request.GET
         return request
 
     def get_filter_field(self, value):
@@ -78,17 +81,16 @@ class ResultFacets(APIView, FilterAbstract):
     def prepare_facets(self, request, format=None):
         structure = OrderedDict()
         structure_temp = {}
-        
         if self.evc:
             request = self.set_request(request)
             queryset = History.objects.filter(tool='EVC',status=0,flag=0)
             params = request.query_params
+            print 'PARAMS',params
             queryset = self.generate_filter(queryset, params)
             facets = settings.RESULT_BROWSER_FACETS
             queryset = queryset.values_list('configuration', flat=True)
 
             items_dic = [json.loads(item) for item in queryset]
-
             # create a dictionary - tags: list of attributes
             # counts tags: total number of attributes
             for fac in facets:
@@ -157,10 +159,11 @@ class ResultFacets(APIView, FilterAbstract):
 
 
     def get(self, request, format=None):
-        result = cache.get(request.get_full_path())
-        if not result:
-            result = self.prepare_facets(request)
-            cache.set(request.get_full_path(), result, None)
+        result = self.prepare_facets(request)
+        #result = cache.get(request.get_full_path())
+        #if not result:
+        #    result = self.prepare_facets(request)
+        #    cache.set(request.get_full_path(), result, None)
 
         return Response(result)
         
