@@ -10,5 +10,5 @@ venv/
 */report.html
 static/admin/
 static/rest_framework/
-*/local_dicad.py
-*/#local.dicad.py#
+local_dicad.py
+\#local_dicad.py#
