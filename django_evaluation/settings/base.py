@@ -235,7 +235,7 @@ SERVER_EMAIL = "miklip@met.fu-berlin.de"
 DEFAULT_FROM_EMAIL = "miklip@met.fu-berlin.de"
 SYSTEM_EMAIL_PREFIX = "[django_evaluation]"
 
-X_FRAME_OPTIONS = 'ALLOW'
+X_FRAME_OPTIONS = 'DENY'
 
 EMAIL_HOST='smtp.gmail.com'
 EMAIL_HOST_USER='miklip.integration@gmail.com'
@@ -253,8 +253,7 @@ SECRET_KEY = 'hj1bkzobng0ck@0&%t509*1ki$#)i5y+i0)&=7zv@amu8pm5*t'
 
 # Recipients of traceback emails and other notifications.
 ADMINS = (
-    ('Bianca Wentzel', 'bianca1409@zedat.fu-berlin.de'),
-    ('Christopher Kadow','christopher.kadow@met.fu-berlin.de'),
+    ('Bianca Wentzel', 'bianca1409@zedat.fu-berlin.de')
 )
 MANAGERS = ADMINS
 
