@@ -11,5 +11,6 @@ urlpatterns = patterns('base.views',
     url(r'^freva.cs', 'dynamic_css', name='dynamic_css'),
     url(r'^shell-in-a-box', 'shell_in_a_box', name='shell_in_a_box'),
     url(r'^forecast-frontend', 'forecast_frontend', name='forecast_frontend'),
-    url(r'^monitoring', 'monitoring', name='monitoring')
+    url(r'^monitoring', 'monitoring', name='monitoring'),
+    url(r'^documentation', 'documentation', name='documentation')
 )

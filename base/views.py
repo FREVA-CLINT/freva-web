@@ -193,5 +193,10 @@ def ncdump(request):
 @login_required()
 @user_passes_test(lambda u: u.is_superuser)
 def monitoring(request):
-    content = open("/home/freva/cmip6-dicad/freva_web/templates/report.html","r").read()
+    content = open("/work/dicad/cmip6-dev/freva_web/templates/report.html","r").read()
     return render(request, 'view_report.html', {'content': content})
+
+@login_required()
+@user_passes_test(lambda u: u.is_superuser)
+def documentation(request):
+    return render(request, 'base/documentation.html')
