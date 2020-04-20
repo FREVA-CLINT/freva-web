@@ -40,12 +40,12 @@ class FilterAbstract(object):
             if hasattr(settings,'CMIP6_PATH') and settings.CMIP6_PATH:
                 request.GET['product'] = 'cmip6' if settings.CMIP6_PATH in request.META['HTTP_REFERER'] else 'cmip5'
         request.GET._mutable = False
-        print request.META
-        print request.GET
+        #print request.META
+        #print request.GET
         return request
 
     def get_filter_field(self, value):
-        print {'%s__%s' % (self.filter_field, self.filter_method,): value}
+        #print {'%s__%s' % (self.filter_field, self.filter_method,): value}
         return {'%s__%s' % (self.filter_field, self.filter_method,): value}
 
 
@@ -85,7 +85,7 @@ class ResultFacets(APIView, FilterAbstract):
             request = self.set_request(request)
             queryset = History.objects.filter(tool='EVC',status=0,flag=0)
             params = request.query_params
-            print 'PARAMS',params
+            #print 'PARAMS',params
             queryset = self.generate_filter(queryset, params)
             facets = settings.RESULT_BROWSER_FACETS
             queryset = queryset.values_list('configuration', flat=True)
