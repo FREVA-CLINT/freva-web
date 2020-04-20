@@ -117,7 +117,6 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-#    ('preview', '/home/freva/ral-ces/misc4freva/db4freva/preview/'),
     os.path.join(PROJECT_ROOT, 'assets')
 )
 
@@ -332,7 +331,7 @@ LOGGING = {
 INTERNAL_IPS = ('127.0.0.1')
 
 # path to the site packages used:
-VENV_PYTHON_DIR = '/usr/local/ve_py/bin/python'
+VENV_PYTHON_DIR = '/work/dicad/cmip6-dev/freva_web/venv/bin/python'
 
 # Restrictions for the data browser
 SOLR_RESTRICTIONS = {'project':['cmip5', 'cmip6', 'cordex', 'observations', 'reanalysis', 'baseline0', 'baseline1', 'prototype', 'example-user']}
