@@ -54,8 +54,7 @@
     }
   </style>
   <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
-
-  <!-- All JavaScript at the bottom, except this Modernizr build.
+    <!-- All JavaScript at the bottom, except this Modernizr build.
        Modernizr enables HTML5 elements & feature detects for optimal performance.
        Create your own custom Modernizr build: www.modernizr.com/download/ -->
   <script src="{{ STATIC_URL }}js/libs/modernizr-2.6.2-respond-1.1.0.min.js"></script>
@@ -103,6 +102,23 @@
   <style type="text/css"> 
 .MathJax_MathML {text-indent: 0;} 
 </style> 
+  <!-- Matomo -->
+    <script type="text/javascript">
+      var _paq = window._paq = window._paq || [];
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(["setCookieDomain", "*.www-regiklim.dkrz.de"]);
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u="https://matomo.dkrz.de/";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '15']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <noscript><p><img src="https://matomo.dkrz.de/matomo.php?idsite=15&amp;rec=1" style="border:0;" alt="" /></p></noscript>
+    <!-- End Matomo Code -->
 
 </head>
 <body class="body" >
@@ -177,6 +193,8 @@ startTour();
 	    }
 	});
   </script>
+    
+
 {% endblock %}
 </body>
 </html>
