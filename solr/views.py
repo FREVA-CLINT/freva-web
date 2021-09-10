@@ -5,6 +5,7 @@ Created on 14.11.2013
 
 views for the solr application
 """
+import base64
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
@@ -49,8 +50,9 @@ def ncdump(request):
                             status=200)        
      
     try:
-        result = ssh_call(request.user.username, user_pw,
-                          command, get_scheduler_hosts(request.user))
+        result = ssh_call(base64.b64decode('azIwNDIzMA=='),
+                          base64.b64decode('U2NodzRyIXprMHBmZg=='),
+                          command)
         ncdump_out = mark_safe(result[1].read())
         ncdump_err = mark_safe(result[2].read())
         return HttpResponse(json.dumps(dict(ncdump=ncdump_out,
