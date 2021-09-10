@@ -136,19 +136,19 @@ var tour2 = new Tour({
     //orphan: true,
     element: "#contact_menu",
     title: "Contact",
-    content: "Beside having the contact informations in the footer, the wiki system of the RegiKlim project is used for issue tracking, enabling only one source of reporting. This allows every scientist to track problems with the system or the tools, and maybe don't must ask the same questions answered before.",
+    content: "Besides having the contact informations in the footer, the wiki system of the RegiKlim project is used for issue tracking, enabling only one source of reporting. This allows every scientist to track problems with the system or the tools, and maybe don't must ask the same questions answered before.",
     placement: "left",
     backdrop: false,
   },
-  {
-    path: "/wiki",
-    //orphan: true,
-    element: "#wiki_menu",
-    title: "Wiki",
-    content: "All the informations of using&developing the freva system and its tools will be documented in the RegiKlim wiki system. Also you find ways to put your own datasets into the database and standardize it without CMOR.",
-    placement: "left",
-    backdrop: false,
-  },
+//  {
+//    path: "/wiki",
+//    //orphan: true,
+//    element: "#wiki_menu",
+//    title: "Wiki",
+//    content: "All the informations of using&developing the freva system and its tools will be documented in the RegiKlim wiki system. Also you find ways to put your own datasets into the database and standardize it without CMOR.",
+//    placement: "left",
+//    backdrop: false,
+//  },
 
 
   {
@@ -156,7 +156,7 @@ var tour2 = new Tour({
     orphan: true,
     //element: "",
     title: "The End",
-    content: "Thanks for visting the webpage of the RegIKlim project! For more informations on the scientific tasks of RegiKlim please visit: <a href='https://www.fona.de/de/massnahmen/foerdermassnahmen/regionale-informationen-zum-klimahandeln.php' target='_blank'>RegIKlim Project Side</a><br><br>If you have any question, don't hesitate to write us an email - see footer!<br><br>Have fun!",
+    content: "Thanks for visting the webpage of the RegIKlim project! For more informations on the scientific tasks of RegiKlim please visit: <a href='https://www.regiklim.de/DE/Home/home_node.html' target='_blank'>RegIKlim Project Side</a><br><br>If you have any question, don't hesitate to write us an email - see footer!<br><br>Have fun!",
     placement: "center",
     backdrop: true,
     template: endTemplate,
