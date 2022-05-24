@@ -383,11 +383,13 @@ def results(request, id, show_output_only=False):
     except:
         pass
 
+    analyze_command = ""
     try:
-        analyze_command = pm.get_command_string(int(id))
+        analyze_command = pm.get_command_string(
+            int(id), command_name="freva", command_options="plugin"
+        )
     except Exception as e:
         logging.debug(e)
-    analyze_command = pm.get_command_string(int(id))
 
     history_object = History.objects.get(id=id)
     file_content = []
