@@ -2,3 +2,7 @@
 export const ADD_ELEMENT = "ADD_ELEMENT";
 export const SET_CONVERSATION = "SET_CONVERSATION";
 export const SET_THREAD = "SET_THREAD";
+export const ViewTypes = {
+    SIDE_PANEL_SHOWN: "SIDE_PANEL_SHOWN",
+    SIDE_PANEL_HIDDEN: "SIDE_PANEL_HIDDEN",
+  };

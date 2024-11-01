@@ -9,12 +9,18 @@ import {
   FormControl,
   InputGroup,
   Button,
-  Form } from 'react-bootstrap';
+  Form,
+  OverlayTrigger,
+  Tooltip,
+  Spinner } from 'react-bootstrap';
+
+  import {
+    FaAlignJustify,
+    FaList,
+  } from "react-icons/fa";
 
 import { browserHistory } from 'react-router';
 import { isEmpty, has } from 'lodash';
-
-import Spinner from "../../Components/Spinner";
 
 import ChatBlock from './ChatBlock';
 import SidePanel from "./SidePanel";
@@ -26,6 +32,8 @@ import {
   setConversation,
   addElement,
 } from './actions';
+
+import { ViewTypes } from './constants';
 
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
@@ -44,12 +52,16 @@ class FrevaGPT extends React.Component {
     this.toggleBotSelect = this.toggleBotSelect.bind(this);
     this.handleStop = this.handleStop.bind(this);
 
+    const firstViewPort = localStorage.FrevaGPTViewPort ?? ViewTypes.SIDE_PANEL_SHOWN;
+    localStorage.FrevaGPTViewPort = firstViewPort;
+
     this.state = {
       loading: false,
       userInput: "",
       botModelList: [],
       botModel: "",
       hideBotModelList: true,
+      viewPort: firstViewPort,
     };
   }
 
@@ -227,29 +239,64 @@ class FrevaGPT extends React.Component {
   }
 
   render() {
+    const showSidePanel = this.state.viewPort === ViewTypes.SIDE_PANEL_SHOWN;
 
     return (
       <Container>
         <Row>
           <div className="d-flex justify-content-between">
             <h2 onClick={this.toggleBotSelect}>FrevaGPT</h2>
+            <div className="d-flex justify-content-between mb-2">
+              <Form.Select 
+                value={this.botModel}
+                onChange={(x) => { this.setState({ botModel: x.target.value }); }}
+                className="me-1 mb-3"
+                placeholder="Choose Chatbot"
+                hidden={this.state.hideBotModelList}>
+                {this.state.botModelList.map((x) => {
+                    return <option key={x}>{x}</option>;
+                })}
+              </Form.Select>
+              <OverlayTrigger overlay={<Tooltip>Hide side panel</Tooltip>}>
+                <Button 
+                  className="me-1"
+                  variant="outline-secondary"
+                  active={!showSidePanel}
+                  onClick={() =>
+                    this.setState(
+                      { viewPort: ViewTypes.SIDE_PANEL_HIDDEN },
+                      () => {
+                        localStorage.FrevaGPTViewPort =
+                          this.state.viewPort;
+                      }
+                    )
+                  }>
+                    <FaAlignJustify/>
+                  </Button>
+              </OverlayTrigger>
+              <OverlayTrigger overlay={<Tooltip>Show side panel</Tooltip>}>
+                <Button 
+                  className="me-1"
+                  variant="outline-secondary"
+                  active={showSidePanel}
+                  onClick={() =>
+                    this.setState(
+                      { viewPort: ViewTypes.SIDE_PANEL_SHOWN },
+                      () => {
+                        localStorage.FrevaGPTViewPort =
+                          this.state.viewPort;
+                      }
+                    )
+                  }>
+                    <FaList/>
+                  </Button>
+              </OverlayTrigger>
+            </div>
           </div>
   
-          <Col md={4}>
-            <Form.Select 
-              value={this.botModel}
-              onChange={(x) => { this.setState({ botModel: x.target.value }); }}
-              className="me-1 mb-3"
-              placeholder="Choose Chatbot"
-              hidden={this.state.hideBotModelList}>
-              {this.state.botModelList.map((x) => {
-                  return <option key={x}>{x}</option>;
-              })}
-            </Form.Select>
-            <SidePanel/>
-          </Col>
-  
-          <Col md={8}>
+          { showSidePanel ? (<Col md={4}><SidePanel/></Col>) : null }
+            
+          <Col md={showSidePanel ? 8 : 12}>
 
             <ChatBlock></ChatBlock>
             
