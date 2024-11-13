@@ -38,6 +38,7 @@ import {
 } from "./actions";
 
 import TimeRangeSelector from "./TimeRangeSelector";
+import BoundingBoxSelector from './BoundingBoxSelector';
 import FilesPanel from "./FilesPanel";
 import DataBrowserCommand from "./DataBrowserCommand";
 import FacetDropdown from "./MetaFacet";
@@ -200,7 +201,16 @@ class Databrowser extends React.Component {
       this.props.router.push(currentLocation);
     }
   }
-
+  dropBoundingBox() {
+    const currentLocation = this.props.location.pathname;
+    const { bbox: ignore, ...queryObject } = this.props.location.query;
+    const query = queryString.stringify(queryObject);
+    if (query) {
+      this.props.router.push(currentLocation + "?" + query);
+    } else {
+      this.props.router.push(currentLocation);
+    }
+  }
   createIntakeLink() {
     return (
       "/api/freva-nextgen/databrowser/intake-catalogue/" +
@@ -231,7 +241,30 @@ class Databrowser extends React.Component {
       </OwnPanel>
     );
   }
+  renderBoundingBoxPanel() {
+    const { bbox } = this.props.databrowser;
+    const isBboxSelected = !!bbox;
+    const title = isBboxSelected ? (
+      <span>
+        Bounding Box: &nbsp;
+        <span className="fw-bold">
+          {bbox}
+        </span>
+      </span>
+    ) : (
+      <span>Bounding Box</span>
+    );
 
+    return (
+      <OwnPanel
+        header={title}
+        key="bounding_box"
+        removeFacet={isBboxSelected ? () => this.dropBoundingBox() : null}
+      >
+        <BoundingBoxSelector />
+      </OwnPanel>
+    );
+  }
   renderFacetBadges() {
     const { dateSelector, minDate, maxDate } = this.props.databrowser;
     const isDateSelected = !!minDate;
@@ -423,6 +456,7 @@ class Databrowser extends React.Component {
 
             {facetPanels}
             {this.renderTimeSelectionPanel()}
+            {this.renderBoundingBoxPanel()}
             <Button
               className="w-100 mb-3 shadow-sm p-3"
               variant="secondary"
@@ -479,6 +513,7 @@ Databrowser.propTypes = {
     dateSelector: PropTypes.string,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
+    bbox: PropTypes.string,
   }),
   location: PropTypes.object.isRequired,
   router: PropTypes.object.isRequired,

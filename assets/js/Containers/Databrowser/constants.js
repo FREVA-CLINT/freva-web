@@ -15,6 +15,7 @@ export const LOAD_NCDUMP_SUCCESS = "LOAD_NCDUMP_SUCCESS";
 export const LOAD_NCDUMP_ERROR = "LOAD_NCDUMP_ERROR";
 export const RESET_NCDUMP = "RESET_NCDUMP";
 
+export const SET_BBOX = "SET_BBOX";
 export const TIME_RANGE_FLEXIBLE = "flexible";
 export const TIME_RANGE_STRICT = "strict";
 export const TIME_RANGE_FILE = "file";
