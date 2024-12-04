@@ -6,7 +6,7 @@ import PropTypes from "prop-types";
 import Highlight from "react-highlight";
 import "highlight.js/styles/atom-one-light.css";
 
-import { formatCode } from "./utils";
+import { formatCode } from "../utils";
 
 function CodeBlock(props) {
   return (

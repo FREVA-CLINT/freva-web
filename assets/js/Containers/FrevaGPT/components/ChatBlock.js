@@ -9,9 +9,9 @@ import { isEmpty } from "lodash";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import CodeBlock from "./CodeBlock";
+import { replaceLinebreaks } from "../utils";
 
-import { replaceLinebreaks } from "./utils";
+import CodeBlock from "./CodeBlock";
 
 class ChatBlock extends React.Component {
   constructor(props) {
@@ -48,7 +48,7 @@ class ChatBlock extends React.Component {
   renderUser(element) {
     return (
       <Col md={{ span: 10, offset: 2 }} key={element.content}>
-        <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-info">
+        <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-secondary">
           {element.content}
         </Card>
       </Col>
