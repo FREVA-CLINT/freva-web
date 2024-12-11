@@ -55,6 +55,12 @@ class FrevaGPT extends React.Component {
       botOkay: undefined,
       showSuggestions: true,
     };
+
+    this.chatEndRef = React.createRef(null);
+  }
+
+  componentDidUpdate() {
+    this.chatEndRef.current?.scrollIntoView();
   }
 
   async componentDidMount() {
@@ -318,6 +324,8 @@ class FrevaGPT extends React.Component {
           ) : null}
 
           <ChatBlock />
+
+          <div ref={this.chatEndRef}/>
 
           {this.state.loading ? (
             <Row className="mb-3">
