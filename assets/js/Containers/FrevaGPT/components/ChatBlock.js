@@ -9,9 +9,11 @@ import { isEmpty } from "lodash";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import CodeBlock from "./CodeBlock";
+import { replaceLinebreaks } from "../utils";
 
-import { replaceLinebreaks } from "./utils";
+import * as constants from "../constants";
+
+import CodeBlock from "./CodeBlock";
 
 class ChatBlock extends React.Component {
   constructor(props) {
@@ -26,7 +28,7 @@ class ChatBlock extends React.Component {
 
   renderImage(element) {
     return (
-      <Col key={element.content} md={{ span: 10, offset: 0 }}>
+      <Col key={element.content} md={constants.BOT_COLUMN_STYLE}>
         <img
           className="w-100"
           src={`data:image/jpeg;base64,${element.content}`}
@@ -39,7 +41,7 @@ class ChatBlock extends React.Component {
     if (isEmpty(element.content[0])) return null;
     else
       return (
-        <Col md={{ span: 10, offset: 0 }} key={element.content}>
+        <Col md={constants.BOT_COLUMN_STYLE} key={element.content}>
           <CodeBlock title={element.variant} code={element.content} />
         </Col>
       );
@@ -48,7 +50,10 @@ class ChatBlock extends React.Component {
   renderUser(element) {
     return (
       <Col md={{ span: 10, offset: 2 }} key={element.content}>
-        <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-info">
+        <Card
+          className="shadow-sm card-body border-0 border-bottom mb-3"
+          style={{ backgroundColor: "#eee" }}
+        >
           {element.content}
         </Card>
       </Col>
@@ -57,7 +62,7 @@ class ChatBlock extends React.Component {
 
   renderError(element) {
     return (
-      <Col md={{ span: 10, offset: 0 }} key={element.content}>
+      <Col md={constants.BOT_COLUMN_STYLE} key={element.content}>
         <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-danger">
           <span className="fw-bold">{element.variant}</span>
           <ReactMarkdown>{replaceLinebreaks(element.content)}</ReactMarkdown>
@@ -68,7 +73,7 @@ class ChatBlock extends React.Component {
 
   renderDefault(element) {
     return (
-      <Col md={{ span: 10, offset: 0 }} key={element.content}>
+      <Col md={constants.BOT_COLUMN_STYLE} key={element.content}>
         <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-light">
           <ReactMarkdown remarkPlugins={[remarkGfm]}>
             {replaceLinebreaks(element.content)}

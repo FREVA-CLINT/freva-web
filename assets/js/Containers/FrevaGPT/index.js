@@ -20,8 +20,9 @@ import { isEmpty, has } from "lodash";
 
 import Spinner from "../../Components/Spinner";
 
-import ChatBlock from "./ChatBlock";
-import SidePanel from "./SidePanel";
+import ChatBlock from "./components/ChatBlock";
+import SidePanel from "./components/SidePanel";
+import PendingAnswerComponent from "./components/PendingAnswerComponent";
 
 import { objectToQueryString, truncate } from "./utils";
 
@@ -54,6 +55,8 @@ class FrevaGPT extends React.Component {
       hideBotModelList: true,
       botOkay: undefined,
       showSuggestions: true,
+      dynamicAnswer: "",
+      dynamicVariant: "",
     };
 
     this.chatEndRef = React.createRef(null);
@@ -177,7 +180,6 @@ class FrevaGPT extends React.Component {
     while (true) {
       // eslint-disable-next-line no-await-in-loop
       const { done, value } = await reader.read();
-      console.log('##', decoder.decode(value));
       if (done) break;
 
       const decodedValues = decoder.decode(value);
@@ -201,6 +203,7 @@ class FrevaGPT extends React.Component {
               // if object has not same variant, add answer to conversation and override object
               if (varObj.variant !== jsonBuffer.variant) {
                 this.props.dispatch(addElement(varObj));
+                this.setState({ dynamicAnswer: "", dynamicVariant: "" });
                 varObj = jsonBuffer;
               } else {
                 // if object has same variant, add content
@@ -208,9 +211,19 @@ class FrevaGPT extends React.Component {
                 if (
                   varObj.variant === "Code" ||
                   varObj.variant === "CodeOutput"
-                )
+                ) {
                   varObj.content[0] = varObj.content[0] + jsonBuffer.content[0];
-                else varObj.content = varObj.content + jsonBuffer.content;
+                  this.setState({
+                    dynamicAnswer: varObj.content[0],
+                    dynamicVariant: varObj.variant,
+                  });
+                } else {
+                  varObj.content = varObj.content + jsonBuffer.content;
+                  this.setState({
+                    dynamicAnswer: varObj.content,
+                    dynamicVariant: varObj.variant,
+                  });
+                }
               }
             } else {
               // object is empty so add content
@@ -238,8 +251,13 @@ class FrevaGPT extends React.Component {
             foundSomething = true;
             break;
           } catch (err) {
+            // ServerHints and CodeBlocks include nested JSON Objects
             // eslint-disable-next-line no-console
-            console.error(err);
+            if (
+              !subBuffer.includes("ServerHint") &&
+              !subBuffer.includes("Code")
+            )
+              console.error(err);
           }
         }
       }
@@ -325,9 +343,14 @@ class FrevaGPT extends React.Component {
 
           <ChatBlock />
 
+          <PendingAnswerComponent
+            content={this.state.dynamicAnswer}
+            variant={this.state.dynamicVariant}
+          />
+
           <div ref={this.chatEndRef}/>
 
-          {this.state.loading ? (
+          {this.state.loading && !this.state.dynamicAnswer ? (
             <Row className="mb-3">
               <Col md={1}>
                 <Spinner />

@@ -3,7 +3,7 @@ import { Card } from "react-bootstrap";
 
 import { browserHistory } from "react-router";
 
-import { botRequests } from "./exampleRequests";
+import { botRequests } from "../exampleRequests";
 
 function SidePanel() {
   function changeToThread(thread) {

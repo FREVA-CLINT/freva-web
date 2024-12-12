@@ -42,6 +42,7 @@ def reverse_proxy(request, path):
             method="GET",
             url=api_url,
             params=all_parameters,
+            stream=True,  # Enable streaming
             timeout=100,
         )
         return response.content
