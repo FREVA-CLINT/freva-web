@@ -42,8 +42,8 @@ class OIDCPasswordBackend(BaseBackend):
                         successful, otherwise None.
         """
         api_url = os.getenv("FREVA_REST_URL", "http://localhost:7777")
-        token_url = f"{api_url.rstrip('/')}/api/auth/v2/token"
-        userinfo_url = f"{api_url.rstrip('/')}/api/auth/v2/userinfo"
+        token_url = f"{api_url.rstrip('/')}/api/freva-nextgen/auth/v2/token"
+        userinfo_url = f"{api_url.rstrip('/')}/api/freva-nextgen/auth/v2/userinfo"
         headers = {"Content-Type": "application/x-www-form-urlencoded"}
         user_model = get_user_model()
         if username.lower() == "guest":

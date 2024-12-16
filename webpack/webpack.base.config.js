@@ -2,6 +2,7 @@ const path = require("path");
 
 const BundleTracker = require("webpack-bundle-tracker");
 const ESLintPlugin = require("eslint-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 module.exports = function getBaseConfig() {
   return {
@@ -16,6 +17,7 @@ module.exports = function getBaseConfig() {
     plugins: [
       new BundleTracker({ filename: "./webpack-stats.json" }),
       new ESLintPlugin(),
+      new Dotenv(),
     ],
     module: {
       rules: [
