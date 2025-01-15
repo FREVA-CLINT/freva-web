@@ -27,6 +27,7 @@ urlpatterns = [
     url(r"^history/", include(("history.urls", "history"), namespace="history")),
     url(r"", include(("solr.urls", "solr"), namespace="solr")),
     url(r"", include(("base.urls", "base"), namespace="base")),
+    url(r"", include(("bot.urls", "bot"), namespace="bot")),
     url(
         r"^favicon\.svg$",
         RedirectView.as_view(
