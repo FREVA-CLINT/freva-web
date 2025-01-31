@@ -19,6 +19,10 @@ export const TIME_RANGE_FLEXIBLE = "flexible";
 export const TIME_RANGE_STRICT = "strict";
 export const TIME_RANGE_FILE = "file";
 
+export const BBOX_RANGE_FILE = "file";
+export const BBOX_RANGE_FLEXIBLE = "flexible";
+export const BBOX_RANGE_STRICT = "strict";
+
 export const DEFAULT_FLAVOUR = "freva";
 export const BATCH_SIZE = 100;
 export const ViewTypes = {
@@ -26,4 +30,4 @@ export const ViewTypes = {
   FACET_CENTERED: "FACET_CENTERED",
 };
 
-export const INTAKE_MAXIMUM = 100_000;
+export const CATALOGUE_MAXIMUM = 100_000;

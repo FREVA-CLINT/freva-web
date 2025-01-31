@@ -26,4 +26,4 @@ static/*
 assets/bundles/*
 webpack-stats.json
 base/migrations/*
-
+stac-browser/

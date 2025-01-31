@@ -18,8 +18,8 @@ dependencies:
   - gunicorn
   - markdown
   - mock
-  - mod_wsgi
   - mypy
+  - mysql-client <9
   - mysqlclient
   - nbval
   - nodejs
@@ -28,6 +28,7 @@ dependencies:
   - paramiko
   - pep8
   - pip
+  - mod_wsgi
   - pip:
     - black
     - isort

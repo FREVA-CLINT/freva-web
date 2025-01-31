@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   db:
-    image: mariadb:latest
+    image: mariadb:11.3
     environment:
       MYSQL_USER: freva
       MYSQL_PASSWORD: T3st
@@ -92,6 +92,21 @@ services:
     ports:
       - "27017:27017"
     hostname: mongodb
+
+  opensearch:
+    networks:
+      - freva-web
+    image: opensearchproject/opensearch:latest
+    hostname: opensearch
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - cluster.blocks.create_index=false
+    volumes:
+      - ./docker/opensearch/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+    ports:
+      - "9202:9202"
 
 networks:
   freva-web:

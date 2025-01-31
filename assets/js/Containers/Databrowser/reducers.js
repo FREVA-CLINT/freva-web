@@ -8,7 +8,12 @@ const databrowserInitialState = {
   selectedFacets: {},
   minDate: "",
   maxDate: "",
+  minLon: "",
+  maxLon: "",
+  minLat: "",
+  maxLat: "",
   dateSelector: constants.TIME_RANGE_FLEXIBLE,
+  bboxSelector: constants.BBOX_RANGE_FLEXIBLE,
   metadata: {},
   facetLoading: false,
   fileLoading: false,
@@ -28,15 +33,39 @@ export const databrowserReducer = (state = databrowserInitialState, action) => {
         facetLoading: false,
       };
     case constants.UPDATE_FACET_SELECTION: {
-      const { minDate, maxDate, dateSelector, start, flavour, ...queryObject } =
-        action.queryObject;
+      const {
+        minDate,
+        maxDate,
+        dateSelector,
+        minLon,
+        maxLon,
+        minLat,
+        maxLat,
+        bboxSelector,
+        start,
+        flavour,
+        ...queryObject
+      } = action.queryObject;
       let myMinDate = minDate;
       let myMaxDate = maxDate;
       let myDateSelector = dateSelector;
+      let myMinLon = minLon;
+      let myMaxLon = maxLon;
+      let myMinLat = minLat;
+      let myMaxLat = maxLat;
+      let myBBoxSelector = bboxSelector;
       if (!dateSelector || !minDate || !maxDate) {
         myDateSelector = databrowserInitialState.dateSelector;
         myMinDate = databrowserInitialState.minDate;
         myMaxDate = databrowserInitialState.maxDate;
+      }
+
+      if (!bboxSelector || !minLon || !maxLon || !minLat || !maxLat) {
+        myBBoxSelector = databrowserInitialState.bboxSelector;
+        myMinLon = databrowserInitialState.minLon;
+        myMaxLon = databrowserInitialState.maxLon;
+        myMinLat = databrowserInitialState.minLat;
+        myMaxLat = databrowserInitialState.maxLat;
       }
       return {
         ...state,
@@ -45,6 +74,11 @@ export const databrowserReducer = (state = databrowserInitialState, action) => {
         dateSelector: myDateSelector,
         minDate: myMinDate,
         maxDate: myMaxDate,
+        bboxSelector: myBBoxSelector,
+        minLon: myMinLon,
+        maxLon: myMaxLon,
+        minLat: myMinLat,
+        maxLat: myMaxLat,
         selectedFlavour: flavour || databrowserInitialState.selectedFlavour,
       };
     }
