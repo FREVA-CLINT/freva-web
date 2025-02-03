@@ -4,6 +4,8 @@ export EVALUATION_SYSTEM_CONFIG_FILE := $(PWD)/docker/local-eval-system.conf
 export EVALUATION_SYSTEM_DRS_CONFIG_FILE := $(PWD)/docker/drs_config.toml
 export DJANGO_SUPERUSER_PASSWORD := secret
 export DEV_MODE := 1
+export CHAT_BOT := 1
+export COLUMNS=250
 export DOCKER_ENV_FILE ?= .env
 include $(DOCKER_ENV_FILE)
 export

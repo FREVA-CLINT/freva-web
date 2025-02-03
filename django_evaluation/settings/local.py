@@ -77,6 +77,23 @@ def _get_logo(logo_file, project_root):
     return f"/static/img/{logo_file.name}"
 
 
+def _read_secret(port: int = 5002, key: str = "email") -> dict[str, str]:
+    """Read the key-value pair secrets from vault server."""
+    sha = config._get_public_key(config.get("project_name"))
+    uri = f"http://{config.get('db.host')}:{port}/vault/{key}/{sha}"
+    try:
+        res = requests.get(uri, timeout=5)
+        res.raise_for_status()
+        req = res.json()
+    except (
+        requests.exceptions.ConnectionError,
+        requests.exceptions.HTTPError,
+    ) as error:
+        logger.warning("Could not read secrets from vault: %s", error)
+        req = {}
+    return req
+
+
 def _set_favicon(html_color: str, project_root: Path) -> None:
     img_folder = Path(project_root) / "static" / "img"
     tmpl_folder = Path(project_root) / "static_root" / "img"
@@ -282,6 +299,15 @@ RESULT_BROWSER_FACETS = [
 ]
 MENU_ENTRIES = []
 
+CHAT_BOT_URL = "http://vader5-icpub.lvt.dkrz.de:8502"
+CHAT_BOT_AUTH_KEY = os.environ.get("CHAT_BOT_AUTH_KEY")
+CHAT_BOT_FREVA_CONFIG = os.environ.get("CHAT_BOT_FREVA_CONFIG")
+
+if os.getenv("CHAT_BOT", "0").isdigit():
+    ACTIVATE_CHAT_BOT = bool(int(os.getenv("CHAT_BOT", "0")))
+else:
+    ACTIVATE_CHAT_BOT = False
+
 # Sometimes it is desired to put a link into the navbar which does not correspond
 # to a template inside django. If something like this is needed, put a slash as a
 # prefix to your relative url (the second value in each of the lists), e.g. "/impressum"
@@ -299,3 +325,12 @@ for title, url, html_id in web_config.get("menu_entries", []) or _MENU_ENTRIES:
         MENU_ENTRIES.append(
             {"name": title, "url": reverse_lazy(url), "html_id": html_id}
         )
+
+if ACTIVATE_CHAT_BOT:
+    MENU_ENTRIES.append(
+        {
+            "name": "FrevaGPT",
+            "url": reverse_lazy("bot:chatbot"),
+            "html_id": "chatbot_menu",
+        }
+    )

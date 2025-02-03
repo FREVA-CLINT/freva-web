@@ -5,6 +5,7 @@ Created on 14.11.2013
 
 urlconf for the solr application
 """
+
 import os
 
 from django.conf import settings

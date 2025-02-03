@@ -12,4 +12,4 @@ python manage.py createsuperuser \
     --email $DJANGO_SUPERUSER_EMAIL || echo 0
 python manage.py shell -c \
     'from django.contrib.sites.models import Site; Site.objects.create(id=1, domain="example.com", name="example.com").save()' || echo 0
-gunicorn -b [::]:8000 -w 1 django_evaluation.wsgi
+gunicorn -b [::]:8000 --timeout 900 -w 1 django_evaluation.wsgi
