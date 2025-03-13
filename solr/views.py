@@ -58,6 +58,11 @@ def intake_catalogue(request, flavour, unique_key):
         f"{settings.DATA_BROWSER_HOST}/api/freva-nextgen/databrowser/intake-catalogue/{flavour}/{unique_key}",
     )
 
+def stac_catalogue(request, flavour, unique_key):
+    return reverse_proxy(
+        request,
+        f"{settings.DATA_BROWSER_HOST}/api/freva-nextgen/databrowser/stac-catalogue/{flavour}/{unique_key}",
+    )
 
 def get_all_parameters(query_string):
     query_dict = QueryDict(query_string)

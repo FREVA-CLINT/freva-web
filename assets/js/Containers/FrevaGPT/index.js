@@ -13,16 +13,16 @@ import {
   Alert,
   Tooltip,
   OverlayTrigger,
+  Spinner,
+  Card,
 } from "react-bootstrap";
 
 import { browserHistory } from "react-router";
-import { isEmpty } from "lodash";
+import { isEmpty, debounce } from "lodash";
 
-import { FaStop, FaPlay } from "react-icons/fa";
+import { FaStop, FaPlay, FaArrowDown } from "react-icons/fa";
 
 import queryString from "query-string";
-
-import Spinner from "../../Components/Spinner";
 
 import ChatBlock from "./components/ChatBlock";
 import SidePanel from "./components/SidePanel";
@@ -48,6 +48,9 @@ class FrevaGPT extends React.Component {
     this.toggleBotSelect = this.toggleBotSelect.bind(this);
     this.handleStop = this.handleStop.bind(this);
     this.submitUserInput = this.submitUserInput.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.resizeInputField = this.resizeInputField.bind(this);
+    this.scrollDown = this.scrollDown.bind(this);
 
     this.state = {
       loading: false,
@@ -59,10 +62,17 @@ class FrevaGPT extends React.Component {
       showSuggestions: true,
       dynamicAnswer: "",
       dynamicVariant: "",
+      atBottom: true,
     };
+
+    this.chatEndRef = React.createRef();
+    this.lastVariant = React.createRef("User");
   }
 
   async componentDidMount() {
+    // document.querySelector
+    // document.getElementById('chatContainer').addEventListener('scroll', this.handleScroll)
+
     // if thread giving on mounting the component, set thread within store
     const givenQueryParams = browserHistory.getCurrentLocation().query;
     if (
@@ -107,6 +117,8 @@ class FrevaGPT extends React.Component {
     } else {
       this.setState({ botOkay: false });
     }
+
+    this.handleScroll();
   }
 
   createNewChat() {
@@ -116,7 +128,7 @@ class FrevaGPT extends React.Component {
       pathname: "/chatbot/",
       search: "",
     });
-    this.setState({ showSuggestions: true });
+    this.setState({ showSuggestions: true, atBottom: true });
     window.scrollTo(0, 0);
   }
 
@@ -126,6 +138,7 @@ class FrevaGPT extends React.Component {
 
   async handleKeyDown(e) {
     if (e.key === "Enter" && !isEmpty(e.target.value.trim())) {
+      e.preventDefault(); // preventing to add a new line within textare when sending request by pressing enter
       this.handleSubmit(e.target.value);
     }
   }
@@ -213,6 +226,7 @@ class FrevaGPT extends React.Component {
                 // if object has not same variant, add answer to conversation and override object
                 if (varObj.variant !== jsonBuffer.variant) {
                   this.props.dispatch(addElement(varObj));
+                  this.lastVariant.current = varObj.variant;
                   this.setState({ dynamicAnswer: "", dynamicVariant: "" });
                   varObj = jsonBuffer;
                 } else {
@@ -320,6 +334,30 @@ class FrevaGPT extends React.Component {
     this.setState({ hideBotModelList: !this.state.hideBotModelList });
   }
 
+  handleScroll() {
+    const container = document.querySelector("#chatContainer");
+    this.setState({
+      atBottom:
+        container.scrollTop + container.clientHeight >=
+        container.scrollHeight - 200,
+    });
+  }
+
+  resizeInputField() {
+    const inputField = document.getElementById("inputField");
+    const style = inputField.style;
+
+    style.height = inputField.style.minHeight = "auto";
+    style.minHeight = `${Math.min(inputField.scrollHeight, parseInt(inputField.style.maxHeight))}px`;
+    style.height = `${inputField.scrollHeight}px`;
+  }
+
+  scrollDown() {
+    if (this.state.atBottom) {
+      this.chatEndRef.current?.scrollIntoView();
+    }
+  }
+
   renderAlert() {
     return (
       <Alert key="botError" variant="danger">
@@ -328,81 +366,181 @@ class FrevaGPT extends React.Component {
     );
   }
 
-  renderBotContent() {
+  renderSuggestions() {
     return (
       <>
-        <Col md={4}>
+        {this.state.showSuggestions ? (
+          <>
+            {botSuggestions.map((element) => {
+              return (
+                <div key={`${element}-div`} className="col-md-3 mb-2">
+                  <OverlayTrigger
+                    key={`${element}-tooltip`}
+                    overlay={<Tooltip>{element}</Tooltip>}
+                  >
+                    <Button
+                      className="h-100 w-100"
+                      variant="outline-secondary"
+                      onClick={() => this.handleSubmit(element)}
+                    >
+                      {truncate(element)}
+                    </Button>
+                  </OverlayTrigger>
+                </div>
+              );
+            })}
+          </>
+        ) : null}
+      </>
+    )
+  }
+
+  renderBotInput() {
+    return (
+      <Col>
+        <InputGroup className="mb-2 pb-2">
+          <FormControl
+            as="textarea"
+            id="inputField"
+            rows={1}
+            value={this.state.userInput}
+            onChange={(e) => {
+              this.handleUserInput(e);
+              this.resizeInputField();
+            }}
+            onKeyDown={this.handleKeyDown}
+            placeholder="Ask a question"
+          />
+          {this.state.loading ? (
+            <Button
+              variant="outline-danger"
+              onClick={this.handleStop}
+              className="d-flex align-items-center"
+            >
+              <FaStop />
+            </Button>
+          ) : (
+            <Button
+              variant="outline-success"
+              onClick={this.submitUserInput}
+              className="d-flex align-items-center"
+            >
+              <FaPlay />
+            </Button>
+          )}
+        </InputGroup>
+      </Col>
+    )
+  }
+
+  renderChatSpinner() {
+    return (
+      <>
+        {this.state.loading && !this.state.dynamicAnswer ? (
+          <Row className="mb-3">
+            <Col md={3}>
+              <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-light d-flex flex-row align-items-center">
+                <Spinner size="sm" />
+                <span className="ms-2">
+                  {this.lastVariant.current === "Code"
+                    ? "Executing..."
+                    : "Thinking..."}
+                </span>
+              </Card>
+            </Col>
+          </Row>
+        ) : null}
+      </>
+    )
+  }
+
+  renderScrollButtons() {
+
+    // here also no suitable solutions using bootstrap found -> need for better solution
+    const scrollButtonStyle = {
+      zIndex: 10,
+      right: "40px",
+      bottom: "10px",
+      position: "sticky",
+    };
+
+    return (
+      <>
+        {this.state.atBottom ? (
+          <Col md={12}></Col>
+        ) : (
+          <Col
+            md={12}
+            style={scrollButtonStyle}
+            className="d-flex flex-row justify-content-end"
+          >
+            <Button
+              variant="secondary"
+              onClick={() =>
+                this.chatEndRef.current?.scrollIntoView({
+                  behavior: "smooth",
+                })
+              }
+            >
+              <FaArrowDown />
+            </Button>
+          </Col>
+        )}
+      </>
+    )
+  }
+
+  renderBotContent() {
+    const windowHeight = document.documentElement.clientHeight * 0.8;
+
+    // better solution needed (wasn't able to find any suitable bootstrap class -> need of fixed height for overflow-auto -> scrolling)
+    const chatWindow = {
+      height: windowHeight,
+    };   
+
+    return (
+      <>
+        <Col md={3}>
           <SidePanel />
         </Col>
 
-        <Col md={8}>
-          {this.state.showSuggestions ? (
-            <Row className="mb-2 g-2">
-              {botSuggestions.map((element) => {
-                return (
-                  <div key={element} className="col-md-3">
-                    <OverlayTrigger
-                      key={element}
-                      overlay={<Tooltip>{element}</Tooltip>}
-                    >
-                      <Button
-                        className="h-100 w-100"
-                        variant="outline-secondary"
-                        onClick={() => this.handleSubmit(element)}
-                      >
-                        {truncate(element)}
-                      </Button>
-                    </OverlayTrigger>
-                  </div>
-                );
-              })}
-            </Row>
-          ) : null}
+        <Col
+          md={9}
+          className={
+            "d-flex flex-column " +
+            (this.state.showSuggestions
+              ? "justify-content-start"
+              : "justify-content-between")
+          }
+          style={chatWindow}
+        >
+          <Row
+            className="overflow-auto position-relative"
+            id="chatContainer"
+            onScroll={debounce(this.handleScroll, 100)}
+          >
+            <Col md={12}>
+              <ChatBlock onScrollDown={this.scrollDown} />
 
-          <ChatBlock />
+              <PendingAnswerComponent
+                content={this.state.dynamicAnswer}
+                variant={this.state.dynamicVariant}
+                position={this.state.atBottom}
+                ref={{
+                  chatEndRef: this.chatEndRef,
+                  lastVariant: this.lastVariant,
+                }}
+              />
 
-          <PendingAnswerComponent
-            content={this.state.dynamicAnswer}
-            variant={this.state.dynamicVariant}
-          />
-
-          {this.state.loading && !this.state.dynamicAnswer ? (
-            <Row className="mb-3">
-              <Col md={1}>
-                <Spinner />
-              </Col>
-            </Row>
-          ) : null}
+              {this.renderChatSpinner()}
+              <div ref={this.chatEndRef}></div>
+            </Col>
+            {this.renderScrollButtons()}
+          </Row>
 
           <Row>
-            <Col md={12}>
-              <InputGroup className="mb-2 pb-2">
-                <FormControl
-                  type="text"
-                  value={this.state.userInput}
-                  onChange={this.handleUserInput}
-                  onKeyDown={this.handleKeyDown}
-                  placeholder="Ask a question"
-                />
-                {this.state.loading ? (
-                  <Button
-                    variant="outline-danger"
-                    onClick={this.handleStop}
-                    className="d-flex align-items-center"
-                  >
-                    <FaStop />
-                  </Button>
-                ) : (
-                  <Button
-                    variant="outline-success"
-                    onClick={this.submitUserInput}
-                    className="d-flex align-items-center"
-                  >
-                    <FaPlay />
-                  </Button>
-                )}
-              </InputGroup>
-            </Col>
+            {this.renderSuggestions()}
+            {this.renderBotInput()}
           </Row>
         </Col>
       </>
@@ -421,8 +559,8 @@ class FrevaGPT extends React.Component {
           placeholder="Model"
           hidden={this.state.hideBotModelList}
         >
-          {this.state.botModelList.map((x) => {
-            return <option key={x}>{x}</option>;
+          {this.state.botModelList.map((model) => {
+            return <option key={model}>{model}</option>;
           })}
         </Form.Select>
         <Button onClick={this.createNewChat} variant="info">

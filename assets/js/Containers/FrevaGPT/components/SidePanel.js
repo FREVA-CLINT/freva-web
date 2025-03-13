@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "react-bootstrap";
+import { Card, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 import { browserHistory } from "react-router";
 
@@ -22,14 +22,15 @@ function SidePanel() {
         <Card.Body className="p-3 py-2">
           {botRequests.general.map((element) => {
             return (
-              <div key={element.thread} className="mb-2">
-                <a
-                  className="text-wrap"
-                  href=""
-                  onClick={() => changeToThread(element.thread)}
+              <div key={element.thread} className="mb-2 text-truncate color">
+                <OverlayTrigger
+                  key={`${element.title}-tooltip`}
+                  overlay={<Tooltip>{element.title}</Tooltip>}
                 >
-                  {element.title}
-                </a>
+                  <a href="" onClick={() => changeToThread(element.thread)}>
+                    {element.title}
+                  </a>
+                </OverlayTrigger>
               </div>
             );
           })}
@@ -43,14 +44,15 @@ function SidePanel() {
         <Card.Body className="p-3 py-2">
           {botRequests.freva.map((element) => {
             return (
-              <div key={element.thread} className="mb-2">
-                <a
-                  className="text-wrap"
-                  href=""
-                  onClick={() => changeToThread(element.thread)}
+              <div key={element.thread} className="mb-2 text-truncate color">
+                <OverlayTrigger
+                  key={`${element.title}-tooltip`}
+                  overlay={<Tooltip>{element.title}</Tooltip>}
                 >
-                  {element.title}
-                </a>
+                  <a href="" onClick={() => changeToThread(element.thread)}>
+                    {element.title}
+                  </a>
+                </OverlayTrigger>
               </div>
             );
           })}
