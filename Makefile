@@ -31,6 +31,10 @@ setup-rest:
 	python -m pip install $$TEMP_DIR/freva-rest $$TEMP_DIR/freva-data-portal-worker &&\
 	rm -rf $$TEMP_DIR
 
+setup-stac: # this is a setup only for STAC-API and STAC-Browser, and not static STAC
+	python -m pip install stac-fastapi.opensearch
+	@echo "STAC FastAPI dependencies installed successfully"
+
 setup-node:
 	npm install
 
@@ -49,7 +53,7 @@ runrest:
 		--key-file $(REDIS_SSL_KEYFILE)
 	python -m data_portal_worker -c .data-portal-cluster-config.json > rest.log 2>&1 &
 	python docker/config/dev-utils.py oidc http://localhost:8080/realms/freva/.well-known/openid-configuration
-	python -m freva_rest.cli -p 7777 --tls-key $(REDIS_SSL_KEYFILE) --tls-cert $(REDIS_SSL_CERTFILE) --debug --dev >> rest.log 2>&1 &
+	python -m freva_rest.cli -p 7777 --redis-ssl-keyfile $(REDIS_SSL_KEYFILE) --redis-ssl-certfile $(REDIS_SSL_CERTFILE) --debug --dev >> rest.log 2>&1 &
 	@echo "To watch the freva-rest logs, run 'tail -f rest.log'"
 
 runfrontend:
@@ -58,14 +62,50 @@ runfrontend:
 	@echo "npm development server is running..."
 	@echo "To watch the npm logs, run 'tail -f npm.log'"
 
+wait-for-opensearch:
+	@echo "wait until openseach wakes up"
+	@until curl -s "localhost:9202/_cluster/health" > /dev/null; do \
+		echo "we wait 2 secs for OpenSearch to wake up"; \
+		sleep 2; \
+	done
+	@echo "OpenSearch is ready to go, now we have to enable auto index creation"
+	@curl -XPUT "localhost:9202/_cluster/settings" -H 'Content-Type: application/json' -d'{ \
+		"persistent": { \
+			"cluster.blocks.create_index": null, \
+			"action.auto_create_index": true \
+		} \
+	}'
+
+runstac: wait-for-opensearch
+	ES_HOST=localhost \
+	ES_PORT=9202 \
+	ES_USE_SSL=false \
+	ES_VERIFY_CERTS=false \
+	BACKEND=opensearch \
+	ENVIRONMENT=local \
+	APP_HOST=0.0.0.0 \
+	APP_PORT=8083 \
+	STAC_USERNAME=stac \
+	STAC_PASSWORD=secret \
+	STAC_FASTAPI_TITLE="Freva STAC Service" \
+	STAC_FASTAPI_DESCRIPTION="Freva STAC Service provides a SpatioTemporal Asset Catalog API" \
+	STAC_FASTAPI_ROUTE_DEPENDENCIES='[{"routes":[{"path":"/collections/{collection_id}/items/{item_id}","method":["PUT","DELETE"]},{"path":"/collections/{collection_id}/items","method":["POST"]},{"path":"/collections","method":["POST"]},{"path":"/collections/{collection_id}","method":["PUT","DELETE"]},{"path":"/collections/{collection_id}/bulk_items","method":["POST"]},{"path":"/aggregations","method":["POST"]},{"path":"/collections/{collection_id}/aggregations","method":["POST"]},{"path":"/aggregate","method":["POST"]},{"path":"/aggregate","method":["POST"]},{"path":"/collections/{collection_id}/aggregate","method":["POST"]}],"dependencies":[{"method":"stac_fastapi.core.basic_auth.BasicAuth","kwargs":{"credentials":[{"username":"stac","password":"secret"}]}}]}]' \
+	python -m stac_fastapi.opensearch.app >> stac.log 2>&1 &
+	@echo "STAC service is running..."
+	@echo "To watch the STAC logs, run 'tail -f stac.log'"
+
 stopserver:
 	ps aux | grep '[f]reva_rest.cli' | awk '{print $$2}' | xargs -r kill
 	ps aux | grep '[d]ata_portal_worker' | awk '{print $$2}' | xargs -r kill
 	ps aux | grep '[m]anage.py runserver' | awk '{print $$2}' | xargs -r kill
+	@if pgrep -f '[s]tac_fastapi.opensearch.app' > /dev/null; then \
+		ps aux | grep '[s]tac_fastapi.opensearch.app' | awk '{print $$2}' | head -n 1 | xargs kill; \
+		sleep 1; \
+	fi
 	rm -fr .data-portal-cluster-config.json
 	echo "Stopped Django development server..." > runserver.log
 	echo "Stopped freva-rest development server..." > rest.log
-
+	echo "Stopped STAC service..." > stac.log
 
 stopfrontend:
 	pkill -f "npm run dev"
@@ -74,9 +114,9 @@ stopfrontend:
 stop: stopserver stopfrontend
 	@echo "All services have been stopped."
 
-setup: setup-rest setup-node setup-django dummy-data
+setup: setup-rest setup-node setup-django dummy-data setup-stac
 
-run: runrest runfrontend runserver
+run: runrest runfrontend runserver runstac
 
 lint: setup-node
 	npm run lint-format

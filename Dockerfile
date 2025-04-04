@@ -18,7 +18,8 @@ ENV PATH=$CONDA_ENV_DIR/bin:$PATH\
     DJANGO_SUPERUSER_EMAIL=freva@dkrz.de\
     EMAIL_HOST_PASSWORD=$EMAIL_HOST_PASSWORD
 RUN  set -e && \
-     mamba env create -y -p ${CONDA_ENV_DIR} -f conda-env.yml &&\
+     mamba install -c conda-forge --override-channels -y mamba
+     mamba env create -c conda-forge --override-channels -y -p ${CONDA_ENV_DIR} -f conda-env.yml &&\
      mamba clean -afy &&\
      npm install && npm run build-production &&\
      rm -rf node_modules

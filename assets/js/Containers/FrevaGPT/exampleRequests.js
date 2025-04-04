@@ -2,34 +2,38 @@ export const botRequests = {
   general: [
     {
       title: "Name the most important parameters in meteorology",
-      thread: "09OYj1UhBIyzakMAEHDbyXGu0d1UavZZ",
+      thread: "O7GbZrqU6sVTt2LsWLtp3mHqH6DxAod6",
     },
     {
-      title: "What is ENSO",
-      thread: "OvWhPEkNAeVDjxANpJCFLRvjPJnq01mt",
+      title: "What is ENSO?",
+      thread: "vgJSy4qxc3xKyUXDxDyJsbJxZOnhCQaC",
     },
     {
-      title: "What is the difference between RCP scenarios and SSp scenarios",
-      thread: "qIZyDxfUOdTecCJ5kgKir6MDY7olvEMw",
+      title: "What is the difference between RCP and SSP?",
+      thread: "kUfvN0QVlzaXVnD0ssLpDhcOZgODyBRb",
     },
     {
       title: "Name the most common climate models",
-      thread: "VcQc3ZuWMDWFluLLQd2YzaNIqYoSxi6P",
+      thread: "uwie5w5t1pIEI6DGyk7V8K0vu6EDzr8X",
+    },
+    {
+      title: "Name the most common projections for climate data",
+      thread: "ROexyJChy8HcMNk0Mr70tFAGIctxApHi",
     },
   ],
   freva: [
     {
-      title:
-        "Use the freva databrowser to extract the number of datasets for the project cmip5 and the variable cli",
-      thread: "faWvwiqUGwC6cJq9OL4bSmWytkLxyYkQ",
-    },
-    {
-      title: "Which plugins are integrated into freva?",
-      thread: "66Rtx8qGrAHUza5DRjUBCkgblBGnE7yb",
-    },
-    {
       title: "What is freva?",
-      thread: "Pp6xO7lLI4j9LGx34AIGcPGbgxLFq5jE",
+      thread: "VE2umTqohK4UsUtYykH6PfqTrnYvHW36",
+    },
+    {
+      title: "What facets can I specify using the data browser?",
+      thread: "l3kLSpRUizJzTmeEd3ZWAoW02IpdP1bz",
+    },
+    {
+      title:
+        "Use the data browser to specify the available experiments for CMIP5 data",
+      thread: "WPAJdUq5mdGWE6uHSNPRNLXYDszTS24J",
     },
   ],
 };

@@ -5,9 +5,22 @@ import * as constants from "./constants";
 export function prepareSearchParams(location, additionalParams = "") {
   let params = "";
   let flavourValue = constants.DEFAULT_FLAVOUR;
+
   if (location) {
     const queryObject = location.query;
-    const { dateSelector, minDate, maxDate, flavour, ...facets } = queryObject;
+    const {
+      dateSelector,
+      minDate,
+      maxDate,
+      bboxSelector,
+      minLon,
+      maxLon,
+      minLat,
+      maxLat,
+      flavour,
+      ...facets
+    } = queryObject;
+
     flavourValue = flavour ?? flavourValue;
     params = queryString.stringify(facets);
 
@@ -19,6 +32,12 @@ export function prepareSearchParams(location, additionalParams = "") {
     if (isDateSelected) {
       params += `&time_select=${dateSelector}&time=${minDate} TO ${maxDate}`;
     }
+
+    const isBBoxSelected = !!(minLon && maxLon && minLat && maxLat);
+    if (isBBoxSelected) {
+      params += `&bbox_select=${bboxSelector}&bbox=${minLon},${maxLon}by${minLat},${maxLat}`;
+    }
   }
+
   return `${flavourValue}/file?${additionalParams}${params}`;
 }

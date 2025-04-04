@@ -1,27 +1,62 @@
 {% load custom_filters %}
 
 <style>
-    .select2-container{
-        padding:0px;
+    .select2-container {
+        padding: 0px;
     }
 </style>
-<select class="col-md-12 {{attrs.class}}" id="{{name}}" name="{{name}}">
-    <option></option>
-    {% for key,val in options %}
-        <option value="{{key}}" {%if val == value %}selected{%endif%}>{{val}}</option>
-    {%endfor%}
-</select>
+
+<!--data-multiple="{{multiple}}"-->
+<input type="hidden"
+       class="col-md-12 {{attrs.class}}"
+       value="{% if value %}{{ value|safe }}{% endif %}"
+       id="{{name}}"
+       name="{{name}}"
+/>
 
 <script>
-    $(document).ready(function(){
+    $(document).ready(function() {
 
-        $('#{{name}}').select2({
-            placeholder: "Select a {{name}}",
-            allowClear: true,
+        var isMultiple = {{ multiple|yesno:"true,false" }};  // Convert Django bool to JS bool
+        $("#{{name}}").select2({
+            placeholder: "Select a {{ name }}",
+            initSelection : function (element, callback) {
+                if(isMultiple){
+                    var data = [];
+                    var vals = element.val().split(",")
+                    $.each(vals, function(key,value){
+                        data.push({
+                            id: value,
+                            text: value
+                        });
+                    });
+                } else {
+                    var data = {id: element.val(), text: element.val()};
+                }
+                callback(data);
+            },
+
+
+            {% if multiple %}
+	    tags: isMultiple,
+            multiple: isMultiple,
+            tokenSeparators: [',', ';'],  // Allow separating values with commas or semicolons
+	    {% endif %}
+	        data: [
+                {% for key, val in options %}
+                    { id: "{{ key }}", text: "{{ val }}" },
+                {% endfor %}
+            ],
+	    {% if allow_user_input %}
+          //Allow manually entered text in drop down.
+            createSearchChoice:function(term, data) {
+              if ( $(data).filter( function() {
+                  return this.text.localeCompare(term) === 0;
+              }).length === 0) {
+                  return {id:term, text:term};
+              }
+            },
+	  {% endif %}
         });
     });
 </script>
-
-<!--
-<input type="hidden" class="col-md-12"  value="{% if value %}{{ value }}{%endif%}" id="{{ attrs.id }}" name="{{name}}" style="margin:0px; padding:0px;" data-facet="{{facet}}" data-group="{{group}}" data-multiple="{{multiple}}">
-!-->
