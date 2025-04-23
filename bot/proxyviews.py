@@ -19,6 +19,7 @@ class ChatBotProxy(View):
         # adding bot auth key and freva conf
         params["auth_key"] = settings.CHAT_BOT_AUTH_KEY
         params["freva_config"] = settings.CHAT_BOT_FREVA_CONFIG
+        params["user_id"] = request.user.username
 
         try:
             upstream_response = requests.get(base_url[:-1], params=params, stream=True)
