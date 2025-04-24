@@ -1,22 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import PropTypes from "prop-types";
 
-import { Col, Card, Spinner, Accordion, Row } from "react-bootstrap";
+import { Col, Card, Spinner, Row } from "react-bootstrap";
+
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 import Markdown from "react-markdown";
 
-import Highlight from "react-highlight";
-import "highlight.js/styles/atom-one-light.css";
-
 import * as constants from "../constants";
+import { chatExceedsWindow, scrollToChatBottom } from "../utils";
 
-function PendingAnswerComponent(props) {
+const PendingAnswerComponent = forwardRef((props, ref) => {
   const [renderedCode, setRenderedCode] = useState("");
 
   useEffect(() => {
     const parsedCode = renderCode(props.content);
     if (parsedCode !== "") {
       setRenderedCode(parsedCode);
+    }
+
+    // conditional autoscrolling (might need some debounce for performance)
+    if (props.content !== "" && chatExceedsWindow()) {
+      if (props.atBottom) {
+        scrollToChatBottom();
+      }
     }
   }, [props.content]);
 
@@ -50,30 +58,39 @@ function PendingAnswerComponent(props) {
           </Col>
         );
       case "Code":
-      case "CodeBlock":
         return (
           <Col md={constants.BOT_COLUMN_STYLE}>
-            <div className="mb-3">
-              <Accordion defaultActiveKey="0">
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>python</Accordion.Header>
-                  <Accordion.Body>
-                    <Highlight className="python">{renderedCode}</Highlight>
-                    <span>
-                      <Spinner size="sm" />
-                      <span className="m-2">Analyzing...</span>
-                    </span>
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            </div>
+            <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-light">
+              <p className="m-0">Analyzing...</p>
+              <Card className="shadow-sm mt-2">
+                <Card.Header>python</Card.Header>
+                <Card.Body
+                  className="p-0 m-0"
+                  style={{ backgroundColor: "#fafafa" }}
+                >
+                  <SyntaxHighlighter language="python" style={oneLight}>
+                    {renderedCode}
+                  </SyntaxHighlighter>
+                  <span>
+                    <Spinner className="mx-1" size="sm" />
+                  </span>
+                </Card.Body>
+              </Card>
+            </Card>
           </Col>
         );
       case "ServerHint":
         return (
           <Row className="mb-3">
-            <Col md={1}>
-              <Spinner />
+            <Col md={3}>
+              <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-light d-flex flex-row align-items-center">
+                <Spinner size="sm" />
+                <span className="ms-2">
+                  {ref.lastVariant.current === "Code"
+                    ? "Executing..."
+                    : "Thinking..."}
+                </span>
+              </Card>
             </Col>
           </Row>
         );
@@ -83,11 +100,12 @@ function PendingAnswerComponent(props) {
   }
 
   return renderAnswer(props);
-}
+});
 
 PendingAnswerComponent.propTypes = {
   content: PropTypes.string,
   variant: PropTypes.string,
+  atBottom: PropTypes.bool,
 };
 
 export default PendingAnswerComponent;

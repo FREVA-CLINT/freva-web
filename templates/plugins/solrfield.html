@@ -47,10 +47,7 @@
               url: function (term, page) {
                   term=term.replace('/','');
                   const tmp_data = {
-                      facets : '{{facet}}',
-                      {%if editable %}
-                         {{facet}}: term+'*', // search term
-                      {%endif%}
+                      facets : '{{facet}}'
                   };
                   const tmp_data2 = getActiveFacets('{{facet}}','{{group}}');
                   let res = '/api/freva-nextgen/databrowser/metadata-search/freva/file?';

@@ -2,12 +2,16 @@ from urllib.parse import urljoin
 
 import requests
 from django.conf import settings
-from django.http import StreamingHttpResponse
+from django.http import HttpResponseForbidden, StreamingHttpResponse
 from django.views import View
 
 
 class ChatBotProxy(View):
     def get(self, request, *args, **kwargs):
+        if request.user.isGuest():
+            return HttpResponseForbidden(
+                "Guest users are not allowed to access the chatbot API."
+            )
         path = request.path
         base_url = urljoin(settings.CHAT_BOT_URL, path)
         params = request.GET.dict()

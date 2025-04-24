@@ -12,22 +12,18 @@ import {
   Form,
   Collapse,
 } from "react-bootstrap";
-
 import {
   FaAlignJustify,
-  FaFileExport,
   FaList,
   FaMinusSquare,
   FaPlusSquare,
   FaTimes,
 } from "react-icons/fa";
-
 import queryString from "query-string";
 import { withRouter } from "react-router";
 
 import OwnPanel from "../../Components/OwnPanel";
 import Spinner from "../../Components/Spinner";
-
 import { initCap, underscoreToBlank } from "../../utils";
 
 import {
@@ -36,20 +32,26 @@ import {
   updateFacetSelection,
   setFlavours,
 } from "./actions";
-
 import TimeRangeSelector from "./TimeRangeSelector";
 import FilesPanel from "./FilesPanel";
 import DataBrowserCommand from "./DataBrowserCommand";
 import FacetDropdown from "./MetaFacet";
-import { ViewTypes, DEFAULT_FLAVOUR, INTAKE_MAXIMUM } from "./constants";
+import {
+  ViewTypes,
+  DEFAULT_FLAVOUR,
+  STREAM_CATALOGUE_MAXIMUM,
+} from "./constants";
 import { FacetPanel } from "./FacetPanel";
 import { prepareSearchParams } from "./utils";
+import CatalogExportDropdown from "./CatalogExportDropdown";
+import BBoxSelector from "./BBoxSelector";
 
 class Databrowser extends React.Component {
   constructor(props) {
     super(props);
     this.clickFacet = this.clickFacet.bind(this);
     this.renderFacetBadges = this.renderFacetBadges.bind(this);
+    this.createCatalogLink = this.createCatalogLink.bind(this);
     const firstViewPort =
       localStorage.FrevaDatabrowserViewPort ?? ViewTypes.RESULT_CENTERED;
     localStorage.FrevaDatabrowserViewPort = firstViewPort;
@@ -94,6 +96,16 @@ class Databrowser extends React.Component {
       this.props.dispatch(loadFiles(this.props.location));
       this.props.dispatch(updateFacetSelection(this.props.location.query));
     }
+  }
+
+  createCatalogLink(type, isDynamic = false) {
+    const baseUrl = `/api/freva-nextgen/databrowser/${type}-catalogue/`;
+    const searchParams = prepareSearchParams(
+      this.props.location,
+      "translate=false"
+    );
+    const dynamicParam = isDynamic ? "&stac_dynamic=true" : "";
+    return `${baseUrl}${searchParams}${dynamicParam}`;
   }
 
   clickFacet(category, value = null) {
@@ -190,6 +202,49 @@ class Databrowser extends React.Component {
         );
       });
   }
+  dropBBoxSelection() {
+    const currentLocation = this.props.location.pathname;
+    const {
+      bboxSelector: ignore1,
+      minLon: ignore2,
+      maxLon: ignore3,
+      minLat: ignore4,
+      maxLat: ignore5,
+      ...queryObject
+    } = this.props.location.query;
+    const query = queryString.stringify(queryObject);
+    if (query) {
+      this.props.router.push(currentLocation + "?" + query);
+    } else {
+      this.props.router.push(currentLocation);
+    }
+  }
+
+  renderBBoxPanel() {
+    const { databrowser } = this.props;
+    const { minLon, maxLon, minLat, maxLat } = databrowser;
+    const isBBoxSelected = !!(minLon || maxLon || minLat || maxLat);
+    const title = isBBoxSelected ? (
+      <span>
+        BBox: &nbsp;
+        <span className="fw-bold">
+          {minLon},{maxLon} by {minLat},{maxLat}
+        </span>
+      </span>
+    ) : (
+      <span>Bounding Box</span>
+    );
+
+    return (
+      <OwnPanel
+        header={title}
+        key="bbox_range"
+        removeFacet={isBBoxSelected ? () => this.dropBBoxSelection() : null}
+      >
+        <BBoxSelector />
+      </OwnPanel>
+    );
+  }
 
   dropTimeSelection() {
     const currentLocation = this.props.location.pathname;
@@ -205,13 +260,6 @@ class Databrowser extends React.Component {
     } else {
       this.props.router.push(currentLocation);
     }
-  }
-
-  createIntakeLink() {
-    return (
-      "/api/freva-nextgen/databrowser/intake-catalogue/" +
-      prepareSearchParams(this.props.location, "translate=false")
-    );
   }
 
   renderTimeSelectionPanel() {
@@ -241,10 +289,17 @@ class Databrowser extends React.Component {
   renderFacetBadges() {
     const { dateSelector, minDate, maxDate } = this.props.databrowser;
     const isDateSelected = !!minDate;
+    const isBBoxSelected = !!(
+      this.props.databrowser.minLon ||
+      this.props.databrowser.maxLon ||
+      this.props.databrowser.minLat ||
+      this.props.databrowser.maxLat
+    );
     let values = [];
     if (
       Object.keys(this.props.databrowser.selectedFacets).length > 0 ||
-      isDateSelected
+      isDateSelected ||
+      isBBoxSelected
     ) {
       values.push(
         <Button
@@ -260,6 +315,27 @@ class Databrowser extends React.Component {
           <FaTimes className="ms-2 fs-6" />
         </Button>
       );
+    }
+    if (
+      this.props.databrowser.minLon ||
+      this.props.databrowser.maxLon ||
+      this.props.databrowser.minLat ||
+      this.props.databrowser.maxLat
+    ) {
+      const bboxBadge = (
+        <Button
+          variant="secondary"
+          className="me-2 mb-2 badge d-flex align-items-center"
+          onClick={() => this.dropBBoxSelection()}
+          key={"bbox-selection"}
+        >
+          BBox ({this.props.databrowser.bboxSelector}):{" "}
+          {this.props.databrowser.minLon},{this.props.databrowser.maxLon} by{" "}
+          {this.props.databrowser.minLat},{this.props.databrowser.maxLat}
+          <FaTimes className="ms-2 fs-6" />
+        </Button>
+      );
+      values.push(bboxBadge);
     }
     values = [
       ...values,
@@ -323,6 +399,7 @@ class Databrowser extends React.Component {
     const additionalFacetPanels = this.renderAdditionalFacets();
     const isFacetCentered = this.state.viewPort === ViewTypes.FACET_CENTERED;
     const flavour = this.props.location.query.flavour;
+
     return (
       <Container>
         <Row>
@@ -346,39 +423,17 @@ class Databrowser extends React.Component {
                   return <option key={x}>{x}</option>;
                 })}
               </Form.Select>
-              {this.props.databrowser.numFiles > INTAKE_MAXIMUM ? (
-                <OverlayTrigger
-                  overlay={
-                    <Tooltip>
-                      Please narrow down your search to a maximum of 100,000
-                      results in order to enable Intake exports
-                    </Tooltip>
-                  }
-                >
-                  <span>
-                    <Button
-                      className="me-1"
-                      variant="outline-secondary"
-                      disabled
-                    >
-                      <span className="text-nowrap d-flex align-items-center">
-                        <FaFileExport className="fs-5 me-2" /> Intake catalogue
-                      </span>
-                    </Button>
-                  </span>
-                </OverlayTrigger>
-              ) : (
-                <a
-                  className="btn btn-outline-secondary export-intake me-1 text-decoration-none text-secondary"
-                  href={this.createIntakeLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <span className="text-nowrap d-flex align-items-center">
-                    <FaFileExport className="fs-5 me-2" /> Intake catalogue
-                  </span>
-                </a>
-              )}
+
+              <CatalogExportDropdown
+                disabled={
+                  this.props.databrowser.numFiles > STREAM_CATALOGUE_MAXIMUM
+                }
+                createCatalogLink={this.createCatalogLink}
+                numFiles={this.props.databrowser.numFiles}
+                maxFiles={STREAM_CATALOGUE_MAXIMUM}
+                className="me-1"
+              />
+
               <OverlayTrigger
                 overlay={<Tooltip>Change view with facets in focus</Tooltip>}
               >
@@ -429,6 +484,7 @@ class Databrowser extends React.Component {
 
             {facetPanels}
             {this.renderTimeSelectionPanel()}
+            {this.renderBBoxPanel()}
             <Button
               className="w-100 mb-3 shadow-sm p-3"
               variant="secondary"
@@ -485,6 +541,11 @@ Databrowser.propTypes = {
     dateSelector: PropTypes.string,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
+    minLon: PropTypes.string,
+    maxLon: PropTypes.string,
+    minLat: PropTypes.string,
+    maxLat: PropTypes.string,
+    bboxSelector: PropTypes.string,
   }),
   location: PropTypes.object.isRequired,
   router: PropTypes.object.isRequired,

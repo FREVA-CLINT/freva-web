@@ -1,0 +1,28 @@
+## Cluster Settings
+cluster.name: stac-cluster
+node.name: os01
+network.host: 0.0.0.0
+transport.host: 0.0.0.0
+discovery.type: single-node
+http.port: 9202
+http.cors.enabled: true
+http.cors.allow-headers: X-Requested-With,Content-Type,Content-Length,Accept,Authorization
+
+path:
+  repo:
+    - /usr/share/opensearch/snapshots
+    
+action.auto_create_index: true
+cluster.blocks.create_index: false
+
+cluster.routing.allocation.disk.watermark.low: 95%
+cluster.routing.allocation.disk.watermark.high: 97%
+cluster.routing.allocation.disk.watermark.flood_stage: 98%
+
+# Security
+plugins.security.disabled: true
+plugins.security.ssl.http.enabled: true
+
+
+
+node.max_local_storage_nodes: 3

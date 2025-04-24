@@ -87,10 +87,13 @@ def search_similar_results(request, plugin_name=None, history_id=None):
                     if key in plugin_fields:
                         data[key] = val
 
-            o = pm.dict2conf(plugin_name, data, user=user)
+            try:
+                o = pm.dict2conf(plugin_name, data, user=user)
+            except Exception:
+                return HttpResponse("[]")
             hist_objects = History.find_similar_entries(
-                o, uid=request.user.username, max_entries=5
-            )
+                    o, uid=request.user.username, max_entries=5
+                )
 
     res = list()
     for obj in hist_objects:

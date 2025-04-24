@@ -51,9 +51,13 @@ class PluginFileFieldWidget(Input):
 class PluginSelectFieldWidget(Input):
     def __init__(self, *args, **kwargs):
         self.options = kwargs.pop("options")
+        self.allow_user_input = kwargs.pop("allow_user_input", False)
+        self.multiple = kwargs.pop("multiple", False)
         import operator
 
-        self.sorted_options = sorted(self.options.items(), key=operator.itemgetter(1))
+        self.sorted_options = sorted(
+            self.options.items(), key=operator.itemgetter(1)
+        )
         super(PluginSelectFieldWidget, self).__init__(*args, **kwargs)
 
     def render(self, name, value, attrs=None, renderer=None):
@@ -61,9 +65,13 @@ class PluginSelectFieldWidget(Input):
             "plugins/selectfield.html",
             {
                 "name": name,
-                "value": value,
+                #"value": value,
+                "value": ",".join(value) if isinstance(value, list) else value,
                 "attrs": attrs,
                 "options": self.sorted_options,
+                "option_keys": list(map(str, self.options.keys())),
+                "multiple": self.multiple,
+                "allow_user_input": self.allow_user_input,
             },
         )
 
@@ -129,7 +137,12 @@ class PasswordField(forms.CharField):
 
 
 class PluginForm(forms.Form):
-    caption_standard_names = ["caption", "result_caption", "web_caption", "my_caption"]
+    caption_standard_names = [
+        "caption",
+        "result_caption",
+        "web_caption",
+        "my_caption",
+    ]
 
     def get_caption_field(self, tool):
         # the caption field should not have a fixed name
@@ -140,7 +153,9 @@ class PluginForm(forms.Form):
         while criticalcaption:
             # go through the list of standard names
             if captionindex < len(self.caption_standard_names):
-                self.caption_field_name = self.caption_standard_names[captionindex]
+                self.caption_field_name = self.caption_standard_names[
+                    captionindex
+                ]
                 captionindex += 1
             else:
                 self.caption_field_name = "_" + self.caption_field_name
@@ -188,7 +203,11 @@ class PluginForm(forms.Form):
                 self.fields[key] = forms.CharField(
                     required=required,
                     help_text=help_str,
-                    widget=PluginSelectFieldWidget(options=param.options),
+                    widget=PluginSelectFieldWidget(
+                        options=param.options,
+                        multiple=getattr(param, "multiple", False),
+                        allow_user_input=getattr(param, "allow_user_input", False),
+                    ),
                 )
             elif isinstance(param, parameters.SolrField):
                 self.fields[key] = forms.CharField(
@@ -214,7 +233,9 @@ class PluginForm(forms.Form):
                 self.fields[key] = forms.CharField(
                     required=required,
                     help_text=help_str,
-                    widget=PluginFileFieldWidget(file_extension=param.file_extension),
+                    widget=PluginFileFieldWidget(
+                        file_extension=param.file_extension
+                    ),
                 )
             else:
                 self.fields[key] = forms.CharField(
@@ -237,6 +258,8 @@ class PluginForm(forms.Form):
         self.fields["unique_output_id"] = forms.BooleanField(
             required=False,
             help_text="If true append the freva run id to every output folder",
-            widget=forms.RadioSelect(choices=(("False", "False"), ("True", "True"))),
+            widget=forms.RadioSelect(
+                choices=(("False", "False"), ("True", "True"))
+            ),
             initial=True,
         )
