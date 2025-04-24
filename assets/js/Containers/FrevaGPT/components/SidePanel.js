@@ -1,63 +1,32 @@
-import React from "react";
-import { Card, OverlayTrigger, Tooltip } from "react-bootstrap";
+import React, { useEffect, useState } from "react";
 
-import { browserHistory } from "react-router";
-
-import { botRequests } from "../exampleRequests";
+import SidePanelCard from "./SidePanelCard";
 
 function SidePanel() {
-  function changeToThread(thread) {
-    browserHistory.push({
-      pathname: "/chatbot/",
-      search: `?thread_id=${thread}`,
-    });
-  }
+  const [threadData, setThreadData] = useState([]);
+
+  useEffect(() => {
+    const threadHistory = [
+      {
+        _id: "67dc32a9474c83a16dfee835",
+        user_id: "janedoe",
+        thread_id: "oCAMrUr8q3jJqlKjFIdEFwUOaPPVE4nf",
+        date: "2025-03-20T15:22:17.578873+00:00",
+        topic:
+          "This is a test regarding your capabilities of using the code_interpreter",
+        content: [],
+      },
+    ];
+
+    setThreadData(threadHistory);
+  }, []);
 
   return (
     <>
-      <Card className="mb-3 shadow-sm">
-        <Card.Header className="outline-secondary border-0 p-3 rounded-top text-start card-header shadow-sm">
-          General requests
-        </Card.Header>
-        <Card.Body className="p-3 py-2">
-          {botRequests.general.map((element) => {
-            return (
-              <div key={element.thread} className="mb-2 text-truncate color">
-                <OverlayTrigger
-                  key={`${element.title}-tooltip`}
-                  overlay={<Tooltip>{element.title}</Tooltip>}
-                >
-                  <a href="" onClick={() => changeToThread(element.thread)}>
-                    {element.title}
-                  </a>
-                </OverlayTrigger>
-              </div>
-            );
-          })}
-        </Card.Body>
-      </Card>
-
-      <Card className="mb-3 shadow-sm">
-        <Card.Header className="outline-secondary border-0 p-3 rounded-top text-start card-header shadow-sm">
-          Freva requests
-        </Card.Header>
-        <Card.Body className="p-3 py-2">
-          {botRequests.freva.map((element) => {
-            return (
-              <div key={element.thread} className="mb-2 text-truncate color">
-                <OverlayTrigger
-                  key={`${element.title}-tooltip`}
-                  overlay={<Tooltip>{element.title}</Tooltip>}
-                >
-                  <a href="" onClick={() => changeToThread(element.thread)}>
-                    {element.title}
-                  </a>
-                </OverlayTrigger>
-              </div>
-            );
-          })}
-        </Card.Body>
-      </Card>
+      <SidePanelCard title="Today" data={threadData} />
+      <SidePanelCard title="Last 7 days" data={[]} />
+      <SidePanelCard title="Last 30 days" data={[]} />
+      <SidePanelCard title="Earlier" data={[]} />
     </>
   );
 }

@@ -37,13 +37,9 @@ import {
 
 import { setThread, setConversation, addElement } from "./actions";
 
-import { botSuggestions } from "./exampleRequests";
+import { BOT_SUGGESTIONS } from "./constants";
 
 class FrevaGPT extends React.Component {
-  // const abortController = useRef();
-  // abortController.current = new AbortController();
-  // const signal = abortController.signal;
-
   constructor(props) {
     super(props);
     this.handleUserInput = this.handleUserInput.bind(this);
@@ -69,6 +65,7 @@ class FrevaGPT extends React.Component {
       dynamicVariant: "",
       atBottom: false,
       atTop: true,
+      reader: undefined,
     };
 
     this.lastVariant = React.createRef("User");
@@ -124,14 +121,29 @@ class FrevaGPT extends React.Component {
   }
 
   createNewChat() {
-    this.props.dispatch(setConversation([]));
-    this.props.dispatch(setThread(""));
-    browserHistory.push({
-      pathname: "/chatbot/",
-      search: "",
-    });
-    this.setState({ showSuggestions: true, atBottom: false, atTop: true });
-    window.scrollTo(0, 0);
+    this.handleStop(false)
+      .then(() => {
+        this.props.dispatch(setConversation([]));
+        this.props.dispatch(setThread(""));
+        browserHistory.push({
+          pathname: "/chatbot/",
+          search: "",
+        });
+        this.setState({
+          showSuggestions: true,
+          atBottom: false,
+          atTop: true,
+          dynamicAnswer: "",
+          dynamicVariant: "",
+          reader: undefined,
+        });
+        window.scrollTo(0, 0);
+        return;
+      })
+      .catch((err) => {
+        // eslint-disable-next-line no-console
+        console.error(err);
+      });
   }
 
   handleUserInput(e) {
@@ -188,6 +200,7 @@ class FrevaGPT extends React.Component {
 
     if (response.ok) {
       const reader = response.body.getReader();
+      this.setState({ reader });
       const decoder = new TextDecoder("utf-8");
 
       let buffer = "";
@@ -315,21 +328,22 @@ class FrevaGPT extends React.Component {
     this.props.dispatch(setConversation(variantArray));
   }
 
-  async handleStop() {
+  async handleStop(dispatchStopMessage = true) {
     // stop of thread only possible if a thread id is given
-
+    if (this.state.reader) {
+      await this.state.reader.cancel();
+    }
     const queryObject = { thread_id: this.props.frevaGPT.thread };
     if (this.props.frevaGPT.thread) {
       await fetch(`/api/chatbot/stop?` + queryString.stringify(queryObject));
     }
 
-    // abort fetch request anyway (especially if no thread is given)
-    // if (abortController.current) abortController.current.abort();
-
-    this.setState({ loading: false });
-    this.props.dispatch(
-      addElement({ variant: "UserStop", content: "Request stopped manually" })
-    );
+    this.setState({ loading: false, reader: undefined });
+    if (dispatchStopMessage) {
+      this.props.dispatch(
+        addElement({ variant: "UserStop", content: "Request stopped manually" })
+      );
+    }
   }
 
   toggleBotSelect() {
@@ -372,7 +386,7 @@ class FrevaGPT extends React.Component {
       <>
         {this.state.showSuggestions ? (
           <>
-            {botSuggestions.map((element) => {
+            {BOT_SUGGESTIONS.map((element) => {
               return (
                 <div key={`${element}-div`} className="col-md-3 mb-2">
                   <OverlayTrigger
