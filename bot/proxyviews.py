@@ -5,6 +5,8 @@ from django.conf import settings
 from django.http import HttpResponseForbidden, StreamingHttpResponse
 from django.views import View
 
+from django_evaluation.auth import OIDCPasswordBackend
+
 
 class ChatBotProxy(View):
     def get(self, request, *args, **kwargs):
@@ -14,14 +16,13 @@ class ChatBotProxy(View):
             )
         path = request.path
         base_url = urljoin(settings.CHAT_BOT_URL, path)
-        params = request.GET.dict()
-
-        # adding bot auth key and freva conf
-        params["auth_key"] = settings.CHAT_BOT_AUTH_KEY
-        params["freva_config"] = settings.CHAT_BOT_FREVA_CONFIG
+        
+        pwbe = OIDCPasswordBackend()
+        token = pwbe.get_token(request.user.username, password)
+        headers = {f"Authorization: Bearer {token}"}
 
         try:
-            upstream_response = requests.get(base_url[:-1], params=params, stream=True)
+            upstream_response = requests.get(base_url[:-1], headers=headers, stream=True)
             upstream_response.raise_for_status()
         except requests.RequestException as e:
             return StreamingHttpResponse(

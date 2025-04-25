@@ -73,6 +73,25 @@ class OIDCPasswordBackend(BaseBackend):
                 return user
         return None
 
+    def get_token(self, username=Optional[str], password=Optional[str]) -> Optional[Any]:
+        api_url = os.getenv("FREVA_REST_URL", "http://localhost:7777")
+        token_url = f"{api_url.rstrip('/')}/api/freva-nextgen/auth/v2/token"
+        headers = {"Content-Type": "application/x-www-form-urlencoded"}
+
+        data = {
+            "grant_type": "password",
+            "username": username,
+            "password": password,
+        }
+
+        response = requests.post(token_url, headers=headers, data=data, timeout=3)
+
+        if response.status_code == 200:
+            token = response.json().get("access_token", "")
+            return token
+        else:
+            return None
+
     def get_user(self, user_id: int) -> Optional[Any]:
         """
         Retrieve a user instance by its ID.
