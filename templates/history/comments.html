@@ -1,6 +1,6 @@
 {% load resulttags %}
 
-{% if not request.user.isGuest %}
+{% if request.session.user_home_dir == "" %}
     {% comment_field request.user history_id None %}
 {% endif %}
 

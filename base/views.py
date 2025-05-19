@@ -1,3 +1,4 @@
+# base/views.py
 import logging
 
 import django.contrib.auth as auth
@@ -6,62 +7,22 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.utils.http import url_has_allowed_host_and_scheme
-from django.views.decorators.debug import sensitive_post_parameters, sensitive_variables
 from evaluation_system.misc import config
 
 from base.models import UIMessages
 from django_evaluation.monitor import _restart
 
 
-@sensitive_variables("passwd")
-@sensitive_post_parameters("password")
 def home(request):
     """Default view for the root"""
-    login_failed = False
-    guest_login = None
-    next_page = request.GET.get("next", None)
-    forward = request.POST.get("next", None)
     messages = UIMessages.objects.order_by("-id").filter(resolved=False)
-    if not request.user.is_authenticated:
-        try:
-            username = request.POST.get("user", "")
-            passwd = request.POST.get("password", "")
-            if username:
-                user_object = auth.authenticate(
-                    username=username, password=passwd
-                )
-                if user_object:
-                    auth.login(request, user_object)
-                    guest_login = user_object.isGuest()
-                    if forward and url_has_allowed_host_and_scheme(
-                        forward, allowed_hosts=request.get_host()
-                    ):
-                        return HttpResponseRedirect(forward)
-                    else:
-                        return HttpResponseRedirect("/")
-
-                else:
-                    raise Exception("Login failed")
-
-        except Exception as e:
-            # do not forget the forward after failed login
-            if forward:
-                next_page = forward
-
-            login_failed = True
-            logging.exception(str(e))
-
-    return render(
-        request,
-        "base/home.html",
-        {
-            "login_failed": login_failed,
-            "guest_login": guest_login,
-            "next": next_page,
-            "messages": messages,
-        },
-    )
+    
+    context = {
+        "messages": messages,
+        "next": request.GET.get("next", None),
+    }
+    
+    return render(request, "base/home.html", context)
 
 
 def dynamic_css(request):
@@ -140,11 +101,30 @@ def contact(request):
 
 def logout(request):
     """
-    Logout view.
+    logout that clears both Django and Keycloak sessions
     """
+    id_token = request.session.get('oidc_id_token', '')
+
     auth.logout(request)
+    
+    if id_token:
+        keycloak_base_url = settings.OIDC_URL + '/protocol/openid-connect/logout'
+        # TODO: I wish I had a better way to get the redirect_uri
+        scheme = request.scheme
+        host = request.get_host()
+        redirect_uri = f"{scheme}://{host}"
+        logout_url = f"{keycloak_base_url}?post_logout_redirect_uri={redirect_uri}&id_token_hint={id_token}"
+        return HttpResponseRedirect(logout_url)
+    
     return HttpResponseRedirect("/")
 
+def edit_account(request):
+    """
+    Edit account information
+    """
+    return HttpResponseRedirect(
+        settings.OIDC_URL + "/account"
+    )
 
 @login_required()
 @user_passes_test(lambda u: u.is_superuser)

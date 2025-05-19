@@ -213,8 +213,8 @@ class PluginList extends React.Component {
             <h2>Plugins</h2>
           </Col>
           <Col md={6} className="pt-2">
-            {!currentUser.isGuest &&
-            (currentUser.home || currentUser.scratch) ? (
+            {/* do we need to give plug-my-Plugin access to guest?? i don't think so!*/}
+            {currentUser.home ? (
               <Button
                 variant="info"
                 className="float-end"
@@ -405,7 +405,6 @@ PluginList.propTypes = {
     id: PropTypes.number,
     username: PropTypes.string,
     email: PropTypes.string,
-    isGuest: PropTypes.bool,
     home: PropTypes.string,
     scratch: PropTypes.string,
   }),

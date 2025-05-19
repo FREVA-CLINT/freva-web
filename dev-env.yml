@@ -43,6 +43,8 @@ dependencies:
     - types-requests
     - types-toml
     - hurry.filesize
+    - gevent>=1.4
+    - mozilla-django-oidc
   - pygtail
   - pylint
   - pyjwt

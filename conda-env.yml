@@ -27,3 +27,5 @@ dependencies:
       - django-bootstrap-v5
       - django-model-utils
       - djproxy
+      - gevent>=1.4
+      - mozilla-django-oidc

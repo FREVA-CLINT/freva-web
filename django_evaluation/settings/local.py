@@ -9,6 +9,7 @@ FREVA_WEB_CONFIG_FILE : str
 DEV_MODE : 0|1
 PROJECT_ROOT : str
 FREVA_REST_URL : str
+OIDC_URL : str
 SCHEDULER_HOST : str
 REDIS_HOST : str
 REDIS_PORT : str
@@ -198,15 +199,15 @@ DATABASES = {
         "ENGINE": "django.db.backends.mysql",
         "NAME": db_name,
         "USER": db_user,
-        "PASSWORD": db_password,  #'miklip',
-        "HOST": db_host,  #'wwwdev-miklip',
+        "PASSWORD": db_password,  # 'miklip',
+        "HOST": db_host,  # 'wwwdev-miklip',
         "PORT": db_port,
         "OPTIONS": {"charset": "utf8mb4"},
     },
 }
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "django_evaluation.auth.OIDCPasswordBackend",
+    "django_evaluation.auth.CustomOIDCBackend",
 )
 ### Caching stuff
 REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
@@ -241,6 +242,7 @@ CACHES = {
 }
 
 DATA_BROWSER_HOST = os.environ.get("FREVA_REST_URL", "http://localhost:7777")
+OIDC_URL = os.environ.get("OIDC_URL", "http://localhost:8080//realms/freva/")
 
 SERVER_EMAIL = os.environ.get("SERVER_EMAIL", "freva@dkrz.de")
 DEFAULT_FROM_EMAIL = SERVER_EMAIL
@@ -326,6 +328,24 @@ for title, url, html_id in web_config.get("menu_entries", []) or _MENU_ENTRIES:
             {"name": title, "url": reverse_lazy(url), "html_id": html_id}
         )
 
+OIDC_RP_CLIENT_ID = os.environ.get("OIDC_RP_CLIENT_ID", "freva")
+OIDC_RP_CLIENT_SECRET = ""
+OIDC_OP_AUTHORIZATION_ENDPOINT = OIDC_URL + "/protocol/openid-connect/auth"
+OIDC_OP_TOKEN_ENDPOINT = OIDC_URL + "/protocol/openid-connect/token"
+OIDC_OP_USER_ENDPOINT = OIDC_URL + "/protocol/openid-connect/userinfo"
+OIDC_OP_JWKS_ENDPOINT = OIDC_URL + "/protocol/openid-connect/certs"
+OIDC_RP_SIGN_ALGO = "RS256"
+OIDC_CREATE_USER = True
+OIDC_STORE_ID_TOKEN = True  # important for the logout callback
+OIDC_STORE_ACCESS_TOKEN = True  # important for the logout callback
+
+# we need this for the followinfs next redirect
+LOGIN_URL = reverse_lazy('oidc_authentication_init')
+OIDC_RENDER_NEXT = True
+
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+OIDC_VERIFY_SSL = os.environ.get("OIDC_VERIFY_SSL", False)  # Set to True in production
 if ACTIVATE_CHAT_BOT:
     MENU_ENTRIES.append(
         {

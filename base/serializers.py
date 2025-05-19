@@ -15,18 +15,13 @@ class UserSerializer(serializers.ModelSerializer):
             "username",
             "email",
             "first_name",
-            "isGuest",
             "home",
             "scratch",
         )
 
     def get_home(self, instance):
-        if instance.username.lower() == "guest" or not HOME_DIRS_AVAILABLE:
-            return None
         _user = self.context.get("user")
-        if _user:
-            return _user.getUserHome()
-        return None
+        return _user.getUserHome()
 
     def get_scratch(self, instance):
         _user = self.context.get("user")

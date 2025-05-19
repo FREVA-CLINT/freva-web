@@ -19,6 +19,10 @@ const databrowserInitialState = {
   fileLoading: false,
   flavours: ["freva"],
   selectedFlavour: constants.DEFAULT_FLAVOUR,
+  // zarr_stream is a special case for the Zarr streaming toggle
+  facetMapping: {
+    zarr_stream: "zarr_stream",
+  },
 };
 
 export const databrowserReducer = (state = databrowserInitialState, action) => {
@@ -91,7 +95,10 @@ export const databrowserReducer = (state = databrowserInitialState, action) => {
         ...state,
         facets: action.payload.facets,
         primaryFacets: action.payload.primary_facets,
-        facetMapping: action.payload.facet_mapping,
+        facetMapping: {
+          ...action.payload.facet_mapping,
+          zarr_stream: "zarr_stream",
+        },
         files: action.payload.search_results.map((x) => x.file),
         numFiles: action.payload.total_count,
         fileLoading: false,

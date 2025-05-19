@@ -13,7 +13,7 @@ class AuthenticatedUser(APIView):
     def get(self, request):
         if request.user.is_authenticated:
             try:
-                user = OpenIdUser(request.user.username)
+                user = OpenIdUser(request.user.username, request.session.get("user_home_dir", ""))
             except UserNotFoundError:
                 user = None
             return Response(

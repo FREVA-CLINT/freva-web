@@ -63,7 +63,7 @@ def search_similar_results(request, plugin_name=None, history_id=None):
 
     data = {}
 
-    if request.user.isGuest():
+    if request.session.get("user_home_dir", "") == "":
         hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name)
     else:
         try:
@@ -108,8 +108,8 @@ def search_similar_results(request, plugin_name=None, history_id=None):
 def setup(request, plugin_name, row_id=None):
     pm.reload_plugins(request.user.username)
 
-    user_can_submit = request.user.username.lower() != "guest"
-
+    # user_can_submit = request.user.username.lower() != "guest"
+    user_can_submit = request.session.get("user_home_dir") != ""
     if user_can_submit:
         try:
             user = OpenIdUser(request.user.username)
@@ -117,7 +117,6 @@ def setup(request, plugin_name, row_id=None):
             user = User()
     else:
         user = User()
-
     plugin = get_plugin_or_404(plugin_name, user=user)
 
     error_msg = pm.get_error_warning(plugin_name)[0]

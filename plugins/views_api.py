@@ -40,6 +40,7 @@ class PluginDetail(APIView):
         plugin_dict = pm.get_plugin_metadata(
             plugin_name, user_name=request.user.username
         )
+        print(f"plugin_dict: {plugin.tool_developer}")
         # plugin = PluginWeb(plugin)
         data = PluginSerializer(plugin).data
         data["user_exported"] = plugin_dict.user_exported
@@ -60,7 +61,7 @@ basically useless.
 
 class ExportPlugin(APIView):
     def post(self, request):
-        if request.user.isGuest():
+        if request.session["user_home_dir"] == "":
             return Response("Guests are not allowed to add plugins")
 
         # try to remove plugin from enironment
@@ -86,7 +87,7 @@ class SendMailToDeveloper(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        if request.user.isGuest():
+        if request.session["user_home_dir"] == "":
             return Response(False)
         from templated_email import send_templated_mail
 
@@ -136,7 +137,7 @@ class ShareResultsByMail(APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request):
-        if request.user.isGuest():
+        if request.session["user_home_dir"] == "":
             status = "Normally, the selected recipients would get an email containing a link to this result,"
             status += "but this feature is turned off for guest users."
             return Response(status)

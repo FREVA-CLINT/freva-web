@@ -228,3 +228,19 @@ def mask_safe_uid(text, is_guest):
     from django.utils.safestring import mark_safe
 
     return mark_safe(mask_uid(text, is_guest))
+
+@register.filter(name='is_empty')
+def is_empty(value):
+    """
+    Check if a value is an empty string
+    Usage: {{ value|is_empty }}
+    """
+    return value == ""
+
+@register.filter(name='is_not_empty')
+def is_not_empty(value):
+    """
+    Check if a value is not an empty string
+    Usage: {{ value|is_not_empty }}
+    """
+    return value != ""

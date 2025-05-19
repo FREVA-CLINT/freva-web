@@ -27,5 +27,5 @@ if ! python manage.py shell -c \
 fi
 
 # Start webserver
-exec gunicorn -b [::]:8000 -w 1 django_evaluation.wsgi \
+exec gunicorn -b [::]:8000 --worker-class gevent -w 2 django_evaluation.wsgi \
     --log-level "$LOG_LEVEL" --error-logfile "$LOG_DIR/freva-web.error.log"

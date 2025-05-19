@@ -36,14 +36,9 @@ import TimeRangeSelector from "./TimeRangeSelector";
 import FilesPanel from "./FilesPanel";
 import DataBrowserCommand from "./DataBrowserCommand";
 import FacetDropdown from "./MetaFacet";
-import {
-  ViewTypes,
-  DEFAULT_FLAVOUR,
-  STREAM_CATALOGUE_MAXIMUM,
-} from "./constants";
+import { ViewTypes, DEFAULT_FLAVOUR } from "./constants";
 import { FacetPanel } from "./FacetPanel";
 import { prepareSearchParams } from "./utils";
-import CatalogExportDropdown from "./CatalogExportDropdown";
 import BBoxSelector from "./BBoxSelector";
 
 class Databrowser extends React.Component {
@@ -370,7 +365,6 @@ class Databrowser extends React.Component {
       );
       values.push(timeBadge);
     }
-
     return (
       <div className="d-flex justify-content-between flex-after flex-wrap my-2">
         {values}
@@ -410,29 +404,32 @@ class Databrowser extends React.Component {
               )}
             </h2>
             <div className="d-flex justify-content-between mb-2">
-              <Form.Select
-                aria-label="Default select example"
-                className="me-1"
-                value={flavour}
-                onChange={(x) => {
-                  this.clickFlavour(x.target.value);
-                }}
-              >
-                {this.props.databrowser.flavours.map((x) => {
-                  return <option key={x}>{x}</option>;
-                })}
-              </Form.Select>
-
-              <CatalogExportDropdown
-                disabled={
-                  this.props.databrowser.numFiles > STREAM_CATALOGUE_MAXIMUM
-                }
-                createCatalogLink={this.createCatalogLink}
-                numFiles={this.props.databrowser.numFiles}
-                maxFiles={STREAM_CATALOGUE_MAXIMUM}
-                className="me-1"
-              />
-
+              <div className="position-relative me-2">
+                <Form.Select
+                  aria-label="Flavour selection"
+                  className="me-1"
+                  value={flavour}
+                  onChange={(x) => {
+                    this.clickFlavour(x.target.value);
+                  }}
+                >
+                  {this.props.databrowser.flavours.map((x) => {
+                    return <option key={x}>{x}</option>;
+                  })}
+                </Form.Select>
+                <small
+                  className="position-absolute text-muted"
+                  style={{
+                    top: "-7px",
+                    left: "2px",
+                    backgroundColor: "white",
+                    padding: "0 4px",
+                    fontSize: "0.7rem",
+                  }}
+                >
+                  flavour
+                </small>
+              </div>
               <OverlayTrigger
                 overlay={<Tooltip>Change view with facets in focus</Tooltip>}
               >

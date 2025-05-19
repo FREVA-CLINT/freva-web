@@ -14,18 +14,17 @@ from base.exceptions import UserNotFoundError
 class OpenIdUser(User):
     """Get user information from JSON Web Token."""
 
-    def __init__(self, username: str):
+    def __init__(self, username: str, home_directory: str = "NA"):
         try:
             _user_model = get_user_model()
             _user = _user_model.objects.get(username=username)
         except ObjectDoesNotExist as error:
             raise UserNotFoundError() from error
         self._dir_type = config.get(config.DIRECTORY_STRUCTURE_TYPE)
-
         self._username = username
         self._uid = "web"
         self._email = _user.email
-        self._home_directory = "NA"
+        self._home_directory = home_directory
         self._userconfig = Config(interpolation=ExtendedInterpolation())
         self._userconfig.read(
             [
@@ -48,7 +47,7 @@ class OpenIdUser(User):
         return self._uid
 
     def getUserHome(self):
-        return self._home_directory
+        return None if self._home_directory == "" else self._home_directory
 
     def getEmail(self):
         return self._email
