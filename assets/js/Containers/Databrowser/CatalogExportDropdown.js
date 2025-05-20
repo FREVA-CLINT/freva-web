@@ -4,10 +4,7 @@ import { OverlayTrigger, Tooltip, Dropdown } from "react-bootstrap";
 import { FaFileExport } from "react-icons/fa";
 
 import IntakeIcon from "../../Icons/IntakeIcon";
-import STACSTATICIcon from "../../Icons/STACSTATICIcon";
-import STACDYNAMICIcon from "../../Icons/STACDYNAMICIcon";
-
-import { ENABLE_STAC_API, STAC_API_MAXIMUM } from "./constants";
+import STACIcon from "../../Icons/STACIcon";
 
 const CustomToggle = React.forwardRef(
   ({ children, onClick, disabled, className }, ref) => (
@@ -56,7 +53,6 @@ const CatalogExportDropdown = ({
   className,
 }) => {
   const isDisabled = disabled || numFiles > maxFiles;
-  const isDynamicDisabled = numFiles > STAC_API_MAXIMUM;
 
   return (
     <Dropdown className={className}>
@@ -91,53 +87,15 @@ const CatalogExportDropdown = ({
             </DropdownItemContent>
           </Dropdown.Item>
 
-          <Dropdown.Divider />
-          <Dropdown.Header className="fw-bold">STAC Catalog</Dropdown.Header>
-
           <Dropdown.Item
             href={createCatalogLink("stac")}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <DropdownItemContent icon={STACSTATICIcon}>
-              Static STAC
+            <DropdownItemContent icon={STACIcon}>
+              STAC Catalog
             </DropdownItemContent>
           </Dropdown.Item>
-
-          {ENABLE_STAC_API && (
-            <OverlayTrigger
-              overlay={
-                isDynamicDisabled ? (
-                  <Tooltip>
-                    Please narrow down your search to a maximum of{" "}
-                    {STAC_API_MAXIMUM} results to enable Dynamic STAC
-                  </Tooltip>
-                ) : (
-                  <></>
-                )
-              }
-            >
-              <span className="d-block">
-                <Dropdown.Item
-                  href={
-                    !isDynamicDisabled ? createCatalogLink("stac", true) : "#"
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  disabled={isDynamicDisabled}
-                  style={
-                    isDynamicDisabled
-                      ? { pointerEvents: "none", opacity: 0.65 }
-                      : {}
-                  }
-                >
-                  <DropdownItemContent icon={STACDYNAMICIcon}>
-                    Dynamic STAC
-                  </DropdownItemContent>
-                </Dropdown.Item>
-              </span>
-            </OverlayTrigger>
-          )}
         </Dropdown.Menu>
       )}
     </Dropdown>

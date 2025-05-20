@@ -63,7 +63,7 @@ function DataBrowserCommandImpl(props) {
         : "") +
       (props.minDate ? `time=${props.minDate}to${props.maxDate} ` : "") +
       (props.minLon
-        ? `bbox=${props.minLon},${props.maxLon}by${props.minLat},${props.maxLat} `
+        ? `bbox=${props.minLon},${props.maxLon},${props.minLat},${props.maxLat} `
         : "") +
       Object.keys(selectedFacets)
         .map((key) => {
@@ -102,7 +102,7 @@ function DataBrowserCommandImpl(props) {
           <React.Fragment>
             &nbsp;bbox=
             <span className="fw-bold">
-              {`${props.minLon},${props.maxLon}by${props.minLat},${props.maxLat}`}
+              {`${props.minLon},${props.maxLon},${props.minLat},${props.maxLat}`}
             </span>
           </React.Fragment>
         )}
@@ -155,7 +155,7 @@ function DataBrowserCommandImpl(props) {
 
     if (props.minLon) {
       args.push(
-        `bbox="${props.minLon},${props.maxLon} by ${props.minLat},${props.maxLat}"`
+        `bbox="${props.minLon} ${props.maxLon} ${props.minLat} ${props.maxLat}"`
       );
       if (bboxSelectorToCli) {
         args.push(`bbox_select="${bboxSelectorToCli}"`);

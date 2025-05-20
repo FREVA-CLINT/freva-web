@@ -1,6 +1,6 @@
 import React from "react";
 
-const STACSTATICIcon = () => (
+const STACIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 500 500"
@@ -908,4 +908,4 @@ const STACSTATICIcon = () => (
   </svg>
 );
 
-export default STACSTATICIcon;
+export default STACIcon;

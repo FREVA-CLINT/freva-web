@@ -27,7 +27,7 @@ installed on you computer. Once anaconda is set up the installation of all
 required packages is quite simple:
 
 ```console
-conda env create -f conda-env.yml
+conda env create -f dev-env.yml
 source .envrc
 ```
 

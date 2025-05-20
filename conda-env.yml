@@ -3,10 +3,6 @@ channels:
   - conda-forge
 dependencies:
   - bleach
-  - conda
-  - configparser
-  - coverage
-  - distributed
   - django-debug-toolbar
   - django-ipware
   - django-nose
@@ -16,45 +12,18 @@ dependencies:
   - freva
   - git
   - gunicorn
-  - markdown
-  - mock
-  - mypy
   - mysql-client <9
   - mysqlclient
-  - nbval
-  - nodejs
-  - nose
-  - pandoc
   - paramiko
-  - pep8
   - pip
-  - mod_wsgi
-  - pip:
-    - black
-    - isort
-    - requests_mock
-    - django-auth-ldap
-    - django-datatable-view
-    - django-templated-email
-    - django_compressor
-    - django-debug-toolbar-user-panel
-    - django-discover-runner
-    - django-bootstrap-v5
-    - django-model-utils
-    - djproxy
-    - pep257
-    - types-requests
-    - types-toml
-    - hurry.filesize
   - pygtail
-  - pylint
-  - pyjwt
-  - pytest
-  - pytest-cov
-  - pytest-env
-  - pytest-html
-  - python-ldap
   - redis-py
-  - requests-mock
-  - sphinx
-  - testpath
+  - toml
+  - pip:
+      - django-datatable-view
+      - django-templated-email
+      - django-debug-toolbar-user-panel
+      - django_compressor
+      - django-bootstrap-v5
+      - django-model-utils
+      - djproxy

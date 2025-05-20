@@ -1,6 +1,6 @@
 {
   "name": "evaluation_system_web",
-  "version": "2502.0.0",
+  "version": "2505.0.0",
   "description": "React-bits of the freva-web interface. The react-parts of the web interface include the plugin-selection, the data-browser and the result-browser",
   "main": "index.js",
   "engines": {

@@ -35,7 +35,7 @@ export function prepareSearchParams(location, additionalParams = "") {
 
     const isBBoxSelected = !!(minLon && maxLon && minLat && maxLat);
     if (isBBoxSelected) {
-      params += `&bbox_select=${bboxSelector}&bbox=${minLon},${maxLon}by${minLat},${maxLat}`;
+      params += `&bbox_select=${bboxSelector}&bbox=${minLon},${maxLon},${minLat},${maxLat}`;
     }
   }
 

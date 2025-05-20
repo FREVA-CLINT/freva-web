@@ -11,12 +11,13 @@ node_modules
 venv/*
 conda/*
 evaluation_system.conf
-
+dist/
 .*
-!.ci
-!.gitignore
-!.github
-!.envrc
+!.project
+!.eslintrc
+!.babelrc
+!.npmrc
+!.prettierrc
 
 static/preview/*
 tail/*
@@ -26,4 +27,3 @@ static/*
 assets/bundles/*
 webpack-stats.json
 base/migrations/*
-stac-browser/

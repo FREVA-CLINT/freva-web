@@ -1,0 +1,51 @@
+# Python artifacts
+*.pyc
+*.db
+*.log
+
+# Dev tools and temp
+bump.py
+virt
+venv/*
+conda/*
+node_modules
+evaluation_system.conf
+activate_web
+python=*/
+*.log
+*.ini
+dev-env.yml
+# Static files
+static/*
+static/preview/*
+static_root/img/favicon.svg
+tail/*
+Makefile
+dummy_plugin
+tests
+docker-compose.yaml
+package-lock.json
+# Docker-specific configs
+freva_web.conf
+docker/
+db
+Dockerfile
+README.md
+LICENSE.md
+CHANGELOG.md
+dist/
+
+# We need pre-build webpack stuff
+!assets/bundles/*
+!webpack-stats.json
+
+# Git and dotfiles (ignore all, then allow a few)
+.*
+!.envrc
+!.eslintrc
+!.project
+!.babelrc
+!.npmrc
+!.prettierrc
+# Django migrations
+base/migrations/*

@@ -98,14 +98,13 @@ class Databrowser extends React.Component {
     }
   }
 
-  createCatalogLink(type, isDynamic = false) {
+  createCatalogLink(type) {
     const baseUrl = `/api/freva-nextgen/databrowser/${type}-catalogue/`;
     const searchParams = prepareSearchParams(
       this.props.location,
       "translate=false"
     );
-    const dynamicParam = isDynamic ? "&stac_dynamic=true" : "";
-    return `${baseUrl}${searchParams}${dynamicParam}`;
+    return `${baseUrl}${searchParams}`;
   }
 
   clickFacet(category, value = null) {
