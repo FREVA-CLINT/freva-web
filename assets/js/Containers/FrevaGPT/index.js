@@ -131,7 +131,7 @@ class FrevaGPT extends React.Component {
         });
         this.setState({
           showSuggestions: true,
-          atBottom: false,
+          atBottom: true,
           atTop: true,
           dynamicAnswer: "",
           dynamicVariant: "",
