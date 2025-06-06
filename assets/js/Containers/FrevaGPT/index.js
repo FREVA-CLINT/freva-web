@@ -324,8 +324,20 @@ class FrevaGPT extends React.Component {
       `/api/chatbot/getthread?` + queryString.stringify(queryObject)
     );
 
-    const variantArray = await response.json();
-    this.props.dispatch(setConversation(variantArray));
+    if (response.status === 200) {
+      const variantArray = await response.json();
+      this.props.dispatch(setConversation(variantArray));
+    } else {
+      this.props.dispatch(setThread(""));
+      this.props.dispatch(
+        setConversation([
+          {
+            variant: "ServerError",
+            content: "There was an issue fetching the conversation",
+          },
+        ])
+      );
+    }
   }
 
   async handleStop(dispatchStopMessage = true) {
