@@ -57,6 +57,8 @@ services:
     volumes:
       - ./docker/config/certs:/certs
       - ./docker/config/keycloak/import:/opt/keycloak/data/import:z
+      - /Users/mo/dev/20250614/freva-auth-template:/opt/keycloak/themes/freva-auth-template:z
+      - /Users/mo/dev/20250614/keycloak-theme/themes:/opt/keycloak/themes/aaa:z
     ports:
       - "8080:8080"
       - "8443:8443"

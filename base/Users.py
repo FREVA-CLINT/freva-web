@@ -12,27 +12,28 @@ from base.exceptions import UserNotFoundError
 
 
 class OpenIdUser(User):
-    """Get user information from JSON Web Token."""
+    """Get user information from session data"""
 
-    def __init__(self, username: str):
+    def __init__(self, username: str, request=None):
         try:
             _user_model = get_user_model()
             _user = _user_model.objects.get(username=username)
         except ObjectDoesNotExist as error:
             raise UserNotFoundError() from error
         self._dir_type = config.get(config.DIRECTORY_STRUCTURE_TYPE)
-
         self._username = username
         self._uid = "web"
-        self._email = _user.email
+        # we use the email from the session if available, 
+        # otherwise from the user model
+        if request and hasattr(request, 'session'):
+            user_info = request.session.get('user_info', {})
+            self._email = user_info.get('email', _user.email)
+        else:
+            self._email = _user.email
+            
         self._home_directory = "NA"
         self._userconfig = Config(interpolation=ExtendedInterpolation())
-        self._userconfig.read(
-            [
-                User.EVAL_SYS_DEFAULT_CONFIG,
-            ]
-        )
-
+        self._userconfig.read([User.EVAL_SYS_DEFAULT_CONFIG])
         self._db = UserDB(self)
 
         row_id = self._db.getUserId(self.getName())

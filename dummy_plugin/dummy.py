@@ -50,8 +50,8 @@ class DummyPlugin(PluginAbstract):
     )
     _runs: list = []
     _template = "${number} - $something - $other"
-    # tool_developer = {"name": "DummyUser", "email": "data@dkrz.de"} this needs to be string or None
-    tool_developer = "DummyUser"
+    tool_developer = {"name": "DummyUser", "email": "data@dkrz.de"} 
+    # tool_developer = "DummyUser"
 
     def run_tool(self, config_dict=None):
         DummyPlugin._runs.append(config_dict)

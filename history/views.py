@@ -93,7 +93,7 @@ class HistoryDatatable(Datatable):
             # this is much faster than the routine config_dict.
             config_dict = json.loads(instance.configuration)
             for key, value in config_dict.items():
-                text = escape(mask_uid(str(value), request.user.isGuest()))
+                text = escape(mask_uid(str(value), request.session.get('user_info', {}).get('is_guest')))
                 config += (
                     '<tr class="blacktable"><td class="blacktable">%s</td><td class="blacktable">%s<td></tr>'
                     % (key, text)
@@ -228,7 +228,7 @@ def change_flag(request):
 
     changed = 0
 
-    if not (flag is None or request.user.isGuest()):
+    if not (flag is None or request.session.get('user_info', {}).get('is_guest')):
         for id in ids:
             changed += 1
 
@@ -271,7 +271,7 @@ def follow_result(request, history_id):
 
     # check if the user has the permission to access the result
     flag = history_object.flag
-    guest = request.user.isGuest()
+    guest = request.session.get('user_info', {}).get('is_guest')
 
     if not guest and flag in [
         History.Flag.free,
@@ -541,7 +541,7 @@ def tail_file(request, id):
 @login_required()
 def set_caption(request, id):
     hist = History.objects.get(id=id)
-    if not request.user.isGuest() and hist.uid == request.user:
+    if not request.session.get('user_info', {}).get('is_guest') and hist.uid == request.user:
         caption = escape(request.POST["caption"].strip())
         hist.caption = caption
         hist.save()
@@ -628,7 +628,7 @@ def edit_htag(request, history_id, tag_id):
 
     retval = ""
 
-    if not request.user.isGuest() and type in allowed_types:
+    if not request.session.get('user_info', {}).get('is_guest') and type in allowed_types:
         user = request.user
         db = UserDB(user)
 

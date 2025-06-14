@@ -63,7 +63,7 @@ def search_similar_results(request, plugin_name=None, history_id=None):
 
     data = {}
 
-    if request.user.isGuest():
+    if request.session.get('user_info', {}).get('is_guest'):
         hist_objects = History.objects.filter(uid=request.user).filter(tool=plugin_name)
     else:
         try:
@@ -107,9 +107,7 @@ def search_similar_results(request, plugin_name=None, history_id=None):
 @login_required()
 def setup(request, plugin_name, row_id=None):
     pm.reload_plugins(request.user.username)
-
-    user_can_submit = request.user.username.lower() != "guest"
-
+    user_can_submit = request.session.get("user_info", {}).get("isGuest")
     if user_can_submit:
         try:
             user = OpenIdUser(request.user.username)

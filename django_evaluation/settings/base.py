@@ -160,6 +160,7 @@ MIDDLEWARE = [
     "django_evaluation.middelwares.ReloadPluginsMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    'django_evaluation.middelwares.OIDCTokenRefreshMiddleware',
 ]
 
 

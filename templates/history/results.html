@@ -54,11 +54,11 @@
         <div class="row">
             {# Render a Bootstrap sendmail dialog #}
             {% if request.user == history_object.uid %}
-                {% sendmail_dialog request.build_absolute_uri request.user.isGuest %}
+                {% sendmail_dialog request.build_absolute_uri request.session|isGuest %}
             {% endif %}
         </div> <!-- row -->
 
-        {% if not request.user.isGuest %}
+        {% if not request.session|isGuest %}
             <div class="row">
                 <div class="col-md-12">
                     {% if is_plugin_available %}
@@ -107,7 +107,7 @@
                             {% for key,value in history_object.config_dict.items %}
                                 <tr>
                                     <td>{{key}}:</td>
-                                    <td>{{value|mask_uid:request.user.isGuest}}</td>
+                                    <td>{{value|mask_uid:request.session|isGuest}}</td>
                                 </tr>
                             {% endfor %}
                             <tr>
@@ -117,10 +117,10 @@
                                 <td>Freva plugin command:</td>
                                 <td>
                                     <div class="d-flex justify-content-between">
-                                        <pre style="white-space: pre-wrap;">{{analyze_command.strip|mask_uid:request.user.isGuest}}</pre>
+                                        <pre style="white-space: pre-wrap;">{{analyze_command.strip|mask_uid:request.session|isGuest}}</pre>
                                         <div>
                                             <button class="btn btn-primary text-nowrap"
-                                                onClick="copyTextToClipboard('{{analyze_command | mask_uid:request.user.isGuest | escapejs}}');"
+                                                onClick="copyTextToClipboard('{{analyze_command | mask_uid:request.session|isGuest | escapejs}}');"
                                                 id="copy_button">
                                                 <i class="fw-bold fa fa-clone me-2"></i> Copy
                                             </button>
@@ -274,7 +274,7 @@
 
                             <div class="col-md-12">
                                 <ul class="jqueryFileTree">
-                                    {{ file_list|preview_tree|mask_safe_uid:request.user.isGuest }}
+                                    {{ file_list|preview_tree|mask_safe_uid:request.session|isGuest }}
                                 </ul>
                             </div>
                         {%endif%}
@@ -320,7 +320,7 @@
             $("#clipboard-toast").toast("show");
           } catch (err) {
             // Fallback for the fallback: Show window prompt to copy-paste the command
-            window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}')
+            window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.session|isGuest | escapejs}}')
           }
 
           document.body.removeChild(textArea);
@@ -335,7 +335,7 @@
             $("#clipboard-toast").toast("show");
           }, function(err) {
             // Fallback: Show window prompt to copy-paste the command
-            window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.user.isGuest | escapejs}}')
+            window.prompt('Copy to clipboard: Ctrl+C, Enter', '{{analyze_command | mask_uid:request.session|isGuest | escapejs}}')
           });
         }
 

@@ -9,6 +9,7 @@
 
     {% load bootstrap5 %}
     {% load static %}
+    {% load settingstags %}
     <style>
         .files {
             max-height: 500px;
@@ -35,6 +36,141 @@
             color: red;
         }
 
+        /* Guest Modal Styles */
+        #guestModal {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        #guestModal .modal-dialog {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0 auto;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #guestModal .modal-content {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            border: none;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        #guestModal .modal-header {
+            background: {% settings_val 'MAIN_COLOR' %};
+            color: white;
+            padding: 16px 20px;
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
+            position: relative;
+        }
+
+        #guestModal .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #guestModal .modal-title::before {
+            content: "👥";
+            font-size: 20px;
+        }
+
+        #guestModal .btn-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            opacity: 1;
+            box-shadow: none;
+            filter: none;
+        }
+
+        #guestModal .btn-close::before {
+            content: "×";
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        #guestModal .btn-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        #guestModal .modal-body {
+            padding: 20px;
+        }
+
+        #guestModal .help-block {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4b5563;
+            margin-bottom: 16px;
+        }
+
+        #guestModal .help-block:first-child {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        #guestModal .modal-footer {
+            padding: 20px;
+            border-top: none;
+            display: flex;
+            justify-content: center;
+        }
+
+        #guestModal .tourbtn {
+            background: {% settings_val 'MAIN_COLOR' %};
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background 0.2s;
+            min-width: 100px;
+        }
+
+        #guestModal .tourbtn:hover {
+            background: {% settings_val 'HOVER_COLOR' %};
+        }
+
+        @media (max-width: 640px) {
+            #guestModal .modal-dialog {
+                margin: 10px;
+            }
+            #guestModal .modal-body {
+                padding: 16px;
+            }
+        }
     </style>
 
     {# Load CSS and JavaScript #}
@@ -149,7 +285,7 @@
                         <div class="form-group">
                             <p class="help-block">Dear Guest,</p>
                             <p class="help-block">you do not have the permissions to start any job.
-                                You will be automatically redirected to the history. There you can view
+                                Press OK to be automatically redirected to the history. There you can view
                                 example results of the tools available.
                             </p>
                         </div>

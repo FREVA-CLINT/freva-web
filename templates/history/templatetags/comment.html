@@ -6,7 +6,7 @@
             <input class="form-control class_{{class_id}} mybtn-edit" id='dummyinput' placeholder="Insert new note" tabindex=-1></input>
         {% else %}
             {% if htag.type|slugify == tagType.note_public|slugify %}
-                {% if user.isGuest %}
+                {% if request.session|isGuest %}
                     <h4>#{{htag.id}} <span id="h4_text_{{class_id}}">Commentary by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}}</span></span></h4>
                 {% else %}
                     <h4>#{{htag.id}} <span id="h4_text_{{class_id}}">Commentary by <span id='user_{{class_id}}'>{{htag.uid.first_name}} {{htag.uid.last_name}} ({{htag.uid}})</span></span></h4>

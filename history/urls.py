@@ -18,7 +18,7 @@ urlpatterns = [
     url(r"^(?P<history_id>\w+)/follow/$", views.follow_result, name="follow"),
     url(r"^(?P<history_id>\w+)/unfollow/$", views.unfollow_result, name="unfollow"),
     url(
-        r"^(?P<uid>[\w+.]+)/show/$",
+        r"^(?P<uid>[^/]+)/show/$",
         never_cache(login_required(views.HistoryTable.as_view())),
         name="history",
     ),

@@ -206,7 +206,7 @@ DATABASES = {
 }
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "django_evaluation.auth.OIDCPasswordBackend",
+    "django_evaluation.auth.OIDCAuthorizationCodeBackend",
 )
 ### Caching stuff
 REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")

@@ -213,8 +213,7 @@ class PluginList extends React.Component {
             <h2>Plugins</h2>
           </Col>
           <Col md={6} className="pt-2">
-            {!currentUser.isGuest &&
-            (currentUser.home || currentUser.scratch) ? (
+            {!currentUser.isGuest ? (
               <Button
                 variant="info"
                 className="float-end"

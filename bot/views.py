@@ -15,13 +15,12 @@ def chatbot(request):
     New view for plugin list
     TODO: As we use react now, we should use ONE default view for all react pages
     """
-    if request.user.isGuest():
+    if request.session.get("user_info", {}).get("is_guest"):
         raise PermissionDenied
     return render(request, "plugins/list.html", {"title": "Chat Bot"})
 
 
 def ping(request):
-    print(f"{settings.CHAT_BOT_URL}/api/chatbot/ping")
     return reverse_proxy(request, f"{settings.CHAT_BOT_URL}/api/chatbot/ping")
 
 

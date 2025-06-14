@@ -1,3 +1,4 @@
+
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -13,10 +14,10 @@ class AuthenticatedUser(APIView):
     def get(self, request):
         if request.user.is_authenticated:
             try:
-                user = OpenIdUser(request.user.username)
+                user = OpenIdUser(request.user.username, request=request)
             except UserNotFoundError:
                 user = None
             return Response(
-                self.serializer_class(request.user, context={"user": user}).data
+                self.serializer_class(request.user, context={"user": user, "request": request}).data
             )
-        return Response({})  # False)
+        return Response({})

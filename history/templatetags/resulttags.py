@@ -228,3 +228,12 @@ def mask_safe_uid(text, is_guest):
     from django.utils.safestring import mark_safe
 
     return mark_safe(mask_uid(text, is_guest))
+
+@register.filter(name='isGuest')
+def is_guest(session):
+    """
+    Check if the user is a guest.
+    Usage: {{ request.session|isGuest }}
+    """
+    user_info = getattr(session, 'user_info', {})
+    return bool(user_info.get('is_guest', False))
