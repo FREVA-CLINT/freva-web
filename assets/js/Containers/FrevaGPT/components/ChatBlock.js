@@ -16,6 +16,7 @@ import { replaceLinebreaks, chatExceedsWindow } from "../utils";
 import * as constants from "../constants";
 
 import CodeBlock from "./CodeBlock";
+import UserInputBlock from "./UserInputBlock";
 
 class ChatBlock extends React.Component {
   constructor(props) {
@@ -124,14 +125,7 @@ class ChatBlock extends React.Component {
 
   renderUser(element, index) {
     return (
-      <Col md={{ span: 10, offset: 2 }} key={`${index}-user`}>
-        <Card
-          className="shadow-sm card-body border-0 border-bottom mb-3"
-          style={{ backgroundColor: "#eee" }}
-        >
-          {element.content}
-        </Card>
-      </Col>
+      <UserInputBlock content={element} index={index} key={`UserInputBlock-${index}`}/>
     );
   }
 
