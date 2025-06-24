@@ -13,12 +13,12 @@ from plugins.utils import get_scheduler_hosts, ssh_call
 @api_view(["POST"])
 @login_required()
 def ncdump(request):
-    if request.user.isGuest():
-        ncdump_out = "Guest users are not allowed to use this command.<br/>Normally you would see the output of <strong>ncdump</strong> here."
-        return JsonResponse(
-            {"ncdump": "", "error_msg": mark_safe(ncdump_out)}, status=403
-        )
-
+    valid = request.session.get("system_user_valid", False)
+    if not valid:
+        return JsonResponse({
+            "ncdump": "",
+            "error_msg": "Guest users are not allowed to use this command. Normally you would see the output of ncdump here."
+        }, status=403)
     fn = request.data.get("file")
     user_pw = request.data.get("pass")
     command = "%s %s" % (

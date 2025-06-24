@@ -28,6 +28,25 @@ export function formatCode(mode, data) {
   return codeSnippets;
 }
 
+export async function getAuthToken() {
+  try {
+    const response = await fetch("/get-current-token/");
+    const data = await response.json();
+    return data.success ? `Bearer ${data.token_data.access_token}` : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function fetchWithAuth(url, options = {}) {
+  const token = await getAuthToken();
+  const headers = { ...options.headers };
+  if (token) {
+    headers["X-Freva-User-Token"] = token;
+  }
+  return fetch(url, { ...options, headers });
+}
+
 export const truncate = (value) => {
   const trunc = value.substring(0, 32) + "\u2026";
   return trunc;

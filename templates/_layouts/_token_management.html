@@ -1,0 +1,886 @@
+{% load settingstags %}
+
+<!-- Token Management CSS -->
+<style>
+    /* Styles for authentication buttons */
+    .login-btn,
+    .token-btn-nav {
+        padding: 8px 16px;
+        font-weight: 500;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: transparent;
+        color: white;
+    }
+
+    .token-btn-nav {
+        margin-right: 8px;
+    }
+
+    .login-btn:hover,
+    .token-btn-nav:hover {
+        background: rgba(255,255,255,0.1);
+        transform: translateY(-1px);
+        border-color: rgba(255,255,255,0.3);
+        color: white;
+    }
+
+    /* Token Management Modal Styles */
+    .token-modal {
+        display: none;
+        position: fixed;
+        z-index: 1050;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    .token-modal.show {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .token-modal-content {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        scroll-behavior: smooth;
+    }
+
+    .token-header {
+        background: {% settings_val 'MAIN_COLOR' %};
+        color: white;
+        padding: 16px 20px;
+        position: relative;
+    }
+
+    .token-header h1 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .token-header p {
+        opacity: 0.9;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .token-close-btn {
+        position: absolute;
+        top: 16px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+    }
+
+    .token-close-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+    }
+
+    .token-section {
+        padding: 16px 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .token-status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+
+    .token-label {
+        font-size: 16px;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .token-expiry {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 13px;
+        color: #059669;
+        background: #dcfce7;
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    .token-expiry.warning {
+        color: #d97706;
+        background: #fef3c7;
+    }
+
+    .token-expiry.danger {
+        color: #dc2626;
+        background: #fecaca;
+    }
+
+    .token-display {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px;
+        position: relative;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .token-scroll-hint {
+        position: absolute;
+        top: 4px;
+        right: 8px;
+        color: #6b7280;
+        font-size: 9px;
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .token-info {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 12px;
+        border-radius: 8px;
+        font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+        font-size: 11px;
+        line-height: 1.4;
+        overflow-x: auto;
+        overflow-y: auto;
+        min-height: 175px;
+        max-height: 225px;
+        position: relative;
+        word-break: break-all;
+        white-space: pre-wrap;
+        flex: 1;
+    }
+
+    /* Custom scrollbar for token display */
+    .token-info::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    .token-info::-webkit-scrollbar-track {
+        background: #374151;
+        border-radius: 4px;
+    }
+
+    .token-info::-webkit-scrollbar-thumb {
+        background: #6b7280;
+        border-radius: 4px;
+    }
+
+    .token-info::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+    }
+
+    .token-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 12px;
+        justify-content: center;
+    }
+
+    .token-btn {
+        background: {% settings_val 'MAIN_COLOR' %};
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: background 0.2s;
+        min-width: 80px;
+    }
+
+    .token-btn:hover {
+        background: {% settings_val 'HOVER_COLOR' %};
+    }
+
+    .spinner {
+        border: 2px solid #f3f4f6;
+        border-top: 2px solid {% settings_val 'MAIN_COLOR' %};
+        border-radius: 50%;
+        width: 16px;
+        height: 16px;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .auth-buttons {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .user-hover-btn {
+        position: relative;
+        min-width: 140px;
+    }
+
+    .user-hover-btn .user-text {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        opacity: 1;
+        transition: opacity 0.1s ease;
+    }
+
+    .user-hover-btn .logout-text {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.1s ease;
+    }
+
+    .user-hover-btn:hover .user-text {
+        opacity: 0;
+    }
+
+    .user-hover-btn:hover .logout-text {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    @media (max-width: 640px) {
+        .token-modal-content {
+            margin: 10px;
+            max-height: 95vh;
+        }
+        
+        .token-section {
+            padding: 12px 16px;
+        }
+
+        .token-actions {
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .token-btn {
+            width: 100%;
+        }
+
+        .auth-buttons {
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .token-btn-nav {
+            margin-right: 0;
+            margin-bottom: 8px;
+        }
+
+        .token-info {
+            min-height: 300px;
+            max-height: 400px;
+        }
+    }
+</style>
+
+<!-- Token Authentication Buttons -->
+<div class="auth-buttons" data-user-authenticated="true">
+    <!-- Token Management Button -->
+    <button type="button" class="btn btn-outline-light token-btn-nav" onclick="openTokenModal()">
+        <i class="fas fa-key me-1"></i> Token
+    </button>
+    
+    <!-- User Hover Button -->
+    <div class="user-hover-btn btn btn-outline-light login-btn" onclick="handleUserClick(event)">
+        <div class="user-text">
+            <i class="fas fa-user-circle"></i> {{ request.user.username }}
+        </div>
+        <div class="logout-text">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </div>
+    </div>
+    
+    <!-- Hidden logout form -->
+    <form action="{% url 'base:logout' %}" method="post" id="hidden-logout-form" style="display: none;">
+        {% csrf_token %}
+    </form>
+</div>
+
+<!-- Token Management Modal -->
+<div class="token-modal" id="tokenModal">
+    <div class="token-modal-content">
+        <div class="token-header">
+            <h1>Freva API Token</h1>
+            <p>Secure access to FREVA API resources</p>
+            <button class="token-close-btn" onclick="closeTokenModal()">×</button>
+        </div>
+
+        <div class="token-section">
+            <div class="token-status">
+                <div class="token-label">Token:</div>
+                <div id="tokenExpiry" class="token-expiry">
+                    <span><i class="fas fa-clock"></i></span>
+                    <span id="expiryText">Loading...</span>
+                </div>
+            </div>
+            
+            <div class="token-display">
+                <div class="token-info" id="tokenInfo">
+                    <div id="tokenValue">
+                        Loading token...
+                    </div>
+                </div>
+                
+                <div class="token-actions">
+                    <button class="token-btn" onclick="copyToken()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="token-btn" onclick="downloadToken()">
+                        <i class="fas fa-download"></i> Download
+                    </button>
+                    <button class="token-btn" onclick="refreshToken()">
+                        <i class="fas fa-rotate-right"></i> Re-new Token
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Token Management js -->
+<script>
+    class TokenManager {
+        constructor() {
+            this.refreshInProgress = false;
+            this.refreshPromise = null;
+            this.currentTokenData = null;
+            this.expiryInterval = null;
+            this.autoRefreshTimer = null;
+            this.init();
+        }
+
+        init() {
+            // Listen for visibility changes to refresh when tab becomes active
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && this.isAuthenticated()) {
+                    this.checkAndRefreshToken();
+                }
+            });
+
+            // Intercept fetch requests to automatically refresh tokens
+            this.interceptFetch();
+            
+            // Set up logout cleanup
+            this.setupLogoutCleanup();
+        }
+
+        setupLogoutCleanup() {
+            // Watch for logout form submission
+            const logoutForm = document.getElementById('hidden-logout-form');
+            if (logoutForm) {
+                logoutForm.addEventListener('submit', () => {
+                    this.cleanup();
+                });
+            }
+
+            // Watch for beforeunload (page navigation/refresh)
+            window.addEventListener('beforeunload', () => {
+                this.cleanup();
+            });
+        }
+
+        cleanup() {            
+            if (this.expiryInterval) {
+                clearInterval(this.expiryInterval);
+                this.expiryInterval = null;
+            }
+            
+            if (this.autoRefreshTimer) {
+                clearInterval(this.autoRefreshTimer);
+                this.autoRefreshTimer = null;
+            }
+            
+            // Clear token data
+            this.currentTokenData = null;
+            
+            // Reset refresh state
+            this.refreshInProgress = false;
+            this.refreshPromise = null;
+        }
+
+        stopAutoRefresh() {
+            if (this.autoRefreshTimer) {
+                clearInterval(this.autoRefreshTimer);
+                this.autoRefreshTimer = null;
+            }
+        }
+
+        isAuthenticated() {
+            return document.querySelector('[data-user-authenticated="true"]') !== null;
+        }
+
+        getCurrentTokenExpiry() {
+            const expiryElement = document.getElementById('expiryText');
+            if (!expiryElement) return null;
+            
+            const expiryText = expiryElement.textContent;
+            if (expiryText.includes('Expires in')) {
+                const timeMatch = expiryText.match(/(\d{2}):(\d{2}):(\d{2})/);
+                if (timeMatch) {
+                    const hours = parseInt(timeMatch[1]);
+                    const minutes = parseInt(timeMatch[2]);
+                    const seconds = parseInt(timeMatch[3]);
+                    return hours * 3600 + minutes * 60 + seconds;
+                }
+            }
+            return null;
+        }
+
+        async checkAndRefreshToken() {
+            const expirySeconds = this.getCurrentTokenExpiry();
+            
+            if (expirySeconds !== null && expirySeconds < 120) {
+                await this.refreshToken();
+            }
+        }
+
+        async refreshToken() {
+            if (this.refreshInProgress) {
+                return this.refreshPromise;
+            }
+
+            this.refreshInProgress = true;
+            this.refreshPromise = this._performRefresh();
+
+            try {
+                const result = await this.refreshPromise;
+                return result;
+            } finally {
+                this.refreshInProgress = false;
+                this.refreshPromise = null;
+            }
+        }
+
+        async _performRefresh() {
+            try {
+                const response = await fetch('{% url "base:get_refresh_token" %}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': this.getCsrfToken(),
+                        'Content-Type': 'application/json',
+                    },
+                });
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Session expired - please login again');
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    console.log('Token refreshed successfully');
+
+                    if (this.currentTokenData && typeof displayToken === 'function') {
+                        this.currentTokenData.access_token = data.access_token;
+                        this.currentTokenData.expires = data.expires;
+                        displayToken(this.currentTokenData);
+                        startExpiryTimer(data.expires);
+                    }
+
+                    return { success: true, data };
+                } else {
+                    throw new Error(data.error || 'Token refresh failed');
+                }
+            } catch (error) {
+                console.error('Token refresh failed:', error);
+                
+                if (error.message.includes('expired') || error.message.includes('invalid')) {
+                    setTimeout(() => this.redirectToLogin(), 2000);
+                }
+
+                return { success: false, error: error.message };
+            }
+        }
+
+        redirectToLogin() {
+            const currentPath = window.location.pathname;
+            const loginUrl = `{% url "base:oidc_login" %}?next=${encodeURIComponent(currentPath)}`;
+            window.location.href = loginUrl;
+        }
+
+        getCsrfToken() {
+            const cookieValue = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='));
+            return cookieValue ? cookieValue.split('=')[1] : '{{ csrf_token }}';
+        }
+
+        interceptFetch() {
+            const originalFetch = window.fetch;
+            const self = this;
+
+            window.fetch = async function(...args) {
+                try {
+                    let response = await originalFetch.apply(window, args);
+                    
+                    if (response.status === 401 && self.isAuthenticated()) {
+                        const refreshResult = await self.refreshToken();
+
+                        if (refreshResult.success) {
+                            response = await originalFetch.apply(window, args);
+                        } else {
+                            self.redirectToLogin();
+                        }
+                    }
+                    return response;
+                } catch (error) {
+                    console.error('Fetch error:', error);
+                    throw error;
+                }
+            };
+        }
+    }
+
+    // Initialize token manager when DOM is loaded
+    let tokenManager;
+    let currentTokenData = null;
+    let expiryInterval = null;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        tokenManager = new TokenManager();
+        window.tokenManager = tokenManager;
+    });
+
+    // Handle user button
+    function handleUserClick(event) {
+        const logoutText = event.currentTarget.querySelector('.logout-text');
+        const isLogoutVisible = window.getComputedStyle(logoutText).display !== 'none';
+        if (isLogoutVisible) {
+            document.getElementById('hidden-logout-form').submit();
+        }
+    }
+
+    function openTokenModal() {
+        if (currentTokenData?.refresh_expires && 
+            Math.floor(Date.now() / 1000) >= currentTokenData.refresh_expires) {
+            alert('Session expired. Redirecting...');
+            window.location.href = '/login/';
+            return;
+        }
+        document.getElementById('tokenModal').classList.add('show');
+        loadTokenData();
+    }
+
+    function closeTokenModal() {
+        document.getElementById('tokenModal').classList.remove('show');
+        document.body.style.overflow = 'auto';
+        if (expiryInterval) {
+            clearInterval(expiryInterval);
+        }
+    }
+
+    function loadTokenData() {
+        fetch('{% url "base:collect_current_token" %}', {
+            method: 'GET',
+            headers: {
+                'X-CSRFToken': getCsrfToken(),
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.token_data) {
+                currentTokenData = data.token_data;
+                displayToken(currentTokenData);
+                startExpiryTimer(currentTokenData.expires);
+
+                if (window.tokenManager) {
+                    window.tokenManager.currentTokenData = currentTokenData;
+                }
+            } else {
+                document.getElementById('tokenValue').textContent = 'No token available - please refresh';
+            }
+        })
+        .catch(error => {
+            console.error('Failed to load token data:', error);
+            document.getElementById('tokenValue').textContent = 'Error loading token - please refresh';
+        });
+    }
+
+    function getCsrfToken() {
+        const cookieValue = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='));
+        return cookieValue ? cookieValue.split('=')[1] : '{{ csrf_token }}';
+    }
+
+    function displayToken(tokenData) {
+        const tokenDisplay = document.getElementById('tokenValue');
+        
+        // expires_at and refresh_expires_at are in human-readable format
+        // to make it easier for users to understand. But I think we need
+        // to keep the original timestamps since one user might copy the
+        // token directly from display without the copy button and use it
+        // in the CLI and Python
+        const formattedToken = {
+            "access_token": tokenData.access_token,
+            "refresh_token": tokenData.refresh_token,
+            "token_type": tokenData.token_type,
+            "expires_at": new Date(tokenData.expires * 1000).toISOString(),
+            "expires": tokenData.expires,
+            "refresh_expires_at": new Date(tokenData.refresh_expires * 1000).toISOString(),
+            "refresh_expires": tokenData.refresh_expires,
+            "scope": tokenData.scope
+        };
+        
+        // Format as pretty JSON
+        const jsonString = JSON.stringify(formattedToken, null, 2);
+        tokenDisplay.textContent = jsonString;
+    }
+
+    function startExpiryTimer(expiresTimestamp) {
+        if (expiryInterval) clearInterval(expiryInterval);
+        
+        function updateTimer() {
+            const now = Math.floor(Date.now() / 1000);
+            const timeLeft = expiresTimestamp - now;
+
+            if (timeLeft <= 0) {
+                document.getElementById('expiryText').textContent = 'Token expired';
+                document.getElementById('tokenExpiry').className = 'token-expiry danger';
+                clearInterval(expiryInterval);
+                return;
+            }
+
+            let timeString;
+
+            // If more than 24 hours, show in days and hours
+            if (timeLeft >= 86400) {
+                const days = Math.floor(timeLeft / 86400);
+                const hours = Math.floor((timeLeft % 86400) / 3600);
+                if (days === 1) {
+                    timeString = hours > 0 ? `1 day, ${hours}h` : '1 day';
+                } else {
+                    timeString = hours > 0 ? `${days} days, ${hours}h` : `${days} days`;
+                }
+            } else {
+                // Less than 24 hours, show in HH:MM:SS format
+                const hours = Math.floor(timeLeft / 3600);
+                const minutes = Math.floor((timeLeft % 3600) / 60);
+                const seconds = timeLeft % 60;
+                timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            document.getElementById('expiryText').textContent = `Expires in ${timeString}`;
+
+            const expiryElement = document.getElementById('tokenExpiry');
+            // TODO: the following logic needs to be improved
+            if (timeLeft < 3600) { // Less than 1 hour
+                expiryElement.className = 'token-expiry danger';
+            } else if (timeLeft < 14400) { // Less than 4 hours
+                expiryElement.className = 'token-expiry warning';
+            } else {
+                expiryElement.className = 'token-expiry';
+            }
+        }
+
+        updateTimer();
+        expiryInterval = setInterval(updateTimer, 1000);
+    }
+
+    function copyToken() {
+        if (!currentTokenData) return;
+
+        const btn = event.target;
+        const originalHTML = btn.innerHTML;
+
+        const TokenData = {
+            "access_token": currentTokenData.access_token,
+            "refresh_token": currentTokenData.refresh_token, 
+            "token_type": currentTokenData.token_type,
+            "expires": currentTokenData.expires,
+            "refresh_expires": currentTokenData.refresh_expires,
+            "scope": currentTokenData.scope
+        };
+
+        // Create temporary textarea element
+        const textarea = document.createElement('textarea');
+        textarea.value = JSON.stringify(TokenData, null, 2);
+        document.body.appendChild(textarea);
+
+        // Select and copy the text
+        textarea.select();
+        textarea.setSelectionRange(0, 99999); // mobile compatibility
+
+        try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied All!';
+                btn.style.background = '#10b981';
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = '{% settings_val "MAIN_COLOR" %}';
+                }, 2000);
+            } else {
+                throw new Error('Copy command failed');
+            }
+        } catch (err) {
+            console.error('Could not copy text: ', err);
+            btn.innerHTML = '<i class="fas fa-times"></i> Failed';
+            btn.style.background = '#dc2626';
+
+            setTimeout(() => {
+                btn.innerHTML = originalHTML;
+                btn.style.background = '{% settings_val "MAIN_COLOR" %}';
+            }, 2000);
+        }
+        
+        // Clean up
+        document.body.removeChild(textarea);
+    }
+
+    function downloadToken() {
+        if (!currentTokenData) return;
+        
+        const TokenData = {
+            "access_token": currentTokenData.access_token,
+            "refresh_token": currentTokenData.refresh_token,
+            "token_type": currentTokenData.token_type, 
+            "expires": currentTokenData.expires,
+            "refresh_expires": currentTokenData.refresh_expires,
+            "scope": currentTokenData.scope
+        };
+        
+        const blob = new Blob([JSON.stringify(TokenData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '.token.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function refreshToken() {
+        const btn = event.target;
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<div class="spinner"></div> Refreshing...';
+        btn.disabled = true;
+        window.tokenManager.refreshToken()
+            .then(result => {
+                if (result.success) {
+                    loadTokenData(); // This will fetch the latest session data
+                    btn.innerHTML = '<i class="fas fa-check"></i> Refreshed';
+                    btn.style.background = '#10b981';
+                    // Reset button after success, 2s buffer
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.style.background = '{% settings_val "MAIN_COLOR" %}';
+                        btn.disabled = false;
+                    }, 2000);
+                } else {
+                    throw new Error(result.error);
+                }
+            })
+            .catch(error => {
+                console.error('Token refresh failed:', error);
+                const isAuthError = error.message.toLowerCase().includes('expired') || 
+                                error.message.toLowerCase().includes('session');
+                if (isAuthError) {
+                    btn.innerHTML = 'Session Expired';
+                    setTimeout(() => {
+                        closeTokenModal();
+                        window.location.href = '/login/';
+                    }, 2000);
+                } else {
+                    btn.innerHTML = '<i class="fas fa-times"></i> Failed';
+                    btn.style.background = '#dc2626';
+                    // Reset button after failure, 2s buffer
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.style.background = '{% settings_val "MAIN_COLOR" %}';
+                        btn.disabled = false;
+                    }, 2000);
+                }
+            });
+    }
+
+    // Handle user button click. One idea could be adding the logout
+    // as a dropdown menu item but since we only have one logout 
+    // option, we can just handle it with changing the text on hover
+    // If we add more options in the future, we can consider a dropdown.
+    function handleUserClick(event) {
+        const logoutText = event.currentTarget.querySelector('.logout-text');
+        const isLogoutVisible = window.getComputedStyle(logoutText).display !== 'none';
+        
+        if (isLogoutVisible) {
+            document.getElementById('hidden-logout-form').submit();
+        }
+    }
+
+    // Close modal when clicking outside of token modal
+    document.addEventListener('click', function(e) {
+        const modal = document.getElementById('tokenModal');
+        if (e.target === modal) {
+            closeTokenModal();
+        }
+    });
+
+    // Close modal with Escape key.
+    // it might be changed based on user preferences
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeTokenModal();
+        }
+    });
+
+    // Cleanup when user logs out
+    function logout() {
+        if (window.tokenManager) {
+            window.tokenManager.stopAutoRefresh();
+        }
+    }
+</script>

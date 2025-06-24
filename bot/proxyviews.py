@@ -2,27 +2,23 @@ from urllib.parse import urljoin
 
 import requests
 from django.conf import settings
-from django.http import HttpResponseForbidden, StreamingHttpResponse
+from django.http import StreamingHttpResponse
 from django.views import View
-
-from django_evaluation.auth import OIDCPasswordBackend
 
 
 class ChatBotProxy(View):
+    """ A view to proxy requests to the chatbot API."""
     def get(self, request, *args, **kwargs):
-        if request.user.isGuest():
-            return HttpResponseForbidden(
-                "Guest users are not allowed to access the chatbot API."
-            )
+        """ Handle GET requests to the chatbot proxy."""
         path = request.path
         base_url = urljoin(settings.CHAT_BOT_URL, path)
-        
-        pwbe = OIDCPasswordBackend()
-        token = pwbe.get_token(request.user.username, password)
-        headers = {f"Authorization: Bearer {token}"}
 
         try:
-            upstream_response = requests.get(base_url[:-1], headers=headers, stream=True)
+            upstream_response = requests.get(
+                base_url[:-1],
+                params=params,
+                stream=True
+            )
             upstream_response.raise_for_status()
         except requests.RequestException as e:
             return StreamingHttpResponse(
@@ -32,6 +28,7 @@ class ChatBotProxy(View):
 
         # Stream the content of the external API to the Django response
         def stream():
+            """Generator to stream the content."""
             for chunk in upstream_response.iter_content(chunk_size=8192):
                 if chunk:
                     yield chunk

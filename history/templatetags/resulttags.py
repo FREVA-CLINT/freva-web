@@ -208,23 +208,4 @@ def get_masked_uid(uid):
     return name
 
 
-@register.filter("mask_uid")
-def mask_uid(text, is_guest):
-    rettext = text
 
-    if is_guest:
-        try:
-            users = re.findall(settings.USERNAME_FILTER, text)
-            for u in users:
-                rettext = rettext.replace(u, get_masked_uid(u))
-        except:
-            pass
-
-    return rettext
-
-
-@register.filter("mask_safe_uid")
-def mask_safe_uid(text, is_guest):
-    from django.utils.safestring import mark_safe
-
-    return mark_safe(mask_uid(text, is_guest))

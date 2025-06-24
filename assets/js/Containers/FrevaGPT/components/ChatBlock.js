@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 
-import { Col, Card, Modal, Button } from "react-bootstrap";
+import { Col, Card, Modal, Button, Alert } from "react-bootstrap";
 
 import { isEmpty } from "lodash";
 
@@ -137,11 +137,11 @@ class ChatBlock extends React.Component {
 
   renderError(element, index) {
     return (
-      <Col md={constants.BOT_COLUMN_STYLE} key={`${index}-error`}>
-        <Card className="shadow-sm card-body border-0 border-bottom mb-3 bg-danger">
+      <Col md={12} key={`${index}-error`}>
+        <Alert variant="danger" className="shadow-sm mb-3">
           <span className="fw-bold">{element.variant}</span>
           <ReactMarkdown>{replaceLinebreaks(element.content)}</ReactMarkdown>
-        </Card>
+        </Alert>
       </Col>
     );
   }
@@ -177,6 +177,7 @@ class ChatBlock extends React.Component {
       case "OpenAIError":
       case "CodeError":
       case "FrontendError":
+      case "InvalidThread":
       case "UserStop":
         return this.renderError(element[0], index);
 

@@ -5,11 +5,60 @@
 
     {% load settingstags %}
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Dynamic CSS for to use in base-navbar of token management-->
+    <link rel="stylesheet" type="text/css" href="{% url 'base:dynamic_css' %}">
+
     <style>
         @media (max-width: 768px) {
             .navbar-collapse {
                 max-height: 100%;
             }
+        }
+
+        /* sign-on button style */
+        .keycloak-signin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(135deg, #0f86c6 0%, #0a6da5 100%); /* we might make sign-on background dynamic in the future */
+            border: none;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .keycloak-signin-btn:hover {
+            background: linear-gradient(135deg, #0a6da5 0%, #085787 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .keycloak-signin-btn:focus,
+        .keycloak-signin-btn:active {
+            text-decoration: none;
+            color: white;
+        }
+
+        .keycloak-signin-btn i {
+            margin-right: 10px;
+            font-size: 18px;
+            position: relative;
+            top: 1px;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s ease;
+        }
+
+        .keycloak-signin-btn:hover i {
+            transform: scale(1.1);
         }
     </style>
     <!-- Header starts -->
@@ -20,7 +69,6 @@
                 <div class="col-md-4 col-sm-6">
                     <!-- Logo and site link -->
                     <div class="logo">
-                        <!-- <h1><a href="{% url 'base:home' %}"><img src="{{ STATIC_URL }}img/miklip-logo.png" style="width:100%;"/></a></h1> -->
                         <h1><a href="{% url 'base:home' %}"><img src="{% settings_val 'INSTITUTION_LOGO' %}"
                             style="width:100%;" /></a></h1>
                     </div>
@@ -28,7 +76,6 @@
                 <div class="col-md-2 col-sm-4 float-right d-none d-sm-block" style="padding-top:20px;">
                     <!-- Logo and site link -->
                     <div class="logo">
-                        <!-- <h1><a href="{% url 'base:home' %}"><img src="{{ STATIC_URL }}img/miklip-logo.png" style="width:100%;"/></a></h1> -->
                         <h1><a href="{% url 'base:home' %}"><img src="{% settings_val 'FREVA_LOGO' %}" style="width:100%;" /></a></h1>
                     </div>
                 </div>
@@ -56,32 +103,13 @@
                     </ul>
                     <div class="d-flex">
                         {% if not request.user.is_authenticated %}
-                            <form class="navbar-form d-flex justify-around-content" method="post" action="{% url 'base:home' %}">
-                                {% csrf_token %}
-                                <div class="form-group" style="padding-left:0px;">
-                                    <div class="input-group">
-                                        <button class="btn text-white navbar-button" type="button" id='guest_credentials'
-                                            title='Press to insert the credentials for the guest login.' data-bs-toggle="tooltip"
-                                            data-bs-placement="top" data-container='body'>
-                                            Guest?
-                                        </button>
-                                        <input name="user" type="text" placeholder="Username" class="form-control" id='in_user'>
-                                        <input name="password" type="password" placeholder="Password" class="form-control" id='in_pwd'>
-                                        <input name="next" type="hidden" id="next_page" value="{% firstof next '/' %}">
-                                        <button type="submit" class="btn text-white navbar-button">Sign in</button>
-                                    </div><!-- /input-group -->
-                                </div>
-                            </form>
+                            <!-- single sign-on button -->
+                            <a href="{% url 'base:oidc_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}" class="keycloak-signin-btn">
+                                <i class="fas fa-fingerprint"></i> Sign-On
+                            </a>
                         {% else %}
-                            <ul class="navbar-nav fs-6">
-                                <li class="nav-item">
-                                    <form action="{% url 'base:logout' %}" method="post" id="logout-link">
-                                        {% csrf_token %}
-                                        <button type="submit" class="btn btn-link nav-link" name="something">
-                                            Logout ({{ request.user.username }})
-                                        </button>
-                                    </form>
-                            </ul>
+                            <!-- Include Token Management Template -->
+                            {% include "_layouts/_token_management.html" %}
                         {% endif %}
                     </div>
                 </div>
@@ -94,18 +122,12 @@
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl)
-            })
-            $('#guest_credentials').on('click', function () {
-                $('#in_user').val('guest');
-                $('#in_pwd').val('miklip');
             });
         });
     </script>
     <!-- Navigation Ends -->
 
-
 {% endblock %}
-
 
 {% block footer %}
 
@@ -121,7 +143,6 @@
                 <!-- Widget 1 -->
                 <div class="widget">
                     <h4>About Us</h4>
-                    <!--    INTEGRAted data and evaluation system for decadal scale predicTION. -->
                     <p>
                         {% settings_val 'ABOUT_US_TEXT' as about_us_text %}
                         {{ about_us_text|safe }}
@@ -160,15 +181,7 @@
                     </div>
                 {% endif %}
             </div>
-            <!-- <div class="row">
-                <hr />
-                <div class="col-md-12">
-                    <p class="copy pull-left">
-                        Created by <a href="https://github.com/FREVA-CLINT/Freva" target="_blank">Freva</a></p>
-                </div>
-            </div> -->
         </div>
-
     </footer>
 
 {% endblock %}

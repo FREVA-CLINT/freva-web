@@ -206,7 +206,7 @@ DATABASES = {
 }
 AUTHENTICATION_BACKENDS = (
     "django.contrib.auth.backends.ModelBackend",
-    "django_evaluation.auth.OIDCPasswordBackend",
+    "django_evaluation.auth.OIDCAuthorizationCodeBackend",
 )
 ### Caching stuff
 REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
@@ -251,8 +251,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = "apikey"
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-HOME_DIRS_AVAILABLE = False
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [
@@ -270,7 +268,7 @@ CSRF_TRUSTED_ORIGINS = [
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
-
+FORM_PASSWORD_CHECK="OIDC"  # OIDC or ssh
 # path to the site packages used:
 VENV_PYTHON_DIR = "/usr/bin/python3"
 # Path to miklip-logo
@@ -278,8 +276,7 @@ MIKLIP_LOGO = STATIC_URL + "img/miklip-logo.png"
 LOAD_MODULE = " "
 FREVA_BIN = os.environ.get("FREVA_BIN", os.path.join(sys.exec_prefix, "bin"))
 NCDUMP_BINARY = os.path.join(FREVA_BIN, "metadata-inspector") + " --html"
-# result to show at guest tour
-GUEST_TOUR_RESULT = 105
+
 SHELL_IN_A_BOX = "/shell/"
 WEBPACK_LOADER = {
     "DEFAULT": {

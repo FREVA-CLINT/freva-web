@@ -44,7 +44,7 @@ mariadb service. This services can be deployed using
 [`docker-compose`](https://docs.docker.com/compose/install/).
 
 ```console
-docker compose up -d
+USER=$(whoami) docker compose up -d
 ```
 
 When finished, tear down the environment with
@@ -57,7 +57,7 @@ docker compose down
 You can also use podman (`python -m pip install podman-compose`):
 
 ```console
-pomand-compose up -d
+USER=$(whoami) pomand-compose up -d
 ```
 
 ```console
@@ -74,7 +74,7 @@ cat .env.dev
 REDIS_USER=redis
 REDIS_PASSWD=secret
 
-docker compose --env-file .env.dev up -d
+USER=$(whoami) docker compose --env-file .env.dev up -d
 ```
 
 ### Running tests
@@ -151,9 +151,6 @@ When running in production mode you should set the following container
 environment variables:
 
 - ``EVALUATION_SYSTEM_CONFIG_FILE`` : Path to the freva config file
-- ``LDAP_USER_DN``: the Distinguished Name within ldap for example
-                    `uid=jdoe,ou=users,dc=example,dc=com`.
-- ``LDAP_USER_PW``: password for the LDAP server connection.
 - ``DJANGO_SUPERUSER_PASSWORD``: the super user password for the django app.
 
 The web app app is running on port 8000, hence you want to publish this port

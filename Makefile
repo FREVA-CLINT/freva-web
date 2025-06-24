@@ -49,7 +49,7 @@ runrest:
 		--key-file $(REDIS_SSL_KEYFILE)
 	python -m data_portal_worker -c .data-portal-cluster-config.json > rest.log 2>&1 &
 	python docker/config/dev-utils.py oidc http://localhost:8080/realms/freva/.well-known/openid-configuration
-	python -m freva_rest.cli -p 7777 --redis-ssl-keyfile $(REDIS_SSL_KEYFILE) --redis-ssl-certfile $(REDIS_SSL_CERTFILE) --debug --dev >> rest.log 2>&1 &
+	python -m freva_rest.cli -p 7777 --oidc-discovery-url http://localhost:8080/realms/freva/.well-known/openid-configuration --redis-ssl-keyfile $(REDIS_SSL_KEYFILE) --redis-ssl-certfile $(REDIS_SSL_CERTFILE) --oidc-client-id freva --debug --dev >> rest.log 2>&1 &
 	@echo "To watch the freva-rest logs, run 'tail -f rest.log'"
 
 runfrontend:
@@ -58,28 +58,11 @@ runfrontend:
 	@echo "npm development server is running..."
 	@echo "To watch the npm logs, run 'tail -f npm.log'"
 
-wait-for-opensearch:
-	@echo "wait until openseach wakes up"
-	@until curl -s "localhost:9202/_cluster/health" > /dev/null; do \
-		echo "we wait 2 secs for OpenSearch to wake up"; \
-		sleep 2; \
-	done
-	@echo "OpenSearch is ready to go, now we have to enable auto index creation"
-	@curl -XPUT "localhost:9202/_cluster/settings" -H 'Content-Type: application/json' -d'{ \
-		"persistent": { \
-			"cluster.blocks.create_index": null, \
-			"action.auto_create_index": true \
-		} \
-	}'
 
 stopserver:
 	ps aux | grep '[f]reva_rest.cli' | awk '{print $$2}' | xargs -r kill
 	ps aux | grep '[d]ata_portal_worker' | awk '{print $$2}' | xargs -r kill
 	ps aux | grep '[m]anage.py runserver' | awk '{print $$2}' | xargs -r kill
-	@if pgrep -f '[s]tac_fastapi.opensearch.app' > /dev/null; then \
-		ps aux | grep '[s]tac_fastapi.opensearch.app' | awk '{print $$2}' | head -n 1 | xargs kill; \
-		sleep 1; \
-	fi
 	rm -fr .data-portal-cluster-config.json
 	echo "Stopped Django development server..." > runserver.log
 	echo "Stopped freva-rest development server..." > rest.log

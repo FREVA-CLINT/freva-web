@@ -17,8 +17,8 @@ def cancel_dialog():
 
 
 @register.inclusion_tag("history/templatetags/sendmail_dialog.html")
-def sendmail_dialog(url, is_guest):
-    return {"url": url, "is_guest": is_guest}
+def sendmail_dialog(url):
+    return {"url": url}
 
 
 @register.inclusion_tag("history/templatetags/caption_dialog.html")
@@ -32,27 +32,26 @@ def caption_dialog(current, default, history_object, user):
 
 
 @register.inclusion_tag("history/templatetags/mailfield.html")
-def mailfield(is_guest):
+def mailfield():
     """Extract the email information from users that have been logged in."""
     data = mark_safe(json.dumps([]))
-    if not is_guest:
-        try:
-            data = cache.get("user_email_info")
-        except Exception as error:
-            data = None
-            logger = logging.getLogger("freva-web")
-            logger.error("Could not add user email info to cache: %s", error)
-        data = data or mark_safe(
-            json.dumps(
-                [
-                    {
-                        "id": u.username,
-                        "text": f"{u.first_name}, {u.last_name} ({u.email})",
-                    }
-                    for u in get_user_model()
-                    .objects.exclude(email__exact="")
-                    .exclude(email__isnull=True)
-                ]
-            )
+    try:
+        data = cache.get("user_email_info")
+    except Exception as error:
+        data = None
+        logger = logging.getLogger("freva-web")
+        logger.error("Could not add user email info to cache: %s", error)
+    data = data or mark_safe(
+        json.dumps(
+            [
+                {
+                    "id": u.username,
+                    "text": f"{u.first_name}, {u.last_name} ({u.email})",
+                }
+                for u in get_user_model()
+                .objects.exclude(email__exact="")
+                .exclude(email__isnull=True)
+            ]
         )
-    return {"user_data": data, "is_guest": is_guest}
+    )
+    return {"user_data": data}

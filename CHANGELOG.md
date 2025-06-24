@@ -3,6 +3,18 @@
 
 
 All notable changes to this project will be documented in this file.
+## [v2506.0.1]
+## Fixes
+- Try to get information on the user via SSSD
+
+## [v2506.0.0]
+## Added
+- Introduced a new component called FrevaGPT.
+- Implemented authentication based on the auth-flow of the Freva-Nextgen REST API.
+- Added a Token button next to the user account menu, allowing users to copy or download their access token and refresh token for use with the Freva CLI and Python client.
+- Guest users are now automatically recognized via the SystemUser endpoint.
+- Made the Plug-My-Plugin available to all users.
+
 ## [v2505.0.0]
 ## Changed
 - Fix an issue on BBOX and removed the minor leftover of STAC-API

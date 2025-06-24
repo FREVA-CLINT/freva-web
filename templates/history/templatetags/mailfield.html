@@ -16,7 +16,7 @@
 <script>
   $(document).ready(function() {
       $("#mail_to_field").select2({
-          data: {{user_data|mask_safe_uid:is_guest}},
+          data: {{user_data}},
           placeholder: "Select recipients",
           minimumInputLength: 2,
           allowClear: true,

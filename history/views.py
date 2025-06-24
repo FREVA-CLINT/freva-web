@@ -26,7 +26,6 @@ from base.exceptions import UserNotFoundError
 from base.Users import OpenIdUser
 from django_evaluation import settings
 from history.models import HistoryTag
-from history.templatetags.resulttags import mask_uid
 from history.utils import FileDict, sendmail_to_follower
 from plugins.utils import get_scheduler_hosts, ssh_call
 
@@ -93,7 +92,7 @@ class HistoryDatatable(Datatable):
             # this is much faster than the routine config_dict.
             config_dict = json.loads(instance.configuration)
             for key, value in config_dict.items():
-                text = escape(mask_uid(str(value), request.user.isGuest()))
+                text = escape(str(value))
                 config += (
                     '<tr class="blacktable"><td class="blacktable">%s</td><td class="blacktable">%s<td></tr>'
                     % (key, text)
@@ -228,7 +227,7 @@ def change_flag(request):
 
     changed = 0
 
-    if not (flag is None or request.user.isGuest()):
+    if flag is not None:
         for id in ids:
             changed += 1
 
@@ -269,14 +268,9 @@ def follow_result(request, history_id):
 
     history_object = get_object_or_404(History, id=history_id)
 
-    # check if the user has the permission to access the result
-    flag = history_object.flag
-    guest = request.user.isGuest()
-
-    if not guest and flag in [
+    if history_object.flag in [
         History.Flag.free,
         History.Flag.public,
-        History.Flag.guest,
     ]:
         user = OpenIdUser(str(request.user))
         pm.follow_history_tag(history_object.id, user, "Web page: follow")
@@ -344,14 +338,11 @@ def results(request, id, show_output_only=False):
             return redirect_to_login(path)
 
         elif not history_object.uid == request.user:
-            if not (
-                request.user.username.lower() != "guest"
-                and flag
-                in [History.Flag.public, History.Flag.shared, History.Flag.guest]
-            ):
+            if flag not in [
+                History.Flag.public,
+                History.Flag.shared
+            ]:
                 raise PermissionDenied
-    if not request.user.is_authenticated:
-        request.user._guest = True
 
     try:
         documentation = FlatPage.objects.get(title__iexact=history_object.tool)
@@ -541,7 +532,7 @@ def tail_file(request, id):
 @login_required()
 def set_caption(request, id):
     hist = History.objects.get(id=id)
-    if not request.user.isGuest() and hist.uid == request.user:
+    if hist.uid == request.user:
         caption = escape(request.POST["caption"].strip())
         hist.caption = caption
         hist.save()
@@ -628,7 +619,7 @@ def edit_htag(request, history_id, tag_id):
 
     retval = ""
 
-    if not request.user.isGuest() and type in allowed_types:
+    if type in allowed_types:
         user = request.user
         db = UserDB(user)
 

@@ -112,19 +112,21 @@ class PluginRangeFieldWidget(Input):
 
 
 class PasswordField(forms.CharField):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, request=None, **kwargs):
+        self.request = request
         widget = kwargs.get("widget", forms.HiddenInput)
         super(PasswordField, self).__init__(widget=widget)
 
         self._user = kwargs.pop("uid")
 
     def validate(self, value):
-        password_type = getattr(settings, "FORM_PASSWORD_CHECK", "LDAP")
-        if password_type == "LDAP":
-            u = auth.authenticate(username=self._user, password=value)
-            if u is None:
+        password_type = getattr(settings, "FORM_PASSWORD_CHECK", "OIDC")
+        if password_type == "OIDC":
+            session = getattr(self.request, "session", None)
+            if not (session and session.get("system_user_valid", False)):
                 raise exceptions.ValidationError(
-                    "You've entered a wrong password!", code="invalid_password"
+                    "Your system user session is no longer valid.",
+                    code="invalid_session",
                 )
         elif password_type == "ssh":
             try:
@@ -162,7 +164,7 @@ class PluginForm(forms.Form):
             # check whether the caption name appear in the list of parameters
             criticalcaption = self.caption_field_name in tool.__parameters__
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, request=None, **kwargs):
         tool = kwargs.pop("tool")
         uid = kwargs.pop("uid")
         self._workdir = Path(pm.config.get("base_dir_location"))
@@ -170,7 +172,7 @@ class PluginForm(forms.Form):
         super(PluginForm, self).__init__(*args, **kwargs)
 
         # set the password field
-        self.fields["password_hidden"] = PasswordField(uid=uid)
+        self.fields["password_hidden"] = PasswordField(uid=uid, request=request)
 
         self.get_caption_field(tool)
 

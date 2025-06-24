@@ -14,6 +14,19 @@ ENV PATH=/opt/conda/bin:$PATH\
     EMAIL_HOST_PASSWORD=$EMAIL_HOST_PASSWORD\
     PYTHONUNBUFFERED=1
 
+RUN  set -xe  && \
+    mkdir -p /etc/pamd.d && \
+    apt -y update &&\
+    DEBIAN_FRONTEND=noninteractive apt -y install sssd libnss-sss libpam-sss \
+    sssd-common sssd-tools &&\
+    rm -rf /var/lib/apt/lists/* && \
+    printf "\n\
+auth required pam_sss.so\n\
+account required pam_sss.so\n\
+password required pam_sss.so\n\
+session required pam_sss.so\n\
+" > /etc/pam.d/login
+
 WORKDIR ${FREVA_WEB_DIR}
 
 COPY . .
