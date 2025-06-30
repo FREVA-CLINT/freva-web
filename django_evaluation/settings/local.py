@@ -296,10 +296,18 @@ RESULT_BROWSER_FACETS = [
 ]
 MENU_ENTRIES = []
 
-CHAT_BOT_URL = "http://vader5-icpub.lvt.dkrz.de:8502"
+CHAT_BOT_URL = "http://vader4-icpub.lvt.dkrz.de:8502"
 CHAT_BOT_AUTH_KEY = os.environ.get("CHAT_BOT_AUTH_KEY")
 CHAT_BOT_FREVA_CONFIG = os.environ.get("CHAT_BOT_FREVA_CONFIG")
-
+### CHATBOT development settings
+# Since the backend of chatbot is running on an operational system
+# it is necessary to pass some configuration from a non-localhost
+# and accessible freva instance to the chatbot backend.
+# For example we can catch the project name and vault url
+# and freva_rest and freva_config from the environment variables
+VAULT_URL = os.environ.get("VAULT_URL")
+CHAT_BOT_FREVA_PROJECT = os.environ.get("CHAT_BOT_FREVA_PROJECT")
+##################################
 if os.getenv("CHAT_BOT", "0").isdigit():
     ACTIVATE_CHAT_BOT = bool(int(os.getenv("CHAT_BOT", "0")))
 else:

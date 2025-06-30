@@ -9,6 +9,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import User
 
+from base.views import ensure_url_scheme
 from django_evaluation.utils import sync_mail_users
 
 logger = logging.getLogger(__name__)
@@ -23,8 +24,8 @@ class OIDCAuthorizationCodeBackend(BaseBackend):
     """
 
     def __init__(self):
-        self.userinfo_url = getattr(settings, 'FREVA_REST_URL').rstrip('/') + '/api/freva-nextgen/auth/v2/userinfo'
-        self.systemuser_url = getattr(settings, 'FREVA_REST_URL').rstrip('/') + '/api/freva-nextgen/auth/v2/systemuser'
+        self.userinfo_url = f"{ensure_url_scheme(settings.FREVA_REST_URL).rstrip('/')}/api/freva-nextgen/auth/v2/userinfo"
+        self.systemuser_url = f"{ensure_url_scheme(settings.FREVA_REST_URL).rstrip('/')}/api/freva-nextgen/auth/v2/systemuser"
 
     def authenticate(self, request: Any, access_token: str = None, **kwargs):
         """

@@ -13,7 +13,14 @@ class ChatBotProxy(View):
         path = request.path
         base_url = urljoin(settings.CHAT_BOT_URL, path)
         params = request.GET.dict()
-
+        access_token = request.session.get("access_token", ""),
+        headers = {
+            "X-Freva-User-Token": f"Bearer {access_token[0]}",
+            "X-Freva-Vault-URL": settings.VAULT_URL,
+            "X-Freva-Rest-URL": settings.FREVA_REST_URL,
+            "X-Freva-Config-Path": settings.CHAT_BOT_FREVA_CONFIG,
+            "X-Freva-Project": settings.CHAT_BOT_FREVA_PROJECT,
+        }
         # adding bot auth key and freva conf
         params["auth_key"] = settings.CHAT_BOT_AUTH_KEY
         params["freva_config"] = settings.CHAT_BOT_FREVA_CONFIG
@@ -21,6 +28,7 @@ class ChatBotProxy(View):
         try:
             upstream_response = requests.get(
                 base_url[:-1],
+                headers=headers,
                 params=params,
                 stream=True
             )

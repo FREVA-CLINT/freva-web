@@ -1,6 +1,6 @@
 import logging
 import time
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlparse, urlunparse
 
 import requests
 from django.conf import settings
@@ -22,7 +22,13 @@ logger = logging.getLogger(__name__)
 
 # Since the endpoints of auth are managing via Freva-rest API and always constant, we define the URLs here instead of settings.py
 # shared variables for OIDC endpoints
-TOKEN_URL = getattr(settings, 'FREVA_REST_URL', 'http://localhost:7777').rstrip('/') + '/api/freva-nextgen/auth/v2/token'
+def ensure_url_scheme(url, default_scheme='http'):
+    parsed = urlparse(url)
+    if not parsed.scheme:
+        return f"{default_scheme}://{url}"
+    return url
+
+TOKEN_URL = ensure_url_scheme(settings.FREVA_REST_URL).rstrip('/') + '/api/freva-nextgen/auth/v2/token'
 LOGIN_URL = '/api/freva-nextgen/auth/v2/login'
 
 

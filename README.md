@@ -9,7 +9,7 @@ web front end in a production environment use the
 To start development with freva clone the repository and its sub-modules:
 
 ```console
-git clone --recursive git@github.com:FREVA-CLINT/freva-web.git
+git clone --recursive git@github.com:freva-org/freva-web.git
 ```
 
 And create a pair of self-signed keys. These keys will be used by various
@@ -39,7 +39,7 @@ source .envrc
 ### Additional services running on docker
 
 The web ui will need a connection to a solr,
-[freva-databrowser](https://github.com/FREVA-CLINT/freva-nextgen/) and
+[freva-databrowser](https://github.com/freva-org/freva-nextgen/) and
 mariadb service. This services can be deployed using
 [`docker-compose`](https://docs.docker.com/compose/install/).
 
@@ -76,6 +76,30 @@ REDIS_PASSWD=secret
 
 USER=$(whoami) docker compose --env-file .env.dev up -d
 ```
+
+### Chatbot Configuration
+
+The chatbot requires specific environment variables to run, as its backend operates on a production system. This setup ensures it connects to an accessible Freva instance and project as a hub.
+
+#### Required Environment Variables:
+Choose one of running Freva instances and get the values from there and set via environment.
+
+| Variable                 | Description                                                                          |
+| ------------------------ | ------------------------------------------------------------------------------------ |
+| `CHAT_BOT_URL`           | URL of the chatbot backend (default example: `http://vader4-icpub.lvt.dkrz.de:8502`) |
+| `CHAT_BOT_AUTH_KEY`      | Authentication key for the chatbot (set via environment variable)                    |
+| `CHAT_BOT_FREVA_CONFIG`  | Path or configuration string for Freva (set via environment variable)                |
+| `VAULT_URL`              | URL of the Vault system providing secrets (set via environment variable)             |
+| `CHAT_BOT_FREVA_PROJECT` | Name of the Freva project the chatbot should use (set via environment variable)      |
+| `FREVA_REST_URL` | URL of the freva-rest of one running freva instance (set via environment variable)      |
+
+#### Optional:
+
+| Variable   | Description                                                                     |
+| ---------- | ------------------------------------------------------------------------------- |
+| `CHAT_BOT` | Set to `"1"` to activate the chatbot, `"0"` to disable it (default is disabled) |
+
+
 
 ### Running tests
 
@@ -144,7 +168,7 @@ to deploy the web app in production mode.
 A pre-build image of the web app is available via:
 
 ```console
-docker pull ghcr.io/freva-clint/freva-web:latest
+docker pull ghcr.io/freva-org/freva-web:latest
 ```
 
 When running in production mode you should set the following container
@@ -173,7 +197,7 @@ docker run -it -e EVALUATION_SYSTEM_CONFIG_FILE=/work/freva/evaluation_system.co
         -v /work/freva:/work/freva:z \
         -v /srv/static:/opt/freva_web/static:z \
         -p 8000:8000 \
-        ghcr.io/freva-clint/freva-web:latest
+        ghcr.io/freva-org/freva-web:latest
 ```
 The web app is then available via port 8000 on the host system.
 
@@ -206,7 +230,7 @@ LoadModule proxy_http_module modules/mod_proxy_http.so
 
 # Create a new web release.
 The production systems are deployed in a docker image hosted on the GitHub
-container registry: `ghcr.io/freva-clint/freva-web`. A GitHub workflow has to
+container registry: `ghcr.io/freva-org/freva-web`. A GitHub workflow has to
 be triggered in order to build an updated version of the docker image and push
 it to the registry. To do so please follow the following steps.
 

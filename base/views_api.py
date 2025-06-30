@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from base.exceptions import UserNotFoundError
 from base.Users import OpenIdUser
+from base.views import ensure_url_scheme
 
 from .serializers import UserSerializer
 
@@ -30,7 +31,8 @@ class AuthenticatedUser(APIView):
 
 def proxy_auth_view(request, path):
     """Proxy auth requests to Freva-REST, preserving redirects, headers, and bodies."""
-    backend_url = f"{settings.FREVA_REST_URL.rstrip('/')}/api/freva-nextgen/auth/{path}"
+
+    backend_url = f"{ensure_url_scheme(settings.FREVA_REST_URL).rstrip('/')}/api/freva-nextgen/auth/{path}"
 
     # forward all client headers except hop-by-hop and host
     forwarded_headers = {

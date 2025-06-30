@@ -1,6 +1,11 @@
 name: Build and publish the container image
 run-name: ${{ github.actor }} is creating a new release
 
+permissions:
+  pull-requests: write
+  contents: write
+  packages: write
+
 on:
   workflow_dispatch:
   push:
@@ -101,7 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-and-push-image, lint]
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - name: Checkout repository
@@ -120,7 +125,7 @@ jobs:
       - name: Get the release script
         run: >
           curl -H 'Cache-Control: no-cache' -Ls -o bump.py
-          https://raw.githubusercontent.com/FREVA-CLINT/freva-deployment/main/release.py
+          https://raw.githubusercontent.com/freva-org/freva-admin/main/release.py
 
       - name: Get tag
         id: repository

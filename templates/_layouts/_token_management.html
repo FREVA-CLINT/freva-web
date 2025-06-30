@@ -2,29 +2,155 @@
 
 <!-- Token Management CSS -->
 <style>
-    /* Styles for authentication buttons */
-    .login-btn,
-    .token-btn-nav {
-        padding: 8px 16px;
-        font-weight: 500;
-        border-radius: 4px;
+    /* Styles for authentication dropdown */
+    .user-dropdown {
+        position: relative;
+    }
+
+    .user-dropdown-btn {
+        padding: 10px 18px;
+        font-weight: 600;
+        border-radius: 8px;
         transition: all 0.3s ease;
-        border: 1px solid rgba(255,255,255,0.2);
-        background: transparent;
-        color: white;
-    }
-
-    .token-btn-nav {
-        margin-right: 8px;
-    }
-
-    .login-btn:hover,
-    .token-btn-nav:hover {
+        border: 1px solid rgba(255,255,255,0.25);
         background: rgba(255,255,255,0.1);
-        transform: translateY(-1px);
-        border-color: rgba(255,255,255,0.3);
+        backdrop-filter: blur(8px);
         color: white;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        position: relative;
+        overflow: hidden;
     }
+
+    .user-dropdown-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .user-dropdown-btn:hover::before {
+        left: 100%;
+    }
+
+    .user-dropdown-btn:hover {
+        background: rgba(255,255,255,0.2);
+        transform: translateY(-2px);
+        border-color: rgba(255,255,255,0.4);
+        color: white;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    }
+
+    .user-dropdown-btn:focus {
+        color: white;
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
+        outline: none;
+    }
+
+    .user-dropdown-menu {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        box-shadow:
+            0 8px 32px rgba(0, 0, 0, 0.12),
+            0 2px 8px rgba(0, 0, 0, 0.08),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        padding: 8px;
+        margin-top: 8px;
+        min-width: 200px;
+        overflow: hidden;
+        transform: translateY(-10px);
+        opacity: 0;
+        transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .user-dropdown-menu.show {
+        transform: translateY(0);
+        opacity: 1;
+    }
+
+    .user-dropdown-menu .dropdown-item {
+        padding: 12px 16px;
+        color: #1f2937;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-radius: 8px;
+        margin: 2px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .user-dropdown-menu .dropdown-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, {% settings_val 'MAIN_COLOR' %}20, {% settings_val 'MAIN_COLOR' %}10);
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        border-radius: 8px;
+    }
+
+    .user-dropdown-menu .dropdown-item:hover::before {
+        opacity: 1;
+    }
+
+    .user-dropdown-menu .dropdown-item:hover {
+        color: {% settings_val 'MAIN_COLOR' %};
+        transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-dropdown-menu .dropdown-item i {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+        transition: transform 0.2s ease;
+        position: relative;
+        z-index: 1;
+    }
+
+    .user-dropdown-menu .dropdown-item:hover i {
+        transform: scale(1.1);
+    }
+
+    .user-dropdown-menu .dropdown-item span {
+        position: relative;
+        z-index: 1;
+    }
+
+    .user-dropdown-menu .dropdown-divider {
+        margin: 8px 12px;
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent);
+        position: relative;
+    }
+
+    .user-dropdown-menu .dropdown-divider::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+        transform: translateY(-1px);
+    }
+
 
     /* Token Management Modal Styles */
     .token-modal {
@@ -244,51 +370,7 @@
         100% { transform: rotate(360deg); }
     }
 
-    .auth-buttons {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .user-hover-btn {
-        position: relative;
-        min-width: 140px;
-    }
-
-    .user-hover-btn .user-text {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        justify-content: center;
-        opacity: 1;
-        transition: opacity 0.1s ease;
-    }
-
-    .user-hover-btn .logout-text {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.1s ease;
-    }
-
-    .user-hover-btn:hover .user-text {
-        opacity: 0;
-    }
-
-    .user-hover-btn:hover .logout-text {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    @media (max-width: 640px) {
+    @media (max-width: 991px) {
         .token-modal-content {
             margin: 10px;
             max-height: 95vh;
@@ -307,14 +389,19 @@
             width: 100%;
         }
 
-        .auth-buttons {
-            flex-direction: column;
-            gap: 8px;
+        .user-dropdown {
+            position: static;
         }
 
-        .token-btn-nav {
-            margin-right: 0;
-            margin-bottom: 8px;
+        .user-dropdown-menu {
+            min-width: 160px;
+            position: fixed !important;
+            top: auto !important;
+            right: auto !important;
+            left: auto !important;
+            transform: none !important;
+            z-index: 9999 !important;
+            margin-top: 8px;
         }
 
         .token-info {
@@ -324,22 +411,27 @@
     }
 </style>
 
-<!-- Token Authentication Buttons -->
-<div class="auth-buttons" data-user-authenticated="true">
-    <!-- Token Management Button -->
-    <button type="button" class="btn btn-outline-light token-btn-nav" onclick="openTokenModal()">
-        <i class="fas fa-key me-1"></i> Token
+<!-- User Dropdown Menu -->
+<div class="dropdown user-dropdown" data-user-authenticated="true">
+    <button class="btn user-dropdown-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-user-circle"></i>
+        {{ request.user.username }}
     </button>
-    
-    <!-- User Hover Button -->
-    <div class="user-hover-btn btn btn-outline-light login-btn" onclick="handleUserClick(event)">
-        <div class="user-text">
-            <i class="fas fa-user-circle"></i> {{ request.user.username }}
-        </div>
-        <div class="logout-text">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </div>
-    </div>
+    <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu" aria-labelledby="userDropdown">
+        <li>
+            <a class="dropdown-item" href="#" onclick="openTokenModal(); return false;">
+                <i class="fas fa-key"></i>
+                Token Management
+            </a>
+        </li>
+        <li><hr class="dropdown-divider"></li>
+        <li>
+            <a class="dropdown-item" href="#" onclick="document.getElementById('hidden-logout-form').submit(); return false;">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </li>
+    </ul>
     
     <!-- Hidden logout form -->
     <form action="{% url 'base:logout' %}" method="post" id="hidden-logout-form" style="display: none;">
@@ -592,15 +684,6 @@
         window.tokenManager = tokenManager;
     });
 
-    // Handle user button
-    function handleUserClick(event) {
-        const logoutText = event.currentTarget.querySelector('.logout-text');
-        const isLogoutVisible = window.getComputedStyle(logoutText).display !== 'none';
-        if (isLogoutVisible) {
-            document.getElementById('hidden-logout-form').submit();
-        }
-    }
-
     function openTokenModal() {
         if (currentTokenData?.refresh_expires && 
             Math.floor(Date.now() / 1000) >= currentTokenData.refresh_expires) {
@@ -846,19 +929,6 @@
                     }, 2000);
                 }
             });
-    }
-
-    // Handle user button click. One idea could be adding the logout
-    // as a dropdown menu item but since we only have one logout 
-    // option, we can just handle it with changing the text on hover
-    // If we add more options in the future, we can consider a dropdown.
-    function handleUserClick(event) {
-        const logoutText = event.currentTarget.querySelector('.logout-text');
-        const isLogoutVisible = window.getComputedStyle(logoutText).display !== 'none';
-        
-        if (isLogoutVisible) {
-            document.getElementById('hidden-logout-form').submit();
-        }
     }
 
     // Close modal when clicking outside of token modal

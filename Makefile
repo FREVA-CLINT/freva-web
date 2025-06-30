@@ -27,7 +27,7 @@ setup-django:
 
 setup-rest:
 	TEMP_DIR=$$(mktemp -d) && \
-	git clone https://github.com/FREVA-CLINT/freva-nextgen.git $$TEMP_DIR &&\
+	git clone https://github.com/freva-org/freva-nextgen.git $$TEMP_DIR &&\
 	python -m pip install $$TEMP_DIR/freva-rest $$TEMP_DIR/freva-data-portal-worker &&\
 	rm -rf $$TEMP_DIR
 
@@ -91,6 +91,6 @@ tests: setup-node
 
 release:
 	pip install git-python requests packaging tomli
-	curl -H 'Cache-Control: no-cache' -Ls -o bump.py https://raw.githubusercontent.com/FREVA-CLINT/freva-deployment/main/release.py
+	curl -H 'Cache-Control: no-cache' -Ls -o bump.py https://raw.githubusercontent.com/freva-org/freva-deployment/main/release.py
 	python3 bump.py tag web -v
 	rm bump.py
