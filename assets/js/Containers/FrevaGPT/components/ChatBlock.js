@@ -125,7 +125,11 @@ class ChatBlock extends React.Component {
 
   renderUser(element, index) {
     return (
-      <UserInputBlock content={element} index={index} key={`UserInputBlock-${index}`}/>
+      <UserInputBlock
+        content={element}
+        index={index}
+        key={`UserInputBlock-${index}`}
+      />
     );
   }
 
