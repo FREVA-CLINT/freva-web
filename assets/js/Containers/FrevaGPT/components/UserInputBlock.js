@@ -15,10 +15,12 @@ class UserInputBlock extends React.Component {
     this.renderUserInputCard = this.renderUserInputCard.bind(this);
     this.renderUserInputField = this.renderUserInputField.bind(this);
     this.resizeInputField = this.resizeInputField.bind(this);
+    this.handleEdit = this.handleEdit.bind(this);
 
     this.state = {
       showEditBar: false,
       renderInput: false,
+      editedInput: ""
     };
   }
 
@@ -41,6 +43,10 @@ class UserInputBlock extends React.Component {
     style.height = `${inputField.scrollHeight}px`;
   }
 
+  handleEdit(e) {
+    this.setState({editedInput: e.target.value});
+  }
+
   renderUserInputCard() {
     return (
       <Col
@@ -53,7 +59,7 @@ class UserInputBlock extends React.Component {
           className="shadow-sm card-body border-0 border-bottom"
           style={{ backgroundColor: "#eee" }}
         >
-          {this.props.content.content}
+          {this.state.editedInput ? this.state.editedInput : this.props.content.content}
         </Card>
         <div className="w-100 d-flex justify-content-end p-0 h-5">
           <Button
@@ -89,7 +95,8 @@ class UserInputBlock extends React.Component {
             id={`UserInputField-${this.props.index}`}
             className="mb-2"
             defaultValue={this.props.content.content}
-            onChange={() => {
+            onChange={(e) => {
+              this.handleEdit(e);
               this.resizeInputField(`UserInputField-${this.props.index}`);
             }}
           />
@@ -102,7 +109,7 @@ class UserInputBlock extends React.Component {
             >
               Cancel
             </Button>
-            <Button variant="info">Send</Button>
+            <Button variant="info" onClick={() => {this.props.onSend(this.state.editedInput, this.props.index); this.setState({renderInput: false})}}>Send</Button>
           </div>
         </Card>
         <div className="w-100 d-flex justify-content-end p-0">
@@ -132,6 +139,7 @@ class UserInputBlock extends React.Component {
 UserInputBlock.propTypes = {
   content: PropTypes.object,
   index: PropTypes.number,
+  onSend: PropTypes.func,
 };
 
 export default UserInputBlock;

@@ -169,7 +169,7 @@ SCHEDULER_HOSTS = [
 ]
 
 # The url of the freva-rest api
-FREVA_REST_URL = os.getenv("FREVA_REST_URL", "http://localhost:7777")
+FREVA_REST_URL = os.getenv("FREVA_REST_URL", "https://nextgems.dkrz.de")
 
 # temporary directory for tailed scheduler files
 TAIL_TMP_DIR = "/tmp/tail/"
@@ -296,17 +296,17 @@ RESULT_BROWSER_FACETS = [
 ]
 MENU_ENTRIES = []
 
-CHAT_BOT_URL = "http://vader4-icpub.lvt.dkrz.de:8502"
-CHAT_BOT_AUTH_KEY = os.environ.get("CHAT_BOT_AUTH_KEY")
-CHAT_BOT_FREVA_CONFIG = os.environ.get("CHAT_BOT_FREVA_CONFIG")
+CHAT_BOT_URL = "http://vader5-icpub.lvt.dkrz.de:8504"
+CHAT_BOT_AUTH_KEY = os.environ.get("CHAT_BOT_AUTH_KEY", "qA94VhroHMHFN55inWgfAAkt1WEmzQ4J")
+CHAT_BOT_FREVA_CONFIG = os.environ.get("CHAT_BOT_FREVA_CONFIG", "/work/ch1187/clint/nextgems/freva/evaluation_system.conf")
 ### CHATBOT development settings
 # Since the backend of chatbot is running on an operational system
 # it is necessary to pass some configuration from a non-localhost
 # and accessible freva instance to the chatbot backend.
 # For example we can catch the project name and vault url
 # and freva_rest and freva_config from the environment variables
-VAULT_URL = os.environ.get("VAULT_URL")
-CHAT_BOT_FREVA_PROJECT = os.environ.get("CHAT_BOT_FREVA_PROJECT")
+VAULT_URL = os.environ.get("VAULT_URL", "http://nextgems.dkrz.de:5002/vault/data/506457173dce256e21d7bf603707d0959b88846bcd79d020f094d20d25456f2820d7c50313e89a6eb86cf24f976b578c81c5e52f59cc7140073bdd89ff344f94")
+CHAT_BOT_FREVA_PROJECT = os.environ.get("CHAT_BOT_FREVA_PROJECT", "nextgems")
 ##################################
 if os.getenv("CHAT_BOT", "0").isdigit():
     ACTIVATE_CHAT_BOT = bool(int(os.getenv("CHAT_BOT", "0")))

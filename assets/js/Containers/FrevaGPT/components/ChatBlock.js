@@ -29,6 +29,7 @@ class ChatBlock extends React.Component {
     this.renderDefault = this.renderDefault.bind(this);
     this.enlargeImage = this.enlargeImage.bind(this);
     this.rearrangeCodeElement = this.rearrangeCodeElements.bind(this);
+    this.getConversationVariantsUntilIndex = this.getConversationVariantsUntilIndex.bind(this);
 
     this.state = {
       showModal: false,
@@ -61,12 +62,7 @@ class ChatBlock extends React.Component {
 
     for (const element of conversation) {
       if (element.variant !== "Code" && element.variant !== "CodeOutput") {
-        if (
-          element.variant !== "ServerHint" &&
-          element.variant !== "StreamEnd"
-        ) {
-          newConv.push([element]);
-        }
+        newConv.push([element]);
       } else {
         const existingIndex = newConv.findIndex(
           (x) =>
@@ -81,6 +77,17 @@ class ChatBlock extends React.Component {
     }
 
     return newConv;
+  }
+
+  getConversationVariantsUntilIndex(input, index) {
+
+    // only start new request if content was altered
+    if (!isEmpty(input)) {
+      const variantArray = this.props.chatBlock.conversation.map(elem => elem.variant)
+      const variantListUntilInput = variantArray.slice(0, index)
+      
+      this.props.onFetchEditedData(input, variantListUntilInput)
+    }
   }
 
   renderImage(element, index) {
@@ -129,6 +136,7 @@ class ChatBlock extends React.Component {
         content={element}
         index={index}
         key={`UserInputBlock-${index}`}
+        onSend={this.getConversationVariantsUntilIndex}
       />
     );
   }
@@ -219,6 +227,7 @@ ChatBlock.propTypes = {
     conversation: PropTypes.array,
   }),
   onScrollDown: PropTypes.func,
+  onFetchEditedData: PropTypes.func,
 };
 
 const mapStateToProps = (state) => ({

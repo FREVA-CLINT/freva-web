@@ -154,7 +154,7 @@ class FrevaGPT extends React.Component {
   async handleKeyDown(e) {
     if (e.key === "Enter" && !isEmpty(e.target.value.trim())) {
       e.preventDefault(); // preventing to add a new line within textare when sending request by pressing enter
-      this.handleSubmit(e.target.value);
+      this.handleSubmit(e.target.value, []);
     }
   }
 
@@ -162,18 +162,28 @@ class FrevaGPT extends React.Component {
     const userInput = this.state.userInput;
 
     if (!isEmpty(userInput.trim())) {
-      await this.handleSubmit(userInput);
+      await this.handleSubmit(userInput, []);
     }
 
     this.setState({ userInput: "" });
   }
 
-  async handleSubmit(input) {
+  async handleSubmit(input, chatvariants) {
+    if (!isEmpty(chatvariants)) {
+      //eslint-disable-next-line no-console
+      console.log('####', chatvariants)
+      this.props.dispatch(setThread(""));
+      this.props.dispatch(setConversation([]));
+    }
     this.props.dispatch(addElement({ variant: "User", content: input }));
     this.setState({ showSuggestions: false, userInput: "", loading: true });
 
     try {
-      await this.fetchData(input);
+      if (chatvariants) {
+        await this.fetchData(input, chatvariants);
+      } else {
+        await this.fetchData(input, []);
+      }
     } catch (err) {
       this.props.dispatch(
         addElement({
@@ -187,11 +197,13 @@ class FrevaGPT extends React.Component {
     this.setState({ loading: false });
   }
 
-  async fetchData(input) {
+  async fetchData(input, chatvariants) {
+
     const queryObject = {
       input,
       thread_id: this.props.frevaGPT.thread,
       chatbot: this.state.botModel,
+      chatvariants
     };
 
     // response of a new bot request is streamed
@@ -412,7 +424,7 @@ class FrevaGPT extends React.Component {
                     <Button
                       className="h-100 w-100"
                       variant="outline-secondary"
-                      onClick={() => this.handleSubmit(element)}
+                      onClick={() => this.handleSubmit(element, [])}
                     >
                       {truncate(element)}
                     </Button>
@@ -557,7 +569,7 @@ class FrevaGPT extends React.Component {
             onScroll={debounce(this.setPosition, 100)}
           >
             <Col md={12}>
-              <ChatBlock onScrollDown={this.scrollDown} />
+              <ChatBlock onScrollDown={this.scrollDown} onFetchEditedData={this.handleSubmit}/>
 
               <PendingAnswerComponent
                 content={this.state.dynamicAnswer}
