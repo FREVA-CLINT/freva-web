@@ -13,10 +13,14 @@ All notable changes to this project will be documented in this file.
 ## Changed
 - Turn token button into user dropdown button
 - Change the Freva databrowser command display based on the neew freva-client
+- After token expiration, user redirected to the home page instead of login page
+- Help page stays always, the last item on the navbar
 
 ## Fixed
 - Internal auth hotfix
 - Getting the Freva RestAPI link through STAC-API self-link
+- Protect the main layout from the changes that are coing through SPA
+- 
 
 ## [v2506.0.1]
 ## Fixes

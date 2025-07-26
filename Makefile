@@ -51,6 +51,7 @@ setup-stacbrowser:
 	if [ -n "$$APP_JS" ]; then \
 		echo "Found app.js: $$APP_JS"; \
 		sed -i 's/catalogUrl:null/catalogUrl:window.STAC_CATALOG_URL/g' "$$APP_JS" 2>/dev/null || sed -i '' 's/catalogUrl:null/catalogUrl:window.STAC_CATALOG_URL/g' "$$APP_JS"; \
+		sed -i 's/showThumbnailsAsAssets:!1/showThumbnailsAsAssets:1/g' "$$APP_JS" 2>/dev/null || sed -i '' 's/showThumbnailsAsAssets:!1/showThumbnailsAsAssets:1/g' "$$APP_JS"; \
 		echo "Modified: $$APP_JS"; \
 	else \
 		echo "Error: app.js not found in static_root/stac-browser/js/"; \

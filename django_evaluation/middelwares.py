@@ -47,9 +47,7 @@ class OIDCTokenRefreshMiddleware:
                         # Refresh failed, logout user and redirect to login
                         logger.warning(f"Token refresh failed for user {request.user.username}, logging out")
                         logout(request)
-                        if request.path != '/':
-                            return HttpResponseRedirect(f"/login/?next={request.path}")
-                        return HttpResponseRedirect("/login/")
+                        return HttpResponseRedirect("/")
 
         return self.get_response(request)
 

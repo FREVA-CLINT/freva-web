@@ -61,6 +61,122 @@
         loadScopedCSS();
     });
 
+    function addLayoutProtection() {
+        // Create a style element to protect the main layout
+        const protectionStyle = document.createElement('style');
+        protectionStyle.id = 'stac-layout-protection';
+        protectionStyle.textContent = `
+            /* original max-width number is 1200px, but since it's a SPA
+            we found 1240px by experiment*/
+            .container {
+                max-width: 1240px !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+
+            header .container, header.pt-0 .container {
+                max-width: 1240px !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+            }
+
+            /* Adjustment of the logo and keep the original behavior */
+            header .row.justify-content-between {
+                max-width: 1240px !important; 
+                margin: 0 auto !important; 
+                justify-content: space-between !important;
+            }
+
+            /* Lock column widths to original sizes. 400px is the original size */
+            header .col-md-4.col-sm-6 {
+                width: 400px !important;
+                max-width: 400px !important;
+                flex: 0 0 400px !important;
+            }
+
+            header .col-md-2.col-sm-4 {
+                width: 200px !important;
+                max-width: 200px !important;
+                flex: 0 0 200px !important;
+            }
+
+            /* Lock logo sizes at their original sizes. 376px is the original size */
+            header .col-md-4 .logo img {
+                max-width: 376px !important;
+                width: auto !important;
+                height: auto !important;
+            }
+
+            header .col-md-2 .logo img {
+                max-width: 176px !important;
+                width: auto !important; 
+                height: auto !important;
+            }
+
+            @media (max-width: 991px) {
+                /* Aall values below, has been experimentally determined
+                to be the original values for the responsive layout */
+                .navbar-toggler {
+                    margin-left: -2px !important;
+                }
+
+                .navbar-container .container {
+                    max-width: none !important;
+                    padding: 0px 12px !important;
+                }
+
+                .navbar {
+                    width: 100% !important;
+                    margin: 0 !important;
+                    padding-left: 0px !important;
+                }
+
+                .navbar-nav {
+                    margin-left: 0 !important;
+                    width: auto !important;
+                }
+
+                .user-dropdown {
+                    margin-right: 0 !important;
+                }
+            }
+
+            header, header.pt-0 {
+                width: auto !important;
+                max-width: none !important;
+                min-width: 0px !important;
+                height: auto !important;
+                position: static !important;
+            }
+
+            .navbar, .navbar-default, .navbar-inverse, .navbar-light, .navbar-dark {
+                width: auto !important;
+                max-width: 100% !important;
+                min-width: auto !important;
+                height: auto !important;
+                position: relative !important;
+            }
+
+            nav, .header, .main-header, .site-header {
+                width: auto !important;
+                max-width: none !important;
+                min-width: auto !important;
+                height: auto !important;
+                position: relative !important;
+            }
+
+            #stac-browser {
+                isolation: isolate !important;
+                contain: layout style paint !important;
+                display: block !important;
+                max-width: 100% !important;
+                overflow: hidden !important;
+            }
+
+        `;
+        document.head.appendChild(protectionStyle);
+    }
+
     // we load CSS dynamically in script to ensure it is loaded after the DOM is ready
     // and it prevent conflicts with other styles of freva-web
     const loadScopedCSS = () => {
@@ -72,6 +188,7 @@
                 loadedCount++;
                 if (loadedCount === totalFiles) {
                     addDropdownFixes();
+                    addLayoutProtection();
                     resolve();
                 }
             };

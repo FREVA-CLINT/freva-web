@@ -340,7 +340,7 @@ if ACTIVATE_CHAT_BOT:
         }
     )
 
-if os.getenv("STAC_BROWSER", "0") == "1":
+if os.getenv("STAC_BROWSER", "1") == "1":
     MENU_ENTRIES.append(
         {
             "name": "STAC-Browser",
@@ -348,3 +348,6 @@ if os.getenv("STAC_BROWSER", "0") == "1":
             "html_id": "stacbrowser_menu",
         }
     )
+# help menu entry has to stay at the end of the menu
+MENU_ENTRIES.sort(key=lambda m: m.get("name") == "Help")
+
